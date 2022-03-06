@@ -1,7 +1,8 @@
 # build dir
 
 build/
-bin/
+bin/*
+!bin/.git-keep
 lib/
 cmake-build-*
 docs/html
