@@ -1,0 +1,13 @@
+# build dir
+
+build/
+bin/
+lib/
+cmake-build-*
+docs/html
+*.pyc
+
+# IDE files
+.vscode
+.idea
+
