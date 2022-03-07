@@ -17,7 +17,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/git.cmake)
 #####################################
 add_subdirectory(hellolib)
 add_subdirectory(helloapp)
-
+add_subdirectory(baselib)
 #####################################
 # Define Install Targets
 #####################################
