@@ -2,7 +2,10 @@ name: Build-Static
 
 on:
   push:
+    branches:
+      - master
   pull_request:
+    types: [ opened,reopened, synchronize ]
 
 jobs:
   build:

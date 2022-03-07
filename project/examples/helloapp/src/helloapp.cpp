@@ -5,9 +5,6 @@ using namespace hello;
 #include "baselib.h"
 int main()
 {
-
-
-
   hellolib hello{};
   int32_t error_code = hello.saySomething("Hello Modern C++ Development");
   if (error_code > 0) { return error_code; }
