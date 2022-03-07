@@ -1,10 +1,10 @@
 #pragma once
-#include "MyLib_export.h"
+#include "QtDemoLib_export.h"
 #include <QString>
 namespace app
 {
 
-class MYLIB_EXPORT QtDemoClass
+class QTDEMOLIB_EXPORT QtDemoClass
 {
     QString _text;
 

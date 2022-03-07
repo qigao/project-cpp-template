@@ -1,8 +1,7 @@
-
 find_package(
-        Qt6
-        COMPONENTS Core Gui Widgets
-        REQUIRED)
+  Qt6
+  COMPONENTS Core Gui Widgets
+  REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -33,7 +32,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-add_executable(${TARGET_NAME} WIN32 MACOSX_BUNDLE ${TARGET_SOURCES})
+add_executable(${TARGET_NAME} ${TARGET_SOURCES})
 
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
@@ -56,9 +55,10 @@ target_compile_definitions(
 # set target link options as defined in the cmake/compiler_options.cmake Module
 target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
 
-#if(WIN32)
-#  target_link_options(${TARGET_NAME}  PRIVATE "/entry:mainCRTStartup")
-#endif()
+# Make this a GUI application on Windows
+if(WIN32)
+  set(CMAKE_WIN32_EXECUTABLE ON)
+endif()
 
 # include all the necessary directories
 target_include_directories(
