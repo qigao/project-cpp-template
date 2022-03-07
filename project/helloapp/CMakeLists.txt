@@ -19,7 +19,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
 # Define Target according to options
 #####################################
 add_executable(${TARGET_NAME} ${TARGET_SOURCES})
-add_dependencies(${TARGET_NAME} check_git)
+
 #####################################
 # Define Target Properties and Optional OpenSSL Dependency
 #####################################
@@ -42,10 +42,10 @@ target_include_directories(${TARGET_NAME}
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
   PRIVATE
     ${TARGET_INCLUDE_FOLDER}
-    ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../hellolib/include
     # Any other extra include required
+    ${CMAKE_CURRENT_SOURCE_DIR}/../baselib/include
 )
 
 # link against hellolib
-target_link_libraries(${TARGET_NAME} PUBLIC hellolib)
+target_link_libraries(${TARGET_NAME} PUBLIC hellolib baselib)
