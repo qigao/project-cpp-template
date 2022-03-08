@@ -3,8 +3,14 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'project/**'
+      - '.github/workflows/macos.yml'
   pull_request:
     types: [opened, reopened, synchronize]
+    paths:
+      - 'project/**'
+      - '.github/workflows/macos.yml'
 env:
   QT_VERSION: "6.2.3"
   CONAN_USER_HOME: "${{ github.workspace }}/release"

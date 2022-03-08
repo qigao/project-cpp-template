@@ -3,8 +3,14 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'project/**'
+      - '.github/workflows/ubuntu.yml'
   pull_request:
     types: [opened, reopened, synchronize]
+    paths:
+      - 'project/**'
+      - '.github/workflows/ubuntu.yml'
 env:
   CONAN_USER_HOME: "${{ github.workspace }}/release"
   CONAN_USER_HOME_SHORT: "${{ github.workspace }}/release/short"

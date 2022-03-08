@@ -3,8 +3,14 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'project/**'
+      - '.github/workflows/windows.yml'
   pull_request:
     types: [opened, reopened, synchronize]
+    paths:
+      - 'project/**'
+      - '.github/workflows/windows.yml'
 jobs:
   build:
     name: Build
