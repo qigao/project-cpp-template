@@ -1,8 +1,10 @@
 = moderncpp-project-template
 
-image:https://github.com/madduci/moderncpp-project-template/workflows/Build-Static/badge.svg[Static Build]
+image:https://github.com/qigao/cmake-template/workflows/MacOS/badge.svg[Mac Build]
 
-image:https://github.com/madduci/moderncpp-project-template/workflows/Build-Shared/badge.svg[Shared Build]
+image:https://github.com/qigao/cmake-template/workflows/Ubuntu/badge.svg[Ubuntu Build]
+
+image:https://github.com/qigao/cmake-template/workflows/Windows/badge.svg[Windows Build]
 
 This repository aims to represent a template for Modern C++ projects, including static analysis checks, autoformatting, a BDD/TDD capable test-suite and packaging
 
@@ -10,7 +12,7 @@ This repository aims to represent a template for Modern C++ projects, including 
 
 * a modern C++17 compiler (`gcc-8`, `clang-6.0`, `MSVC 2017` or above)
 * https://cmake.org[`cmake`] 3.10+
-* https://conan.io[`conan`] 1.28+ (optional)
+* https://conan.io[`conan`] 1.28+ 
 * `cppcheck` (optional)
 * `clang-format/clang-tidy` (optional)
 
@@ -88,6 +90,6 @@ and then:
 md project/build
 cd project/build
 conan install ..
-cmake -G "Ninja" -DBUILD_TESTING=TRUE  ..
+cmake -G Ninja -DBUILD_TESTING=TRUE  ..
 cmake --build .
 ----
