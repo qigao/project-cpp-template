@@ -1,0 +1,55 @@
+name: MacOS
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, reopened, synchronize]
+env:
+  QT_VERSION: "6.2.3"
+  CONAN_USER_HOME: "${{ github.workspace }}/release"
+  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/release/short"
+  INSTALL_DIR: ${{ github.workspace }}/install/
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-10.15, macos-11.0]
+        qt_ver: [6.2.3]
+        qt_arch: [clang_64]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: prepare env
+        if: ${{ matrix.os == 'macos-11.0' }}
+        run: |
+          softwareupdate --all --install --force
+          sudo xcode-select --print-path
+          sudo xcode-select --switch /Library/Developer/CommandLineTools
+      - name: Install Python environment
+        uses: actions/setup-python@v2
+      - name: Install Ninja
+        run: brew install ninja
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+      - name: Install conan
+        run: |
+          pip install conan --upgrade
+          conan profile new default --detect
+      - name: Configure cmake
+        run: |
+          conan profile update settings.compiler.libcxx=libc++ default
+          mkdir -p build && cd build
+          conan install .. --build=missing
+          cmake .. -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+
+      - name: build ios
+        run: |
+          cmake --build build --target install --config Release

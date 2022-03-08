@@ -1,0 +1,54 @@
+name: Windows
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, reopened, synchronize]
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        qt_ver: [6.2.3]
+        qt_arch: [win64_msvc2019_64]
+        qt_target: [desktop]
+        os: [windows-2019, windows-2022]
+
+    steps:
+      - name: Perform checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Install Python environment
+        uses: actions/setup-python@v2
+      - name: Install Ninja
+        run: choco install ninja
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+          target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+      - name: Install Conan
+        run: |
+          pip install conan --upgrade
+          conan profile new default --detect
+      - name: Conan Install packages
+        run: |
+          md build && cd build
+          conan install .. --build=missing
+      - name: Cmake Configure and Build
+        shell: cmd
+        run: |
+          cmake -H. -B build ^
+            -DBUILD_TESTING=TRUE ^
+            -DBUILD_SHARED_LIBS=TRUE ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -G Ninja ^
+            -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }} 
+          cmake --build  build --target install --config Release
