@@ -51,10 +51,10 @@ jobs:
       - name: Cmake Configure and Build
         shell: cmd
         run: |
-          cmake -H. -B build ^
-            -DBUILD_TESTING=TRUE ^
-            -DBUILD_SHARED_LIBS=TRUE ^
-            -DCMAKE_BUILD_TYPE=Release ^
-            -G Ninja ^
+          cmake -H. -B build \
+            -DBUILD_TESTING=TRUE \
+            -DBUILD_SHARED_LIBS=TRUE \
+            -DCMAKE_BUILD_TYPE=Release \
+            -G Ninja \
             -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }} 
           cmake --build  build --target install --config Release
