@@ -20,7 +20,7 @@ jobs:
         qt_ver: [6.2.3]
         qt_arch: [win64_msvc2019_64]
         qt_target: [desktop]
-        os: [windows-2019, windows-2022]
+        os: [windows-2019]
 
     steps:
       - name: Perform checkout
@@ -52,5 +52,5 @@ jobs:
             -DBUILD_SHARED_LIBS=TRUE \
             -DCMAKE_BUILD_TYPE=Release \
             -G Ninja \
-            -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }} 
+            -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
           cmake --build  build --target install --config Release
