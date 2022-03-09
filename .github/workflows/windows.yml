@@ -44,14 +44,10 @@ jobs:
         run: |
           pip install conan --upgrade
           conan profile new default --detect
-      - name: Conan Install packages
-        run: |
-          md build && cd build
-          conan install .. --build=missing
       - name: Cmake Configure and Build
         shell: cmd
         run: |
-          cmake -H. -B build \
+          cmake -S . -B build \
             -DBUILD_TESTING=TRUE \
             -DBUILD_SHARED_LIBS=TRUE \
             -DCMAKE_BUILD_TYPE=Release \

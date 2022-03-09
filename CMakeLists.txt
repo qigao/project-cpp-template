@@ -35,7 +35,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 # Define installation folder and the module path (this one required by conan)
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/pkgs)
 set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})
 set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR} ${CMAKE_PREFIX_PATH})
 
@@ -50,6 +50,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries" FALSE)
 option(BUILD_WITH_MT "Build libraries as MultiThreaded DLL (Windows Only)"
        FALSE)
 option(BUILD_WITH_DOCS "Build documentation" FALSE)
+
 # ##############################################################################
 # Define CMake Module Imports
 # ##############################################################################
@@ -61,8 +62,9 @@ include(${CMAKE_SOURCE_DIR}/cmake/clang_format.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cppcheck.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
+
 
 # ##############################################################################
 # Define Targets
