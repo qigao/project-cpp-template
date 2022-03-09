@@ -1,12 +1,7 @@
 #include "MainWindow.h"
 
-namespace app
-{
+namespace app {
 
-MainWindow::MainWindow(QWidget* parent)
-    : QDialog(parent)
-{
-    setupUi(this);
-}
+MainWindow::MainWindow(QWidget *parent) : QDialog(parent) { setupUi(this); }
 
-} // namespace
+}// namespace app

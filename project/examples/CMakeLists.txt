@@ -6,6 +6,8 @@ add_subdirectory(helloapp)
 add_subdirectory(baselib)
 add_subdirectory(MyLib)
 add_subdirectory(App)
+
+
 # ##############################################################################
 # Define Install Targets
 # ##############################################################################
@@ -15,6 +17,3 @@ install(
   LIBRARY DESTINATION ${BINARY_INSTALL_DIR}/lib
   ARCHIVE DESTINATION ${BINARY_INSTALL_DIR}/lib
   PUBLIC_HEADER DESTINATION ${BINARY_INSTALL_DIR}/include)
-
-
-

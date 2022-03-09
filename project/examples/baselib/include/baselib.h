@@ -7,15 +7,14 @@
 #include <baselib_export.h>
 
 
-namespace baselib
-{
+namespace baselib {
 
 
 /**
-*  @brief
-*    Print information about the library to the console
-*/
+ *  @brief
+ *    Print information about the library to the console
+ */
 BASELIB_EXPORT void printInfo();
 
 
-} // namespace baselib
+}// namespace baselib

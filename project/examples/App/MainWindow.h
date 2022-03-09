@@ -1,22 +1,21 @@
 #pragma once
-#include <QtGui>
 #include "ui_MainWindow.h"
+#include <QtGui>
 
-namespace Ui
-{
-	class MainWindow;
+namespace Ui {
+class MainWindow;
 }
 
-namespace app
-{
+namespace app {
 
-class MainWindow : public QDialog, public Ui::MainWindow
+class MainWindow
+  : public QDialog
+  , public Ui::MainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-
+  explicit MainWindow(QWidget *parent = nullptr);
 };
 
-} // namespace
+}// namespace app

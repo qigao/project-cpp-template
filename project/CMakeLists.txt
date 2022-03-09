@@ -1,4 +1,3 @@
-
 # Activate Testing, if given
 if(BUILD_TESTING)
   enable_testing()
@@ -8,5 +7,9 @@ endif()
 set(PRE_CONFIGURE_FILE "git.h.in")
 set(POST_CONFIGURE_FILE "${CMAKE_BINARY_DIR}/git.h")
 include(${CMAKE_SOURCE_DIR}/cmake/git.cmake)
+
+# ##############################################################################
+# Define Targets
+# ##############################################################################
 
 add_subdirectory(examples)

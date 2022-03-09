@@ -68,4 +68,4 @@ if(OPENSSL_FOUND)
   target_link_libraries(${TARGET_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
-target_link_libraries(${TARGET_NAME} PUBLIC  Qt6::Core)
+target_link_libraries(${TARGET_NAME} PUBLIC Qt6::Core)

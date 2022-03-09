@@ -12,7 +12,8 @@
 
 using namespace hello;
 
-int32_t hellolib::saySomething(const std::string &something) const noexcept {
+int32_t hellolib::saySomething(const std::string &something) const noexcept
+{
   if (something.empty()) {
     std::cerr << "No value passed\n";
     return 1;
@@ -23,8 +24,8 @@ int32_t hellolib::saySomething(const std::string &something) const noexcept {
 }
 
 #ifdef WITH_OPENSSL
-int32_t hellolib::saySomethingHashed(
-    const std::string &something) const noexcept {
+int32_t hellolib::saySomethingHashed(const std::string &something) const noexcept
+{
   if (something.empty()) {
     std::cerr << "No value passed\n";
     return 1;
@@ -36,8 +37,7 @@ int32_t hellolib::saySomethingHashed(
     return 2;
   }
 
-  if (!SHA256_Update(&context, (unsigned char *)something.c_str(),
-                     something.size())) {
+  if (!SHA256_Update(&context, (unsigned char *)something.c_str(), something.size())) {
     std::cerr << "Failed to create hash value\n";
     return 3;
   }
@@ -51,9 +51,7 @@ int32_t hellolib::saySomethingHashed(
   // Transform byte-array to string
   std::stringstream shastr;
   shastr << std::hex << std::setfill('0');
-  for (const auto &byte : buffer) {
-    shastr << std::setw(2) << (int)byte;
-  }
+  for (const auto &byte : buffer) { shastr << std::setw(2) << (int)byte; }
 
   std::cout << shastr.str() << '\n';
   return 0;
