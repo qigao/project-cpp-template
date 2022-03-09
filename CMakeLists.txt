@@ -13,13 +13,16 @@ project(
   LANGUAGES CXX
   DESCRIPTION "moderncpp-project is a starter project for Modern C++")
 
-# Set Project version (used for library versioning and for CPack)
+# Set additional project information
 set(CMAKE_PROJECT_VERSION_MAJOR 1)
 set(CMAKE_PROJECT_VERSION_MINOR 0)
 set(CMAKE_PROJECT_VERSION_PATCH 0)
 set(CMAKE_PROJECT_VERSION
     ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
 )
+set(COMPANY "The Modern C++ Project")
+set(COPYRIGHT "Copyright (c) 2022. All rights reserved.")
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 # Set required C++ Standard
 set(CMAKE_CXX_STANDARD 20)
@@ -56,7 +59,6 @@ option(BUILD_WITH_DOCS "Build documentation" FALSE)
 # ##############################################################################
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-# include(InstallRequiredSystemLibraries)
 include(GenerateExportHeader)
 include(${CMAKE_SOURCE_DIR}/cmake/clang_format.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
@@ -64,7 +66,6 @@ include(${CMAKE_SOURCE_DIR}/cmake/cpack.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cppcheck.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
-
 
 # ##############################################################################
 # Define Targets
