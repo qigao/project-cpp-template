@@ -20,7 +20,7 @@ set(CMAKE_PROJECT_VERSION_PATCH 0)
 set(CMAKE_PROJECT_VERSION
     ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
 )
-
+set(CMAKE_VERBOSE_MAKEFILE ON)
 # Set required C++ Standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -62,6 +62,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cppcheck.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
 
 # ##############################################################################
 # Define Targets
