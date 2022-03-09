@@ -11,10 +11,6 @@ on:
     paths:
       - 'project/**'
       - '.github/workflows/ubuntu.yml'
-env:
-  CONAN_USER_HOME: "${{ github.workspace }}/release"
-  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/release/short"
-  INSTALL_DIR: ${{ github.workspace }}/install/
 
 jobs:
   build:
@@ -43,14 +39,10 @@ jobs:
         run: |
           pip install conan --upgrade
           conan profile new default --detect
-
+          conan profile update settings.compiler.libcxx=libstdc++11 default
       - name: Cmake Configure and Build
         run: |
-          conan profile update settings.compiler.libcxx=libstdc++11 default
-          mkdir -p build && cd build
-          conan install .. --build=missing
-          cmake .. -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
-
-      - name: build Ubuntu
+          cmake -S . -B build -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+      - name: Build
         run: |
           cmake --build build --target install --config Release

@@ -11,11 +11,6 @@ on:
     paths:
       - 'project/**'
       - '.github/workflows/macos.yml'
-env:
-  QT_VERSION: "6.2.3"
-  CONAN_USER_HOME: "${{ github.workspace }}/release"
-  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/release/short"
-  INSTALL_DIR: ${{ github.workspace }}/install/
 
 jobs:
   build:
@@ -49,13 +44,11 @@ jobs:
         run: |
           pip install conan --upgrade
           conan profile new default --detect
+          conan profile update settings.compiler.libcxx=libc++ default
       - name: Configure cmake
         run: |
-          conan profile update settings.compiler.libcxx=libc++ default
-          mkdir -p build && cd build
-          conan install .. --build=missing
-          cmake .. -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+          cmake -S . -B build -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
 
-      - name: build ios
+      - name: Build
         run: |
           cmake --build build --target install --config Release
