@@ -1,3 +1,9 @@
+
+# ##############################################################################
+# Define Target Information
+# ##############################################################################
+set(TARGET_NAME QtDemoApp)
+
 find_package(
   Qt6
   COMPONENTS Core Gui Widgets
@@ -6,23 +12,20 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(SOURCE_FILES main.cpp MainWindow.cpp)
-
+set(CPP_SRC_FILES main.cpp MainWindow.cpp)
 set(MOC_HEADERS MainWindow.h)
-
 set(HEADER_FILES ${MOC_HEADERS})
-
 set(UI_SOURCES MainWindow.ui)
-
-set(QRC_SOURCE_FILES res/MyApp.qrc)
-
-# ##############################################################################
-# Define Target Information
-# ##############################################################################
-set(TARGET_NAME QtDemoApp)
+set(QRC_SRC_FILES res/MyApp.qrc)
+# Set additional project information
+set(RESOURCE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/res/icon)
+set(ICON_NAME AppIcon)
+set(APP_DESCRIPTION "Qt Demo Application")
+include(${CMAKE_SOURCE_DIR}/cmake/qt-config.cmake)
+add_project_meta(META_FILES_TO_INCLUDE)
 set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/)
-set(TARGET_SOURCES ${SOURCE_FILES} ${HEADER_FILES} ${UI_SOURCES}
-                   ${QRC_SOURCE_FILES})
+set(TARGET_SOURCES ${CPP_SRC_FILES} ${HEADER_FILES} ${UI_SOURCES}
+                   ${QRC_SRC_FILES})
 
 # ##############################################################################
 # Support IDE Visualization
@@ -32,7 +35,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-add_executable(${TARGET_NAME} ${TARGET_SOURCES})
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${META_FILES_TO_INCLUDE} )
 
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
