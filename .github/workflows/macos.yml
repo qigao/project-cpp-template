@@ -35,8 +35,9 @@ jobs:
       - name: Install Python environment
         uses: actions/setup-python@v2
       - name: Install tools
-        run: brew install ninja \
-          clang-format@11
+        run: |
+          brew install ninja
+          bew install clang-format
       - name: Run Clang-Format
         run: python ./run-clang-format.py -r project
       - name: Install Qt
