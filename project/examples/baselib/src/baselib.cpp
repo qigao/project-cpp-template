@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "git.h"
+#include "version.h"
 #include <baselib.h>
 
 
