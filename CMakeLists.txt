@@ -20,8 +20,7 @@ set(CMAKE_PROJECT_VERSION_PATCH 0)
 set(CMAKE_PROJECT_VERSION
     ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
 )
-set(COMPANY "The Modern C++ Project")
-set(COPYRIGHT "Copyright (c) 2022. All rights reserved.")
+set(CMAKE_CORP_NAME "The Modern C++ Project")
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 # Set required C++ Standard
