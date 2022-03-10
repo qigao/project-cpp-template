@@ -4,13 +4,13 @@ on:
     branches:
       - master
     paths:
-      - 'project/**'
-      - '.github/workflows/macos.yml'
+      - "project/**"
+      - ".github/workflows/macos.yml"
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - 'project/**'
-      - '.github/workflows/macos.yml'
+      - "project/**"
+      - ".github/workflows/macos.yml"
 
 jobs:
   build:
@@ -34,10 +34,11 @@ jobs:
           sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Install Python environment
         uses: actions/setup-python@v2
+      - name: Install tools
+        run: brew install ninja \
+          clang-format
       - name: Run Clang-Format
         run: python ./run-clang-format.py -r project
-      - name: Install Ninja
-        run: brew install ninja
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
