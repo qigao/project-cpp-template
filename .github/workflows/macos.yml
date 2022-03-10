@@ -37,7 +37,7 @@ jobs:
       - name: Install tools
         run: |
           brew install ninja
-          bew install clang-format
+          brew install clang-format
       - name: Run Clang-Format
         run: python ./run-clang-format.py -r project
       - name: Install Qt
