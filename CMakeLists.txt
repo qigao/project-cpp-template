@@ -11,7 +11,7 @@ cmake_policy(SET CMP0091 NEW)
 project(
   moderncpp-project
   LANGUAGES CXX
-  DESCRIPTION "moderncpp-project is a starter project for Modern C++")
+  DESCRIPTION "moderncpp-project for Modern C++")
 
 # Set additional project information
 set(CMAKE_PROJECT_VERSION_MAJOR 1)
@@ -20,8 +20,12 @@ set(CMAKE_PROJECT_VERSION_PATCH 0)
 set(CMAKE_PROJECT_VERSION
     ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
 )
-set(CMAKE_CORP_NAME "The Modern C++ Project")
-set(COPYRIGHT "Copyright (c) 2020 The Modern C++ Project")
+set(APPLICATION_COMPANY_NAME "DemoApp Research")
+set(APPLICATION_COMPANY_DOMAIN "github.com")
+set(APPLICATION_WEBSITE "https://github.com/qigao/cmake-template")
+set(APPLICATION_COPYRIGHT "Copyright 2016- Now, Qi Gao")
+set(APPLICATION_LICENSE "MIT License")
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 # Set required C++ Standard
 set(CMAKE_CXX_STANDARD 20)

@@ -16,26 +16,29 @@ set(MOC_HEADERS MainWindow.h)
 set(HEADER_FILES ${MOC_HEADERS})
 set(UI_SOURCES MainWindow.ui)
 set(QRC_SRC_FILES res/MyApp.qrc)
-# Set additional project information
-set(RESOURCE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/res/icon)
-set(ICON_NAME AppIcon)
-set(APP_DESCRIPTION "Qt Demo Application")
-
-include(${CMAKE_SOURCE_DIR}/cmake/qt-config.cmake)
-add_project_meta(META_FILES_TO_INCLUDE)
 set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(TARGET_SOURCES ${CPP_SRC_FILES} ${HEADER_FILES} ${UI_SOURCES}
                    ${QRC_SRC_FILES})
+# Set additional application information
+set(APPLICATION_NAME "Qt6 Demo App")
+set(APPLICATION_DESCRIPTION "Yet another Qt App")
+set(APPLICATION_VERSION "0.1")
+set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/res/icon/AppIcon.ico")
+if(WIN32)
+  configure_file(${CMAKE_SOURCE_DIR}/project/application.rc.in "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
+endif(WIN32)
+
+
 
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES} )
 
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${META_FILES_TO_INCLUDE})
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
 
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
