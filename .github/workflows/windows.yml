@@ -29,6 +29,8 @@ jobs:
           fetch-depth: 1
       - name: Install Python environment
         uses: actions/setup-python@v2
+      - name: Run Clang-Format
+        run: python ./run-clang-format.py -r project
       - name: Install Ninja
         run: choco install ninja
       - uses: ilammy/msvc-dev-cmd@v1
