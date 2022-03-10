@@ -28,6 +28,8 @@ jobs:
           fetch-depth: 1
       - name: Install Python environment
         uses: actions/setup-python@v2
+      - name: Run Clang-Format
+        run: ./run-clang-format.py -r project
       - name: ubuntu install GL library
         run: sudo apt-get install -y libglew-dev libglfw3-dev ninja-build
       - name: Install Qt

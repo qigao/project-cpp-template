@@ -34,6 +34,8 @@ jobs:
           sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Install Python environment
         uses: actions/setup-python@v2
+      - name: Run Clang-Format
+        run: ./run-clang-format.py -r project
       - name: Install Ninja
         run: brew install ninja
       - name: Install Qt
