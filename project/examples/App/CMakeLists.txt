@@ -1,4 +1,3 @@
-
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
@@ -21,6 +20,7 @@ set(QRC_SRC_FILES res/MyApp.qrc)
 set(RESOURCE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/res/icon)
 set(ICON_NAME AppIcon)
 set(APP_DESCRIPTION "Qt Demo Application")
+
 include(${CMAKE_SOURCE_DIR}/cmake/qt-config.cmake)
 add_project_meta(META_FILES_TO_INCLUDE)
 set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -35,7 +35,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${META_FILES_TO_INCLUDE} )
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${META_FILES_TO_INCLUDE})
 
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
