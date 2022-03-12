@@ -13,12 +13,10 @@ void printInfo()
 {
   std::string dataPath = "data";
   std::cout << "Version: " << PROJECT_VERSION << "\n"
-            << "Commit: " << GIT_DESCRIBE << "\n"
-            << "Author: " << GIT_AUTHOR_NAME << " <" << GIT_AUTHOR_EMAIL << ">\n"
-            << "State: " << (GIT_IS_DIRTY ? "dirty" : "") << "\n"
+            << "Author: " << GIT_AUTHOR_NAME << "\n"
+            << "Branch: " << GIT_BRANCH << "\n"
             << "Date: " << GIT_COMMIT_DATE_ISO8601 << "\n\n"
-            << GIT_COMMIT_SUBJECT << "\n"
-            << GIT_COMMIT_BODY << std::endl;
+            << std::endl;
   // Library name
   std::cout << "Library template::baselib" << std::endl;
   std::cout << "========================================" << std::endl;
