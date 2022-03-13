@@ -75,8 +75,8 @@ jobs:
           -DBUILD_SHARED_LIBS=TRUE \
           -DCMAKE_BUILD_TYPE=Release \
           -G Ninja \
-          -D CMAKE_C_COMPILER_LAUNCHER=ccache \
-          -D CMAKE_CXX_COMPILER_LAUNCHER=ccache \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
           -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
       - name: Cache Env
         shell: cmake -P {0}
@@ -88,9 +88,21 @@ jobs:
           set(ENV{CCACHE_COMPRESS} "true")
           set(ENV{CCACHE_COMPRESSLEVEL} "6")
           set(ENV{CCACHE_MAXSIZE} "400M")
-      - name: Cmake Build
-        run: |
-          cmake --build build --target install --config Release
+          execute_process(COMMAND ccache -p)
+          execute_process(COMMAND ccache -z)
+          execute_process(
+            COMMAND cmake --build build
+            RESULT_VARIABLE result
+            OUTPUT_VARIABLE output
+            ERROR_VARIABLE output
+            ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
+          )
+          if (NOT result EQUAL 0)
+            string(REGEX MATCH "FAILED:.*$" error_message "${output}")
+            string(REPLACE "\n" "%0A" error_message "${error_message}")
+            message("::error::${error_message}")
+            message(FATAL_ERROR "Build failed")
+          endif()
       - name: ccache statistics
         shell: cmake -P {0}
         run: |
