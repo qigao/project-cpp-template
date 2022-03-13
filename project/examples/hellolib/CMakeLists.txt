@@ -18,7 +18,7 @@ if(BUILD_SHARED_LIBS)
 else()
   add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES})
 endif()
-
+add_dependencies(${TARGET_NAME} check_git)
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
 # ##############################################################################
