@@ -4,10 +4,9 @@ if(BUILD_TESTING)
 endif()
 # Define the two required variables before including the source code for
 # watching a git repository.
+set(PRE_CONFIGURE_FILE "version.h.in")
+set(POST_CONFIGURE_FILE "${CMAKE_BINARY_DIR}/version.h")
 include(${CMAKE_SOURCE_DIR}/cmake/git_info.cmake)
-gitinforeport(${PROJECT_SOURCE_DIR})
-configure_file(${CMAKE_SOURCE_DIR}/project/version.h.in
-               "${PROJECT_BINARY_DIR}/version.h")
 
 # ##############################################################################
 # Define Targets

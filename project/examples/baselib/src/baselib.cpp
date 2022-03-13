@@ -8,7 +8,6 @@
 
 namespace baselib {
 
-
 void printInfo()
 {
   std::string dataPath = "data";
