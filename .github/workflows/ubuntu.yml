@@ -80,7 +80,6 @@ jobs:
           -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
       - name: Cmake Build
         run: |
-          set(ENV{NINJA_STATUS} "[%f/%t %o/sec] ")
           file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}" ccache_basedir)
           set(ENV{CCACHE_BASEDIR} "${ccache_basedir}")
           set(ENV{CCACHE_DIR} "${ccache_basedir}/.ccache")
