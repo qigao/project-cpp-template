@@ -68,16 +68,27 @@ jobs:
           restore-keys: |
             ubuntu-ccache-
       - name: Cmake Configure
+        shell: cmake -P {0}
         run: |
-          cmake -S . \
-          -B build \
-          -DBUILD_TESTING=TRUE \
-          -DBUILD_SHARED_LIBS=TRUE \
-          -DCMAKE_BUILD_TYPE=Release \
-          -G Ninja \
-          -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-          -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+          set(path_separator ":")
+          set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
+          execute_process(
+           COMMAND cmake
+             -S .
+             -B build
+             -D BUILD_SHARED_LIBS=TRUE
+             -D BUILD_TESTING=TRUE
+             -D CMAKE_BUILD_TYPE=Release
+             -G Ninja
+             -D CMAKE_MAKE_PROGRAM=ninja
+             -D CMAKE_C_COMPILER_LAUNCHER=ccache
+             -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+             -D CMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+           RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+             message(FATAL_ERROR "Bad exit status")
+          endif()
       - name: Cmake Build With Cache
         shell: cmake -P {0}
         run: |
