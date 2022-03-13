@@ -43,7 +43,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
 # Define Target according to options
 # ##############################################################################
 add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${APPLICATION_RESOURCE} ${APP_RESOURCE_HEADER})
-
+add_dependencies(${TARGET_NAME} check_git)
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
 # ##############################################################################
