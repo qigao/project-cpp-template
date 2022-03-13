@@ -29,7 +29,9 @@ if(WIN32)
                  "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
   set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
 endif(WIN32)
-
+configure_file(${CMAKE_SOURCE_DIR}/project/app.h.in
+"${CMAKE_CURRENT_BINARY_DIR}/app.h")
+set(APP_RESOURCE_HEADER ${CMAKE_CURRENT_BINARY_DIR}/app.h)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
@@ -40,7 +42,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${APPLICATION_RESOURCE})
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${APPLICATION_RESOURCE} ${APP_RESOURCE_HEADER})
 
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
@@ -75,7 +77,8 @@ target_include_directories(
   PRIVATE ${TARGET_INCLUDE_FOLDER}
           # Any other extra include required
           ${CMAKE_CURRENT_SOURCE_DIR}/../MyLib/include
-          ${CMAKE_BINARY_DIR})
+          ${CMAKE_BINARY_DIR}
+          ${CMAKE_CURRENT_BINARY_DIR}/)
 
 # link
 target_link_libraries(${TARGET_NAME} PUBLIC QtDemoLib Qt6::Core Qt6::Quick)
