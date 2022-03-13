@@ -13,3 +13,4 @@ endif()
 
 # Optional Dependency, doesn't trigger error if missing
 find_package(OpenSSL)
+find_package(cxxopts)

@@ -46,4 +46,4 @@ target_include_directories(
           ${CMAKE_CURRENT_SOURCE_DIR}/../baselib/include)
 
 # link against hellolib
-target_link_libraries(${TARGET_NAME} PUBLIC hellolib baselib)
+target_link_libraries(${TARGET_NAME} PUBLIC hellolib baselib cxxopts::cxxopts)
