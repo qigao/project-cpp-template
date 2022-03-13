@@ -89,6 +89,7 @@ jobs:
           set(ENV{CCACHE_COMPRESSLEVEL} "6")
           set(ENV{CCACHE_MAXSIZE} "400M")
       - name: Cmake Build
+        run: |
           cmake --build build --target install --config Release
       - name: ccache statistics
         shell: cmake -P {0}
