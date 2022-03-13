@@ -78,14 +78,17 @@ jobs:
           -D CMAKE_C_COMPILER_LAUNCHER=ccache \
           -D CMAKE_CXX_COMPILER_LAUNCHER=ccache \
           -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
-      - name: Cmake Build
+      - name: Cache Env
+        shell: cmake -P {0}
         run: |
+          set(ENV{NINJA_STATUS} "[%f/%t %o/sec] ")
           file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}" ccache_basedir)
           set(ENV{CCACHE_BASEDIR} "${ccache_basedir}")
           set(ENV{CCACHE_DIR} "${ccache_basedir}/.ccache")
           set(ENV{CCACHE_COMPRESS} "true")
           set(ENV{CCACHE_COMPRESSLEVEL} "6")
           set(ENV{CCACHE_MAXSIZE} "400M")
+      - name: Cmake Build
           cmake --build build --target install --config Release
       - name: ccache statistics
         shell: cmake -P {0}
