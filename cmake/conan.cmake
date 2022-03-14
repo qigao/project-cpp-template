@@ -10,8 +10,8 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
       SHA256=3bef79da16c2e031dc429e1dac87a08b9226418b300ce004cc125a82687baeef
     TLS_VERIFY ON)
 endif()
-
 include(${CMAKE_BINARY_DIR}/conan.cmake)
+conan_cmake_autodetect(settings BUILD_TYPE ${CMAKE_BUILD_TYPE})
 conan_cmake_run(CONANFILE conanfile.txt
                 BASIC_SETUP CMAKE_TARGETS
                 INSTALL_FOLDER ${CMAKE_INSTALL_PREFIX}

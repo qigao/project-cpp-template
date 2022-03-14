@@ -2,7 +2,7 @@
 # Define Target Information
 # ##############################################################################
 set(TARGET_NAME baselib)
-set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_BINARY_DIR})
 set(TARGET_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/baselib.cpp)
 
 # ##############################################################################
@@ -18,7 +18,7 @@ if(BUILD_SHARED_LIBS)
 else()
   add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES})
 endif()
-
+add_dependencies(${TARGET_NAME} check_git)
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
 # ##############################################################################

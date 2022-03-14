@@ -1,10 +1,8 @@
 
-#include <fstream>
-#include <iostream>
-
 #include "version.h"
 #include <baselib.h>
-
+#include <fstream>
+#include <iostream>
 
 namespace baselib {
 
@@ -48,6 +46,5 @@ void printInfo()
     std::cout << "Unable to open file." << std::endl;
   }
 }
-
 
 }// namespace baselib
