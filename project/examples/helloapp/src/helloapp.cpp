@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     std::cout << "unmatched: " << unmatched.size() << std::endl;
     for (auto &u : unmatched) { std::cout << u << std::endl; }
   }
-  if (result.count("help")) {
+  if (result.count("help") != 0U) {
     std::cout << options.help() << std::endl;
     exit(0);
   }
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     baselib::printInfo();
   }
   std::string bar;
-  if (result.count("bar")) {
+  if (result.count("bar") != 0U) {
     bar = result["bar"].as<std::string>();
     std::cout << "bar: " << bar << std::endl;
   }
