@@ -4,13 +4,13 @@ on:
     branches:
       - master
     paths:
-      - 'project/examples/gui/**'
-      - '.github/workflows/windows-qt6.yml'
+      - "project/examples/gui/**"
+      - ".github/workflows/windows-qt6.yml"
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - 'project/examples/gui/**'
-      - '.github/workflows/windows-qt6.yml'
+      - "project/examples/gui/**"
+      - ".github/workflows/windows-qt6.yml"
 jobs:
   build:
     name: Build
@@ -49,11 +49,5 @@ jobs:
       - name: Cmake Configure and Build
         shell: cmd
         run: |
-          cmake -S . -B build \
-            -DBUILD_TESTING=TRUE \
-            -DBUILD_SHARED_LIBS=TRUE \
-            -DCMAKE_BUILD_TYPE=Release \
-            -G Ninja \
-            -DBUILD_WITH_QT6=TRUE \
-            -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+          cmake -S . -B build  -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja  -DBUILD_WITH_QT6=TRUE  -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
           cmake --build  build --target install --config Release
