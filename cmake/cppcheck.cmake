@@ -11,8 +11,10 @@ if(CPPCHECK_BIN)
     "--inconclusive"
     "--check-config"
     "--force"
+    "--quiet"
     "--inline-suppr"
-    "--suppressions-list=${CMAKE_SOURCE_DIR}/cppcheck_suppressions.txt"
-    "--xml"
-    "--output-file=${CMAKE_BINARY_DIR}/cppcheck.xml")
+    "--suppress=missingInclude"
+    "--suppress=unmatchedSuppression"
+    "--suppress=unusedFunction"
+    "--template='{file}:{line}: warning: {id} ({severity}): {message}'")
 endif()
