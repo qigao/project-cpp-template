@@ -7,7 +7,7 @@ find_package(
 # Define Target Information
 # ##############################################################################
 set(TARGET_NAME QtDemoLib)
-set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR} ${MOC_HEADERS})
+set(TARGET_INCLUDE_FOLDER include)
 set(TARGET_SOURCES src/QtDemoClass.cpp)
 
 # ##############################################################################

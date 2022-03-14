@@ -4,10 +4,7 @@
 add_subdirectory(hellolib)
 add_subdirectory(helloapp)
 add_subdirectory(baselib)
-add_subdirectory(MyLib)
-add_subdirectory(App)
-add_subdirectory(Qapp)
-
+add_subdirectory(gui)
 # ##############################################################################
 # Define Install Targets
 # ##############################################################################

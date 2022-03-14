@@ -16,13 +16,13 @@ set(MOC_HEADERS)
 set(HEADER_FILES ${MOC_HEADERS})
 set(UI_SOURCES)
 set(QRC_SRC_FILES qml/qml.qrc)
-set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(TARGET_INCLUDE_FOLDER .)
 set(TS_FILES translations/translation_de_DE.ts)
 # Set additional application information
 set(APPLICATION_NAME "Qt6 Demo App For QML")
 set(APPLICATION_DESCRIPTION "Yet another Qt App")
 set(APPLICATION_VERSION "0.1")
-set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/res/icon/AppIcon.ico")
+set(APPLICATION_ICON "res/icon/AppIcon.ico")
 set(APPLICATION_RESOURCE)
 if(WIN32)
   configure_file(${CMAKE_SOURCE_DIR}/project/application.rc.in
@@ -30,7 +30,7 @@ if(WIN32)
   set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
 endif(WIN32)
 configure_file(${CMAKE_SOURCE_DIR}/project/app.h.in
-"${CMAKE_CURRENT_BINARY_DIR}/app.h")
+               "${CMAKE_CURRENT_BINARY_DIR}/app.h")
 set(APP_RESOURCE_HEADER ${CMAKE_CURRENT_BINARY_DIR}/app.h)
 # ##############################################################################
 # Support IDE Visualization
@@ -42,7 +42,8 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${APPLICATION_RESOURCE} ${APP_RESOURCE_HEADER})
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${APPLICATION_RESOURCE}
+                              ${APP_RESOURCE_HEADER})
 add_dependencies(${TARGET_NAME} check_git)
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
@@ -76,9 +77,7 @@ target_include_directories(
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
   PRIVATE ${TARGET_INCLUDE_FOLDER}
           # Any other extra include required
-          ${CMAKE_CURRENT_SOURCE_DIR}/../MyLib/include
-          ${CMAKE_BINARY_DIR}
-          ${CMAKE_CURRENT_BINARY_DIR}/)
+          ../MyLib/include ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/)
 
 # link
 target_link_libraries(${TARGET_NAME} PUBLIC QtDemoLib Qt6::Core Qt6::Quick)
