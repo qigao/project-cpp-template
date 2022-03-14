@@ -297,8 +297,7 @@ function(SetupGitMonitoring)
       -DGIT_FAIL_IF_NONZERO_EXIT=${GIT_FAIL_IF_NONZERO_EXIT}
       -DGIT_IGNORE_UNTRACKED=${GIT_IGNORE_UNTRACKED}
       -DCMAKE_PROJECT_VERSION=${CMAKE_PROJECT_VERSION}
-      -DGIT_HEAD_BRANCH=${GIT_HEAD_BRANCH}
-      -P "${CMAKE_CURRENT_LIST_FILE}")
+      -DGIT_HEAD_BRANCH=${GIT_HEAD_BRANCH} -P "${CMAKE_CURRENT_LIST_FILE}")
 endfunction()
 
 # Function: Main Description: primary entry-point to the script. Functions are
