@@ -4,15 +4,13 @@ on:
     branches:
       - master
     paths:
-      - "project/**"
-      - "!project/examples/gui/**"
-      - ".github/workflows/macos.yml"
+      - "project/examples/gui/**"
+      - ".github/workflows/macos-qt6.yml"
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - "project/**"
-      - "!project/examples/gui/**"
-      - ".github/workflows/macos.yml"
+      - "project/examples/gui/**"
+      - ".github/workflows/macos-qt.yml"
 
 jobs:
   build:
@@ -21,11 +19,19 @@ jobs:
     strategy:
       matrix:
         os: [macos-10.15, macos-11.0]
+        qt_ver: [6.2.3]
+        qt_arch: [clang_64]
 
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
+      - name: prepare env
+        if: ${{ matrix.os == 'macos-11.0' }}
+        run: |
+          softwareupdate --all --install --force
+          sudo xcode-select --print-path
+          sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Install Python environment
         uses: actions/setup-python@v2
       - name: Install tools
@@ -34,6 +40,10 @@ jobs:
           brew install clang-format
       - name: Run Clang-Format
         run: python ./run-clang-format.py -r project
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
       - name: Install conan
         run: |
           pip install conan --upgrade
@@ -41,7 +51,7 @@ jobs:
           conan profile update settings.compiler.libcxx=libc++ default
       - name: Configure cmake
         run: |
-          cmake -S . -B build -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja
+          cmake -S . -B build -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
 
       - name: Build
         run: |

@@ -4,22 +4,22 @@ on:
     branches:
       - master
     paths:
-      - "project/**"
-      - "!project/examples/gui/**"
-      - ".github/workflows/windows.yml"
+      - 'project/examples/gui/**'
+      - '.github/workflows/windows-qt6.yml'
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - "project/**"
-      - "!project/examples/gui/**"
-      - ".github/workflows/windows.yml"
+      - 'project/examples/gui/**'
+      - '.github/workflows/windows-qt6.yml'
 jobs:
   build:
     name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        qt_ver: [6.2.3]
         qt_arch: [win64_msvc2019_64]
+        qt_target: [desktop]
         os: [windows-2019]
 
     steps:
@@ -36,6 +36,12 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: amd64
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+          target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
       - name: Install Conan
         run: |
           pip install conan --upgrade
@@ -47,6 +53,6 @@ jobs:
             -DBUILD_TESTING=TRUE \
             -DBUILD_SHARED_LIBS=TRUE \
             -DCMAKE_BUILD_TYPE=Release \
-            -G Ninja
-      - name: Cmake build
-        run: cmake --build  build --target install --config Release
+            -G Ninja \
+            -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+          cmake --build  build --target install --config Release
