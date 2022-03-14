@@ -9,7 +9,7 @@ add_subdirectory(gui)
 # Define Install Targets
 # ##############################################################################
 install(
-  TARGETS hellolib helloapp QtDemoApp
+  TARGETS hellolib helloapp
   RUNTIME DESTINATION ${BINARY_INSTALL_DIR}
   LIBRARY DESTINATION ${BINARY_INSTALL_DIR}/lib
   ARCHIVE DESTINATION ${BINARY_INSTALL_DIR}/lib

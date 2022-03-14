@@ -1,4 +1,4 @@
-name: Windows
+name: Windows Build With QT6
 on:
   push:
     branches:
@@ -54,5 +54,6 @@ jobs:
             -DBUILD_SHARED_LIBS=TRUE \
             -DCMAKE_BUILD_TYPE=Release \
             -G Ninja \
+            -DBUILD_WITH_QT6=TRUE \
             -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
           cmake --build  build --target install --config Release
