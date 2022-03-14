@@ -1,4 +1,4 @@
-name: Ubuntu
+name: Ubuntu Build With QT6
 on:
   push:
     branches:
@@ -46,7 +46,7 @@ jobs:
           conan profile update settings.compiler.libcxx=libstdc++11 default
       - name: Cmake Configure and Build
         run: |
-          cmake -S . -B build -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+          cmake -S . -B build -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }} -DBUILD_WITH_QT6=TRUE
       - name: Build
         run: |
           cmake --build build --target install --config Release

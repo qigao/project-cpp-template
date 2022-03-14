@@ -56,7 +56,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries" FALSE)
 option(BUILD_WITH_MT "Build libraries as MultiThreaded DLL (Windows Only)"
        FALSE)
 option(BUILD_WITH_DOCS "Build documentation" FALSE)
-
+option(BUILD_WITH_QT6 "Build QT6 examples" FALSE)
 # ##############################################################################
 # Define CMake Module Imports
 # ##############################################################################
