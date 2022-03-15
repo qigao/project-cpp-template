@@ -53,8 +53,7 @@ set(BINARY_INSTALL_DIR ${PROJECT_SOURCE_DIR}/bin)
 # ##############################################################################
 option(BUILD_TESTING "Build tests" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(BUILD_WITH_MT "Build libraries as MultiThreaded DLL (Windows Only)"
-       OFF)
+option(BUILD_WITH_MT "Build libraries as MultiThreaded DLL (Windows Only)" OFF)
 option(BUILD_WITH_DOCS "Build documentation" OFF)
 option(BUILD_WITH_QT6 "Build QT6 examples" OFF)
 # ##############################################################################

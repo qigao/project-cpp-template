@@ -30,10 +30,10 @@ jobs:
         uses: actions/setup-python@v2
       - name: Run Clang-Format
         run: python ./run-clang-format.py -r project
-      - name: ubuntu install GL library
+      - name: ubuntu install library
         run: |
           sudo apt-get update
-          sudo apt-get install -y libglew-dev libglfw3-dev ninja-build
+          sudo apt-get install -y ninja-build  libglfw3-dev libsdl2-dev gcc-multilib g++-multilib libfreetype6-dev libvulkan-dev
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
