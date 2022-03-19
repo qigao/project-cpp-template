@@ -1,11 +1,11 @@
-# MIT License 
+# MIT License
 # Copyright (c) 2018-Today Michele Adduci <adduci@tutanota.com>
 #
 # Compiler options with hardening flags
 
 if(MSVC)
 
-  list(APPEND compiler_options 
+  list(APPEND compiler_options
     /W4
     /permissive-
     $<$<CONFIG:RELEASE>:/O2 /Ob2 >
@@ -27,7 +27,7 @@ if(MSVC)
 
 else(MSVC)
 
-  list(APPEND compiler_options 
+  list(APPEND compiler_options
       -Wall
       -Wextra
       -Wpedantic
@@ -37,7 +37,7 @@ else(MSVC)
   list(APPEND compiler_definitions
    $<$<OR:$<CONFIG:RELEASE>,$<CONFIG:MINSIZEREL>>:_FORTIFY_SOURCE=2>
   )
- 
+
  list(APPEND linker_flags
  $<$<NOT:$<CXX_COMPILER_ID:AppleClang>>:-Wl,-z,defs>
  $<$<NOT:$<CXX_COMPILER_ID:AppleClang>>:-Wl,-z,now>

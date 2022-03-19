@@ -38,8 +38,6 @@ jobs:
         run: |
           brew install ninja
           brew install clang-format
-      - name: Run Clang-Format
-        run: python ./run-clang-format.py -r project
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:

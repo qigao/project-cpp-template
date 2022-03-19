@@ -23,7 +23,7 @@ set(CMAKE_PROJECT_VERSION
 set(APPLICATION_COMPANY_NAME "DemoApp Research")
 set(APPLICATION_COMPANY_DOMAIN "github.com")
 set(APPLICATION_WEBSITE "https://github.com/qigao/cmake-template")
-set(APPLICATION_COPYRIGHT "Copyright 2016- Now, Qi Gao")
+set(APPLICATION_COPYRIGHT "Copyright Since 2016, Qi Gao")
 set(APPLICATION_LICENSE "MIT License")
 
 set(CMAKE_VERBOSE_MAKEFILE ON)

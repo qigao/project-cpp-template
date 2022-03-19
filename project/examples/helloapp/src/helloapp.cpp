@@ -19,7 +19,7 @@ int main(int argc, char **argv)
       ("f,foo", "Param foo", cxxopts::value<int>()->default_value("10"))
       ("h,help", "Print usage");
   // clang-format on
-  auto result = options.parse(argc, argv);
+  auto  result    = options.parse(argc, argv);
   auto &unmatched = result.unmatched();// get the unmatched arguments
   if (unmatched.size() > 0) {
     std::cout << "unmatched: " << unmatched.size() << std::endl;
@@ -27,7 +27,7 @@ int main(int argc, char **argv)
   }
   if (result.count("help") != 0U) {
     std::cout << options.help() << std::endl;
-    exit(0);
+    return 0;
   }
   bool debug = result["debug"].as<bool>();
   if (debug) {
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
   int foo = result["foo"].as<int>();
   std::cout << "foo: " << foo << std::endl;
   hellolib hello{};
-  int32_t error_code = hello.saySomething("Hello Modern C++ Development");
+  int32_t  error_code = hello.saySomething("Hello Modern C++ Development");
   if (error_code > 0) { return error_code; }
 #ifdef WITH_OPENSSL
   error_code = hello.saySomethingHashed("Hello Modern C++ Development");
