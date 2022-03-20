@@ -8,12 +8,14 @@ This repository aims to represent a template for Modern C++ projects, including 
 
 == Features
 
-* `[x]` Using Qt6 with CMake and Conan
+* `[x]` CMake and Conan based project template
+* `[x]` qt6 widgets&qml style application demo
+* `[x]` imgui-style application demo
+* `[x]` plugin demo(shared/static)
+* `[x]` BDD/TDD test-suite
 * `[x]` GitHub actions
 * `[x]` Code coverage
 * `[x]` Code formatting&linting
-* `[x]` plugin demo(shared/static)
-* `[x]` BDD/TDD test-suite
 * `[x]` Basic CPack packaging
 
 == Available CMake Options
@@ -21,6 +23,11 @@ This repository aims to represent a template for Modern C++ projects, including 
 * BUILD_TESTING - builds the tests (requires `doctest`)
 * BUILD_SHARED_LIBS - enables or disables the generation of shared libraries
 * BUILD_WITH_MT - valid only for MSVC, builds libraries as MultiThreaded DLL
+* BUILD_WITH_QT6 - enables or disables the generation of qt6 widgets&qml style application demo
+
+== Add third party libs
+
+update conanfile.txt from project root
 
 == How to build from command line
 
@@ -29,10 +36,7 @@ The project can be built using the following commands:
 [source,shell]
 ----
 cd /path/to/this/project
-mkdir -p build # md build (on Windows)
-cd build
-cmake -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE ..
-cmake --build .
-cmake --build . --target format
-cmake --build . --target package
+cmake -S . -Bbuild -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -G Ninja
+cmake --build build --target format
+cmake --build build --target package
 ----
