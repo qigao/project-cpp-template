@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - 'project/examples/gui/**'
+      - 'project/examples/gui/qt/**'
       - '.github/workflows/ubuntu-qt6.yml'
   pull_request:
     types: [opened, reopened, synchronize]
