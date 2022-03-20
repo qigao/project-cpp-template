@@ -5,7 +5,7 @@ on:
       - master
     paths:
       - "project/**"
-      - "!project/examples/gui/**"
+      - "!project/examples/gui/qt/**"
       - ".github/workflows/macos.yml"
   pull_request:
     types: [opened, reopened, synchronize]
