@@ -1,3 +1,4 @@
+find_package(cppzmq CONFIG REQUIRED)
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
@@ -61,5 +62,5 @@ target_include_directories(
 
 # link OpenSSL libraries if present
 if(OPENSSL_FOUND)
-  target_link_libraries(${TARGET_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
+  target_link_libraries(${TARGET_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto cppzmq)
 endif()

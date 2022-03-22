@@ -12,6 +12,10 @@ on:
       - "project/examples/gui/**"
       - ".github/workflows/macos-qt.yml"
 
+env:
+  vcpkg_dir: "/usr/local/share/vcpkg"
+  vcpkg_triplet: x64-osx
+
 jobs:
   build:
     name: Build
@@ -34,6 +38,17 @@ jobs:
           sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Install Python environment
         uses: actions/setup-python@v2
+      - name: Cache vcpkg
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.vcpkg_dir }}/installed
+          key: vcpkg-${{ env.vcpkg_triplet }}
+          restore-keys: |
+            vcpkg-${{ env.vcpkg_triplet }}
+      - name: Install vcpkg packages
+        shell: bash
+        run: |
+          vcpkg install --triplet ${{ env.vcpkg_triplet }} $(jq -r '.dependencies | @tsv' packages/vcpkg.json)
       - name: Install tools
         run: |
           brew install ninja
@@ -48,9 +63,14 @@ jobs:
           conan profile new default --detect
           conan profile update settings.compiler.libcxx=libc++ default
       - name: Configure cmake
-        run: |
-          cmake -S . -B build -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }} -DBUILD_WITH_QT6=TRUE
-
+        run: >
+          cmake -S . -B build
+          -DBUILD_TESTING=TRUE
+          -DBUILD_SHARED_LIBS=TRUE
+          -DCMAKE_BUILD_TYPE=Release
+          -G Ninja
+          -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+          -DBUILD_WITH_QT6=TRUE
+          -DCMAKE_TOOLCHAIN_FILE=${{ env.vcpkg_dir }}/scripts/buildsystems/vcpkg.cmake
       - name: Build
-        run: |
-          cmake --build build --target install --config Release
+        run: cmake --build build --target install --config Release

@@ -3,6 +3,8 @@
 # ##############################################################################
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
+set(VCPKG_MANIFEST_DIR ${CMAKE_SOURCE_DIR}/packages/)
+
 # Enables the Visibility Property on all target types
 cmake_policy(SET CMP0063 NEW)
 # Enables the MSVC_RUNTIME_LIBRARY property on targets
@@ -56,6 +58,14 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_WITH_MT "Build libraries as MultiThreaded DLL (Windows Only)" OFF)
 option(BUILD_WITH_DOCS "Build documentation" OFF)
 option(BUILD_WITH_QT6 "Build QT6 examples" OFF)
+
+# vcpkg config
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE dynamic)
+if(BUILD_SHARED_LIBS)
+  set(VCPKG_LIBRARY_LINKAGE dynamic)
+endif()
+
 # ##############################################################################
 # Define CMake Module Imports
 # ##############################################################################

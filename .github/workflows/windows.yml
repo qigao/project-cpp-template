@@ -13,6 +13,10 @@ on:
       - "project/**"
       - "!project/examples/gui/**"
       - ".github/workflows/windows.yml"
+env:
+  vcpkg_dir: c:\vcpkg
+  vcpkg_triplet: x64-windows
+
 jobs:
   build:
     name: Build
@@ -29,6 +33,16 @@ jobs:
           fetch-depth: 1
       - name: Install Python environment
         uses: actions/setup-python@v2
+      - name: Cache vcpkg
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.vcpkg_dir }}/installed
+          key: vcpkg-${{ env.vcpkg_triplet }}
+          restore-keys: |
+            vcpkg-${{ env.vcpkg_triplet }}
+      - name: Install vcpkg packages
+        run: |
+          vcpkg install --triplet ${{ env.vcpkg_triplet }} $(jq -r '.dependencies | @tsv' packages/vcpkg.json)
       - name: Install Ninja
         run: choco install ninja
       - uses: ilammy/msvc-dev-cmd@v1
@@ -39,7 +53,13 @@ jobs:
           pip install conan --upgrade
           conan profile new default --detect
       - name: Cmake Configure and Build
-        shell: cmd
-        run: cmake -S . -B build  -DBUILD_TESTING=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -G Ninja
+        run: >
+          cmake -S .
+          -B build
+          -DBUILD_TESTING=TRUE
+          -DBUILD_SHARED_LIBS=TRUE
+          -DCMAKE_BUILD_TYPE=Release
+          -G Ninja
+          -DCMAKE_TOOLCHAIN_FILE=${{ env.vcpkg_dir }}/scripts/buildsystems/vcpkg.cmake
       - name: Cmake build
         run: cmake --build  build --target install --config Release

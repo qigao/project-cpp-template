@@ -31,29 +31,19 @@ int32_t hellolib::saySomethingHashed(const std::string &something) const noexcep
     return 1;
   }
 
-  SHA256_CTX context;
-  if (!SHA256_Init(&context)) {
-    std::cerr << "Failed to initialize context\n";
-    return 2;
-  }
-
-  if (!SHA256_Update(&context, (unsigned char *)something.c_str(), something.size())) {
-    std::cerr << "Failed to create hash value\n";
-    return 3;
-  }
-
   std::array<unsigned char, 32> buffer{};
-  if (!SHA256_Final(buffer.data(), &context)) {
-    std::cerr << "Failed to finalize hash result\n";
-    return 4;
-  }
 
+  auto p = SHA256((unsigned char *)something.c_str(), something.size(), buffer.data());
+  if(p == nullptr) {
+    std::cerr << "SHA256 failed\n";
+    return 1;
+  }
   // Transform byte-array to string
   std::stringstream shastr;
   shastr << std::hex << std::setfill('0');
   for (const auto &byte : buffer) { shastr << std::setw(2) << (int)byte; }
 
-  std::cout << shastr.str() << '\n';
+  std::cout << shastr.str() << '\n' << "\n";
   return 0;
 }
 #endif
