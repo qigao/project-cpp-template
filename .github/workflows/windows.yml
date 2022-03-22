@@ -41,6 +41,7 @@ jobs:
           restore-keys: |
             vcpkg-${{ env.vcpkg_triplet }}
       - name: Install vcpkg packages
+        shell: bash
         run: |
           vcpkg install --triplet ${{ env.vcpkg_triplet }} $(jq -r '.dependencies | @tsv' packages/vcpkg.json)
       - name: Install Ninja
