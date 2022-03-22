@@ -1,0 +1,14 @@
+[requires]
+
+# Networking
+cpp-httplib/0.10.4
+
+[generators]
+cmake_find_package
+
+
+[options]
+
+
+[imports]
+

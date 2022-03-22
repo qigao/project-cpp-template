@@ -12,8 +12,22 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 conan_cmake_autodetect(settings BUILD_TYPE ${CMAKE_BUILD_TYPE})
-conan_cmake_run(CONANFILE conanfile.txt
-                BASIC_SETUP CMAKE_TARGETS
-                INSTALL_FOLDER ${CMAKE_INSTALL_PREFIX}
-                BUILD missing)
+conan_cmake_run(
+  CONANFILE
+  packages/conan/base.txt
+  BASIC_SETUP
+  CMAKE_TARGETS
+  INSTALL_FOLDER
+  ${CMAKE_INSTALL_PREFIX}
+  BUILD
+  missing)
 
+conan_cmake_run(
+  CONANFILE
+  packages/conan/networking.txt
+  BASIC_SETUP
+  CMAKE_TARGETS
+  INSTALL_FOLDER
+  ${CMAKE_INSTALL_PREFIX}
+  BUILD
+  missing)

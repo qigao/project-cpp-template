@@ -1,0 +1,27 @@
+[requires]
+
+# Basic libs
+openssl/3.0.2
+cxxopts/3.0.0
+spdlog/1.9.2
+ragel/6.10
+
+# Test
+doctest/2.4.6
+catch2/2.13.8
+
+# serialization
+flatbuffers/2.0.0
+
+# Tasks and Events
+sigslot/1.2.1
+taskflow/3.3.0
+
+[generators]
+cmake_find_package
+
+[options]
+openssl:shared=False
+
+[imports]
+
