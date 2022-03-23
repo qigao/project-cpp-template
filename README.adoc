@@ -1,8 +1,11 @@
-= moderncpp-project-template
+= project-cpp-template
 
-image:https://github.com/qigao/cmake-template/workflows/MacOS/badge.svg[Mac Build]
-image:https://github.com/qigao/cmake-template/workflows/Ubuntu/badge.svg[Ubuntu Build]
-image:https://github.com/qigao/cmake-template/workflows/Windows/badge.svg[Windows Build]
+
+image:https://img.shields.io/github/workflow/status/qigao/project-cpp-template/Ubuntu/master?logoColor=grey&logo=ubuntu&label=[Linux Status,link="https://github.com/qigao/project-cpp-template/actions"]
+image:https://img.shields.io/github/workflow/status/qigao/project-cpp-template/Windows/master?logoColor=grey&logo=windows&label=[Windows Status,link="https://github.com/qigao/project-cpp-template/actions"]
+image:https://img.shields.io/github/workflow/status/qigao/project-cpp-template/MacOS/master?logoColor=grey&logo=apple&label=[macOS Status,link="https://github.com/qigao/project-cpp-template/actions"]
+image:https://img.shields.io/github/license/qigao/project-cpp-template.svg?logoColor=silver&logo=open-source-initiative&label=&color=blue[MIT License,link="https://github.com/qigao/project-cpp-template/blob/master/LICENSE.txt"]
+image:https://img.shields.io/github/v/tag/qigao/project-cpp-template.svg?logo=github&label=[Latest version,link="https://github.com/qigao/project-cpp-template/releases"]
 
 This repository aims to represent a template for Modern C++ projects, including static analysis checks, autoformatting, a BDD/TDD capable test-suite and packaging
 
@@ -13,7 +16,7 @@ This repository aims to represent a template for Modern C++ projects, including 
 * `[x]` imgui-style application demo
 * `[x]` plugin demo(shared/static)
 * `[x]` BDD/TDD test-suite
-* `[x]` GitHub actions
+* `[x]` GitHub actions with cache
 * `[x]` Code coverage
 * `[x]` Code formatting&linting
 * `[x]` Basic CPack packaging
