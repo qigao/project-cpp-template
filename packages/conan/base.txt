@@ -17,6 +17,9 @@ flatbuffers/2.0.0
 sigslot/1.2.1
 taskflow/3.3.0
 
+# Tools
+easy_profiler/2.1.0
+
 [generators]
 cmake_find_package
 
