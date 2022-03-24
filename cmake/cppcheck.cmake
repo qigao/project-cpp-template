@@ -16,5 +16,6 @@ if(CPPCHECK_BIN)
     "--suppress=missingInclude"
     "--suppress=unmatchedSuppression"
     "--suppress=unusedFunction"
+    "--suppress=noExplicitConstructor"
     "--template='{file}:{line}: warning: {id} ({severity}): {message}'")
 endif()

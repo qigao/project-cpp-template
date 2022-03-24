@@ -19,6 +19,7 @@ taskflow/3.3.0
 
 # Tools
 easy_profiler/2.1.0
+benchmark/1.6.0
 
 [generators]
 cmake_find_package
