@@ -1,18 +1,11 @@
-# Set additional application information
-set(APPLICATION_NAME "QML Demo App")
-set(APPLICATION_DESCRIPTION "Yet another Qt App")
-set(APPLICATION_VERSION "0.1")
-set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resource/icon/app.ico")
+# shared libs
+set(IMGUI_BINDING_DIR ${PROJECT_BINARY_DIR}/bindings CACHE PATH "IMGUI_BINDING_DIR")
+set(IMGUI_GIZMO_DIR ${PROJECT_SOURCE_DIR}/project/shared/imguizmo CACHE PATH "IMGUI_GIZMO_DIR")
+file(GLOB GIZMO_SRC ${IMGUI_GIZMO_DIR}/*.cpp)
+file(GLOB GIZMO_HEADER ${IMGUI_GIZMO_DIR}/*.h)
+file(GLOB IMGUI_BINDING_SRC ${IMGUI_BINDING_DIR}/*.cpp)
+file(GLOB IMGUI_BINDING_HEADER ${IMGUI_BINDING_DIR}/*.h)
 
-conan_cmake_run(
-  CONANFILE
-  ${CMAKE_SOURCE_DIR}/packages/conan/opengl.txt
-  BASIC_SETUP
-  CMAKE_TARGETS
-  INSTALL_FOLDER
-  ${PKG_INSTALL_PREFIX}
-  BUILD
-  missing)
-
+# add subdirectories
 add_subdirectory(imgui)
 add_subdirectory(guizmo)

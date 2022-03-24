@@ -31,3 +31,13 @@ conan_cmake_run(
   ${PKG_INSTALL_PREFIX}
   BUILD
   missing)
+
+conan_cmake_run(
+  CONANFILE
+  ${CMAKE_SOURCE_DIR}/packages/conan/opengl.txt
+  BASIC_SETUP
+  CMAKE_TARGETS
+  INSTALL_FOLDER
+  ${PKG_INSTALL_PREFIX}
+  BUILD
+  missing)

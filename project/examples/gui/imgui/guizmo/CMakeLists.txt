@@ -10,10 +10,16 @@ file(GLOB TARGET_HEADERS include/*.h)
 file(GLOB TARGET_SOURCES src/*.cpp)
 
 if(WIN32)
+  # Set additional application information
+  set(APPLICATION_NAME "QML Demo App")
+  set(APPLICATION_DESCRIPTION "Yet another Qt App")
+  set(APPLICATION_VERSION "0.1")
+  set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resource/icon/app.ico")
   configure_file(${CMAKE_SOURCE_DIR}/project/application.rc.in
-                 "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
+    "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
   set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
 endif(WIN32)
+
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
@@ -25,6 +31,7 @@ source_group(
   TREE ${CMAKE_CURRENT_SOURCE_DIR}
   PREFIX "Header Files"
   FILES ${TARGET_HEADERS})
+
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
@@ -45,7 +52,7 @@ add_executable(
 # add target properties such as debug postfix and MSVC runtime
 set_target_properties(
   ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
-                                               "${MSVC_RUNTIME_TYPE}")
+  "${MSVC_RUNTIME_TYPE}")
 
 # set target compile options as defined in the cmake/compiler_options.cmake
 # Module
@@ -63,20 +70,21 @@ if(WIN32)
   set_target_properties(
     ${TARGET_NAME}
     PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
-               LINK_FLAGS_RELEASE "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-               LINK_FLAGS_RELWITHDEBINFO
-               "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-               LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-
+    LINK_FLAGS_RELEASE "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
+    LINK_FLAGS_RELWITHDEBINFO
+    "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
+    LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 endif()
 
 # include all the necessary directories
 target_include_directories(
   ${TARGET_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-          # Any other extra include required
-          ${IMGUI_BINDING_DIR} ${IMGUI_GIZMO_DIR})
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+
+  # Any other extra include required
+  ${IMGUI_BINDING_DIR} ${IMGUI_GIZMO_DIR})
 
 # link against
 target_link_libraries(${TARGET_NAME} PUBLIC imgui::imgui glfw::glfw)
