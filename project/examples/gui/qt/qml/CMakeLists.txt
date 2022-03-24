@@ -4,6 +4,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+cmake_policy(SET CMP0071 NEW)
+
 # Directories where Qt Creator can find QML files. (Not needed for builds, but
 # makes Qt Creator code completion happy.)
 list(APPEND QML_IMPORT_PATH "cmake-build-debug/lib")
@@ -21,7 +23,6 @@ set(APPLICATION_NAME "QML Demo App")
 set(APPLICATION_DESCRIPTION "Yet another Qt App")
 set(APPLICATION_VERSION "0.1")
 set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resource/icon/app.ico")
-set(APPLICATION_RESOURCE)
 
 add_subdirectory(plugins)
 add_subdirectory(app)

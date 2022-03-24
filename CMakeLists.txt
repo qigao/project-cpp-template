@@ -38,18 +38,22 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 # Set the Relative Path Configurations
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 # Configure the visibility of symbols in targets
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
-# Define installation folder and the module path (this one required by conan)
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/pkgs)
-set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})
-set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR} ${CMAKE_PREFIX_PATH})
+# Define installation folder and the module path (used by conan)
+set(PKG_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/pkgs)
+set(CMAKE_MODULE_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_MODULE_PATH})
+set(CMAKE_PREFIX_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_PREFIX_PATH})
 
 # Define binary folder for the project
 set(BINARY_INSTALL_DIR ${PROJECT_SOURCE_DIR}/bin)
 
+# Set output directories
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 # ##############################################################################
 # Define Options
 # ##############################################################################
@@ -80,6 +84,6 @@ include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
 
 # ##############################################################################
-# Define Targets
+# Source Directories
 # ##############################################################################
 add_subdirectory(project)

@@ -1,19 +1,14 @@
 find_package(glfw3)
 find_package(imgui)
-set(IMGUI_BACKEND_DIR ${CMAKE_BINARY_DIR}/bindings)
-set(SHARED_IMGUI_GIZMO_DIR ${CMAKE_SOURCE_DIR}/project/shared/imguizmo)
+
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
 set(TARGET_NAME guizmo)
-set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
-file(GLOB IMGUI_BACKEND_SRC ${IMGUI_BACKEND_DIR}/*.cpp)
-file(GLOB IMGUI_BACKEND_INCLUDE ${IMGUI_BACKEND_DIR}/*.h)
-file(GLOB APP_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets/*)
-file(GLOB GIZMO_SRC ${SHARED_IMGUI_GIZMO_DIR}/*.cpp)
-file(GLOB GIZMO_INCLUDE ${SHARED_IMGUI_GIZMO_DIR}/*.h)
-set(TARGET_SOURCES ${APP_SRC})
+
+file(GLOB TARGET_HEADERS include/*.h)
+file(GLOB TARGET_SOURCES src/*.cpp)
+
 if(WIN32)
   configure_file(${CMAKE_SOURCE_DIR}/project/application.rc.in
                  "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
@@ -22,15 +17,26 @@ endif(WIN32)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES} ${ASSETS}
-                                                    ${TARGET_INCLUDE_FOLDER})
-
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR}
+  PREFIX "Source Files"
+  FILES ${TARGET_SOURCES})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR}
+  PREFIX "Header Files"
+  FILES ${TARGET_HEADERS})
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
 add_executable(
-  ${TARGET_NAME} ${TARGET_SOURCES} ${IMGUI_BACKEND_SRC} ${ASSETS}
-                 ${APPLICATION_RESOURCE} ${GIZMO_SRC} ${GIZMO_INCLUDE})
+  ${TARGET_NAME}
+  ${TARGET_SOURCES}
+  ${TARGET_HEADERS}
+  ${GIZMO_SRC}
+  ${GIZMO_HEADER}
+  ${IMGUI_BINDING_SRC}
+  ${IMGUI_BINDING_HEADER}
+  ${APPLICATION_RESOURCE})
 
 # ##############################################################################
 # Define Target Properties
@@ -68,9 +74,19 @@ endif()
 target_include_directories(
   ${TARGET_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-  PRIVATE ${TARGET_INCLUDE_FOLDER}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
           # Any other extra include required
-          ${IMGUI_BACKEND_DIR} ${SHARED_IMGUI_GIZMO_DIR})
+          ${IMGUI_BINDING_DIR} ${IMGUI_GIZMO_DIR})
 
 # link against
 target_link_libraries(${TARGET_NAME} PUBLIC imgui::imgui glfw::glfw)
+
+# ##############################################################################
+# Define Install Targets
+# ##############################################################################
+install(
+  TARGETS ${TARGET_NAME}
+  RUNTIME DESTINATION ${BINARY_INSTALL_DIR}
+  LIBRARY DESTINATION ${BINARY_INSTALL_DIR}/lib
+  ARCHIVE DESTINATION ${BINARY_INSTALL_DIR}/lib
+  PUBLIC_HEADER DESTINATION ${BINARY_INSTALL_DIR}/include)

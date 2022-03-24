@@ -69,3 +69,13 @@ if(OPENSSL_FOUND)
 endif()
 
 target_link_libraries(${TARGET_NAME} PUBLIC Qt6::Core)
+
+# ##############################################################################
+# Define Install Targets
+# ##############################################################################
+install(
+  TARGETS ${TARGET_NAME}
+  RUNTIME DESTINATION ${BINARY_INSTALL_DIR}
+  LIBRARY DESTINATION ${BINARY_INSTALL_DIR}/lib
+  ARCHIVE DESTINATION ${BINARY_INSTALL_DIR}/lib
+  PUBLIC_HEADER DESTINATION ${BINARY_INSTALL_DIR}/include)
