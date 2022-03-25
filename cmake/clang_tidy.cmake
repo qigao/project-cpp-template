@@ -7,10 +7,10 @@ if(CLANG_TIDY_BIN)
 
   add_custom_target(
     tidy-sources COMMAND ${CLANG_TIDY_BIN} -p ${PROJECT_SOURCE_DIR}
-                         -checks=${CLANG_TIDY_CHECKS} ${CPP_SOURCE_FILES})
+    -checks=${CLANG_TIDY_CHECKS} ${CPP_SOURCE_FILES})
   add_custom_target(
     tidy-headers COMMAND ${CLANG_TIDY_BIN} -p ${PROJECT_SOURCE_DIR}
-                         -checks=${CLANG_TIDY_CHECKS} ${CPP_HEADER_FILES})
+    -checks=${CLANG_TIDY_CHECKS} ${CPP_HEADER_FILES})
   add_custom_target(
     tidy-all
     COMMENT "Run clang-tidy on all source files"

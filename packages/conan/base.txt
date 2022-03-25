@@ -8,7 +8,6 @@ ragel/6.10
 
 # Test
 doctest/2.4.6
-catch2/2.13.8
 
 # serialization
 flatbuffers/2.0.0
