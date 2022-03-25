@@ -46,10 +46,6 @@ jobs:
         shell: bash
         run: |
           vcpkg install --triplet ${{ env.vcpkg_triplet }} $(jq -r '.dependencies | @tsv' packages/vcpkg.json)
-      - name: Install vcpkg packages
-        shell: bash
-        run: |
-          vcpkg install --triplet ${{ env.vcpkg_triplet }} $(jq -r '.dependencies | @tsv' packages/vcpkg.json)
       - name: ubuntu update
         run: sudo apt-get update
       - name: ubuntu install library

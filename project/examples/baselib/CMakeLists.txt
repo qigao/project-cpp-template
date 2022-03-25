@@ -72,10 +72,6 @@ if(OPENSSL_FOUND)
                                               cppzmq)
 endif()
 
-if(BUILD_TESTING)
-  add_subdirectory(test)
-endif()
-
 # ##############################################################################
 # Define Install Targets
 # ##############################################################################
