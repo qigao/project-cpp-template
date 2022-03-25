@@ -55,5 +55,4 @@ int main(int argc, char **argv)
   client.conn(ip,port);
   loop->run();
   loop = nullptr;
-  Sleep(1000);
 }

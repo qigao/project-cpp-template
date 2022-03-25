@@ -31,6 +31,7 @@ set(APPLICATION_COPYRIGHT "Copyright Since 2016, Qi Gao")
 set(APPLICATION_LICENSE "MIT License")
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 # Set required C++ Standard
 set(CMAKE_CXX_STANDARD 20)
@@ -87,10 +88,8 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 include(${CMAKE_SOURCE_DIR}/cmake/clang_format.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/clang_tidy.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/cppcheck.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
 
