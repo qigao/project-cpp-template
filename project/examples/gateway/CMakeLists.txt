@@ -1,11 +1,10 @@
-find_package(cppzmq CONFIG REQUIRED)
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
-set(TARGET_NAME baselib)
-set(TARGET_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+find_package(uvw CONFIG REQUIRED)
+set(TARGET_NAME gateway)
 file(GLOB TARGET_SOURCES src/*.cpp)
-file(GLOB TARGET_HEADERS *.h)
+file(GLOB TARGET_HEADERS include/*.h include/*.hpp)
 
 # ##############################################################################
 # Support IDE Visualization
@@ -18,30 +17,20 @@ source_group(
   TREE ${CMAKE_CURRENT_SOURCE_DIR}
   PREFIX "Header Files"
   FILES ${TARGET_HEADERS})
+
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-if(BUILD_SHARED_LIBS)
-  add_library(${TARGET_NAME} SHARED ${TARGET_SOURCES} ${TARGET_HEADERS})
-else()
-  add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES} ${TARGET_HEADERS})
-endif()
-add_dependencies(${TARGET_NAME} check_git)
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${TARGET_HEADERS})
+
 # ##############################################################################
 # Define Target Properties and Optional OpenSSL Dependency
 # ##############################################################################
 
-# generate an export header to expose symbols when using the library
-generate_export_header(${TARGET_NAME} EXPORT_FILE_NAME
-                       ${CMAKE_BINARY_DIR}/exports/${TARGET_NAME}_export.h)
-
-# add target properties such as debug postfix, MSVC Runtime and library version
+# add target properties such as debug postfix and MSVC runtime
 set_target_properties(
-  ${TARGET_NAME}
-  PROPERTIES DEBUG_POSTFIX "-d"
-             MSVC_RUNTIME_LIBRARY "${MSVC_RUNTIME_TYPE}"
-             VERSION ${CMAKE_PROJECT_VERSION}
-             SOVERSION ${CMAKE_PROJECT_VERSION})
+  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
+  "${MSVC_RUNTIME_TYPE}")
 
 # set target compile options as defined in the cmake/compiler_options.cmake
 # Module
@@ -49,9 +38,8 @@ target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
 
 # add compiler definition WITH_OPENSSL, if found
 target_compile_definitions(
-  ${TARGET_NAME}
-  PRIVATE ${compiler_definitions} $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>
-          $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:${target_id}_STATIC_DEFINE>)
+  ${TARGET_NAME} PRIVATE ${compiler_definitions}
+  $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>)
 
 # set target link options as defined in the cmake/compiler_options.cmake Module
 target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
@@ -60,16 +48,15 @@ target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
 target_include_directories(
   ${TARGET_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-  PRIVATE ${TARGET_INCLUDE_DIR}
-          # include OpenSSL directories if present
-          $<$<BOOL:${OPENSSL_FOUND}>:${OPENSSL_INCLUDE_DIR}>
-          # Any other extra include required
-          ${CMAKE_BINARY_DIR})
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-# link OpenSSL libraries if present
-if(OPENSSL_FOUND)
-  target_link_libraries(${TARGET_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto
-                                              cppzmq)
+# link
+target_link_libraries(${TARGET_NAME} PRIVATE baselib cxxopts::cxxopts
+  uvw::uvw)
+
+if(WIN32)
+  target_link_libraries(${TARGET_NAME} PRIVATE ws2_32)
 endif()
 
 if(BUILD_TESTING)
