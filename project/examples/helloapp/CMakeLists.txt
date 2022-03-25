@@ -3,7 +3,7 @@
 # ##############################################################################
 set(TARGET_NAME helloapp)
 set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(TARGET_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/helloapp.cpp)
+set(TARGET_SOURCES src/helloapp.cpp)
 
 # ##############################################################################
 # Support IDE Visualization

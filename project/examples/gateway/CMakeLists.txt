@@ -1,24 +1,10 @@
-find_package(glfw3)
-find_package(imgui)
-
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
-set(TARGET_NAME guizmo)
-
-file(GLOB TARGET_HEADERS include/*.h)
+find_package(uvw CONFIG REQUIRED)
+set(TARGET_NAME gateway)
 file(GLOB TARGET_SOURCES src/*.cpp)
-
-if(WIN32)
-  # Set additional application information
-  set(APPLICATION_NAME "QML Demo App")
-  set(APPLICATION_DESCRIPTION "Yet another Qt App")
-  set(APPLICATION_VERSION "0.1")
-  set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resource/icon/app.ico")
-  configure_file(${CMAKE_SOURCE_DIR}/project/application.rc.in
-    "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
-  set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
-endif(WIN32)
+file(GLOB TARGET_HEADERS include/*.h include/*.hpp)
 
 # ##############################################################################
 # Support IDE Visualization
@@ -35,18 +21,10 @@ source_group(
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-add_executable(
-  ${TARGET_NAME}
-  ${TARGET_SOURCES}
-  ${TARGET_HEADERS}
-  ${GIZMO_SRC}
-  ${GIZMO_HEADER}
-  ${IMGUI_BINDING_SRC}
-  ${IMGUI_BINDING_HEADER}
-  ${APPLICATION_RESOURCE})
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${TARGET_HEADERS})
 
 # ##############################################################################
-# Define Target Properties
+# Define Target Properties and Optional OpenSSL Dependency
 # ##############################################################################
 
 # add target properties such as debug postfix and MSVC runtime
@@ -58,36 +36,32 @@ set_target_properties(
 # Module
 target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
 
-# add compiler definition
-target_compile_definitions(${TARGET_NAME} PRIVATE ${compiler_definitions})
+# add compiler definition WITH_OPENSSL, if found
+target_compile_definitions(
+  ${TARGET_NAME} PRIVATE ${compiler_definitions}
+  $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>)
 
 # set target link options as defined in the cmake/compiler_options.cmake Module
 target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
-
-# Make this a GUI application on Windows
-if(WIN32)
-  set(CMAKE_WIN32_EXECUTABLE ON)
-  set_target_properties(
-    ${TARGET_NAME}
-    PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
-    LINK_FLAGS_RELEASE "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-    LINK_FLAGS_RELWITHDEBINFO
-    "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-    LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-endif()
 
 # include all the necessary directories
 target_include_directories(
   ${TARGET_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-  # Any other extra include required
-  ${IMGUI_BINDING_DIR} ${IMGUI_GIZMO_DIR})
+# link
+target_link_libraries(${TARGET_NAME} PRIVATE baselib cxxopts::cxxopts
+  uvw::uvw)
 
-# link against
-target_link_libraries(${TARGET_NAME} PUBLIC imgui::imgui glfw::glfw)
+if(WIN32)
+  target_link_libraries(${TARGET_NAME} PRIVATE ws2_32)
+endif()
+
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
 
 # ##############################################################################
 # Define Install Targets

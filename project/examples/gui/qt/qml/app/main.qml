@@ -1,5 +1,5 @@
 import QtQuick.Controls 2.15
-import com.mycompany.test 1.0
+import com.mycompany.fancy 1.0
 
 ApplicationWindow {
   id: root

@@ -5,6 +5,7 @@
     "cppzmq",
     "uvw",
     "fmt",
+    "tinyfiledialogs",
     "range-v3"
   ]
 }

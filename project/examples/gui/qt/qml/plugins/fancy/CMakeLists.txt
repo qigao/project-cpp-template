@@ -3,7 +3,7 @@ qt_add_qml_module(
   ${TARGET_NAME}
   STATIC
   URI
-  com.mycompany.test
+  com.mycompany.fancy
   VERSION
   1.0
   PLUGIN_TARGET
@@ -13,7 +13,5 @@ qt_add_qml_module(
   thing.hpp
   QML_FILES
   FancyComponent.qml)
-
-get_target_property(test ${TARGET_NAME}_qmlcache SOURCES)
 
 target_link_libraries(${TARGET_NAME} PRIVATE Qt6::Qml Qt6::Quick)

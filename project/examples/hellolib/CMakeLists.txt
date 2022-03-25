@@ -2,21 +2,28 @@
 # Define Target Information
 # ##############################################################################
 set(TARGET_NAME hellolib)
-set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(TARGET_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/hellolib.cpp)
 
+file(GLOB TARGET_HEADERS include/*.h)
+file(GLOB TARGET_SOURCES src/*.cpp)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TARGET_SOURCES})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR}
+  PREFIX "Source Files"
+  FILES ${TARGET_SOURCES})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR}
+  PREFIX "Header Files"
+  FILES ${TARGET_HEADERS})
 
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
 if(BUILD_SHARED_LIBS)
-  add_library(${TARGET_NAME} SHARED ${TARGET_SOURCES})
+  add_library(${TARGET_NAME} SHARED ${TARGET_SOURCES} ${TARGET_HEADERS})
 else()
-  add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES})
+  add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES} ${TARGET_HEADERS})
 endif()
 add_dependencies(${TARGET_NAME} check_git)
 # ##############################################################################
@@ -51,7 +58,7 @@ target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
 target_include_directories(
   ${TARGET_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-  PRIVATE ${TARGET_INCLUDE_FOLDER}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
           # include OpenSSL directories if present
           $<$<BOOL:${OPENSSL_FOUND}>:${OPENSSL_INCLUDE_DIR}>
           # Any other extra include required
@@ -77,7 +84,7 @@ if(BUILD_TESTING)
     target_include_directories(
       ${TEST_CASE}
       PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-      PRIVATE ${TARGET_INCLUDE_FOLDER}
+      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
               # Any other extra include required
     )
 
