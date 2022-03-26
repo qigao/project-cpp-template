@@ -9,7 +9,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - "project/examples/gui/**"
+      - "project/examples/gui/qt/**"
       - ".github/workflows/ubuntu-qt6.yml"
 env:
   vcpkg_dir: "/usr/local/share/vcpkg"
