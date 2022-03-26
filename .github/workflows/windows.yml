@@ -42,9 +42,9 @@ jobs:
             ${{ github.workspace }}/.conan/data/
             !${{ env.vcpkg_dir }}/.git
             ${{ env.pythonLocation }}
-          key: vcpkg-${{ env.vcpkg_triplet }}-${{ matrix.os }}-${{ matrix.qt_ver }}
+          key: vcpkg-${{ env.vcpkg_triplet }}-${{ matrix.os }}
           restore-keys: |
-            vcpkg-${{ env.vcpkg_triplet }}-${{ matrix.os }}-${{ matrix.qt_ver }}
+            vcpkg-${{ env.vcpkg_triplet }}-${{ matrix.os }}
       - name: Install vcpkg packages
         shell: bash
         run: |

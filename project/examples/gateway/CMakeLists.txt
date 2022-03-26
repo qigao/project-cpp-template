@@ -2,6 +2,7 @@
 # Define Target Information
 # ##############################################################################
 find_package(uvw CONFIG REQUIRED)
+find_package(Threads REQUIRED)
 set(TARGET_NAME gateway)
 file(GLOB TARGET_SOURCES src/*.cpp)
 file(GLOB TARGET_HEADERS include/*.h include/*.hpp)
@@ -24,7 +25,7 @@ source_group(
 add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${TARGET_HEADERS})
 
 # ##############################################################################
-# Define Target Properties and Optional OpenSSL Dependency
+# Define Target Properties and Dependency
 # ##############################################################################
 
 # add target properties such as debug postfix and MSVC runtime
@@ -36,10 +37,10 @@ set_target_properties(
 # Module
 target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
 
-# add compiler definition WITH_OPENSSL, if found
+# add compiler definition
 target_compile_definitions(
   ${TARGET_NAME} PRIVATE ${compiler_definitions}
-  $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>)
+)
 
 # set target link options as defined in the cmake/compiler_options.cmake Module
 target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
@@ -52,8 +53,12 @@ target_include_directories(
 )
 
 # link
-target_link_libraries(${TARGET_NAME} PRIVATE baselib cxxopts::cxxopts
-  uvw::uvw)
+target_link_libraries(${TARGET_NAME}
+  PUBLIC
+  Threads::Threads
+  PRIVATE
+  cxxopts::cxxopts uvw::uvw
+)
 
 if(WIN32)
   target_link_libraries(${TARGET_NAME} PRIVATE ws2_32)
