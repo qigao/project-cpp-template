@@ -9,8 +9,8 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - "project/examples/gui/**"
-      - ".github/workflows/macos-qt.yml"
+      - "project/examples/gui/qt/**"
+      - ".github/workflows/macos-qt6.yml"
 
 env:
   vcpkg_dir: "/usr/local/share/vcpkg"
@@ -43,15 +43,16 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ${{ env.vcpkg_dir }}
             ${{ github.workspace }}/.cache
             ${{ github.workspace }}/.conan/data/
-            ${{ env.Qt6_DIR }}
-            ${{ env.pythonLocation }}
+            ${{ github.workspace }}/build/vcpkg_installed
+            ${{ env.vcpkg_dir }}
             !${{ env.vcpkg_dir }}/.git
+            !${{ env.vcpkg_dir }}/buildtrees
+            !${{ env.vcpkg_dir }}/packages
+            !${{ env.vcpkg_dir }}/downloads
+            ${{ env.pythonLocation }}
           key: vcpkg-${{ env.vcpkg_triplet }}-${{ matrix.os }}-${{ matrix.qt_ver }}
-          restore-keys: |
-            vcpkg-${{ env.vcpkg_triplet }}-${{ matrix.os }}-${{ matrix.qt_ver }}
       - name: Install vcpkg packages
         shell: bash
         run: |
