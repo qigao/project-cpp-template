@@ -1,14 +1,16 @@
 
 #include "client.hpp"
 #include "server.hpp"
+#include "system_tray.h"
 #include <cassert>
 #include <chrono>
 #include <cxxopts.hpp>
 #include <iostream>
 #include <memory>
+#include <stdio.h>
+#include <string.h>
 #include <string>
 #include <uvw.hpp>
-
 int main(int argc, char **argv)
 {
   cxxopts::Options options("test", "A brief description");
@@ -52,7 +54,10 @@ int main(int argc, char **argv)
   raw_server  server = raw_server(loop);
   raw_client  client = raw_client(loop);
   server.listen(ip, port);
-  client.conn(ip,port);
+  client.conn(ip, port);
   loop->run();
   loop = nullptr;
+
+  tray_and_menu t;
+  tray_and_menu::run_tray();
 }

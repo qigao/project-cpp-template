@@ -39,7 +39,7 @@ target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
 
 # add compiler definition
 target_compile_definitions(
-  ${TARGET_NAME} PRIVATE ${compiler_definitions}
+  ${TARGET_NAME} PRIVATE ${compiler_definitions} TRAY_WINAPI=1
 )
 
 # set target link options as defined in the cmake/compiler_options.cmake Module
@@ -49,7 +49,9 @@ target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
 target_include_directories(
   ${TARGET_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/project/shared/tray
 )
 
 # link
@@ -62,6 +64,12 @@ target_link_libraries(${TARGET_NAME}
 
 if(WIN32)
   target_link_libraries(${TARGET_NAME} PRIVATE ws2_32)
+endif()
+
+if(WIN32)
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resource/icon.ico DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+elseif(APPLE)
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resource/icon.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
 if(BUILD_TESTING)
