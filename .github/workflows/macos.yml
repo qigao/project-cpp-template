@@ -51,7 +51,7 @@ jobs:
           brew install ninja
           brew install clang-format
       - name: Update Clang
-        if: matrix.config.os == 'macos-11.0'
+        if: matrix.os == 'macos-11.0'
         run: |
           curl --output clang.tar.xz -L https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.1/clang+llvm-13.0.1-x86_64-apple-darwin.tar.xz
           mkdir clang

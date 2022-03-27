@@ -54,7 +54,7 @@ jobs:
           libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev
           libxcb-dri3-dev libxcb-util-dev libuv1
       - name: Update GCC
-        if: matrix.config.os == 'ubuntu-20.04'
+        if: matrix.os == 'ubuntu-20.04'
         run: |
           sudo apt-get install -y gcc-11 gcc-11-multilib g++-11 g++-11-multilib
           name=CC::gcc-11
