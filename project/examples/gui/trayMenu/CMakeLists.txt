@@ -1,12 +1,11 @@
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
-find_package(uvw CONFIG REQUIRED)
-find_package(Threads REQUIRED)
-set(TARGET_NAME gateway)
+set(TARGET_NAME trayMenu)
 file(GLOB TARGET_SOURCES src/*.cpp)
 file(GLOB TARGET_HEADERS include/*.h include/*.hpp)
 
+find_package(Threads REQUIRED)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
@@ -51,22 +50,31 @@ target_include_directories(
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/project/shared/tray
 )
+# Make this a GUI application on Windows
+if(WIN32)
+  set_target_properties(
+    ${TARGET_NAME}
+    PROPERTIES
+    LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
+    LINK_FLAGS_RELEASE "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
+    LINK_FLAGS_RELWITHDEBINFO
+    "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
+    LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+endif()
 
 # link
 target_link_libraries(${TARGET_NAME}
-  PUBLIC
-  Threads::Threads
+  PUBLIC   Threads::Threads
   PRIVATE
-  cxxopts::cxxopts uvw::uvw
+  tray
 )
 
 if(WIN32)
-  target_link_libraries(${TARGET_NAME} PRIVATE ws2_32)
-endif()
-
-if(BUILD_TESTING)
-  add_subdirectory(test)
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resource/icon.ico DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+elseif(APPLE)
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resource/icon.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
 # ##############################################################################

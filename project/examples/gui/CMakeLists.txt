@@ -4,3 +4,4 @@ if(BUILD_WITH_QT6)
 endif()
 
 add_subdirectory(imgui)
+add_subdirectory(trayMenu)

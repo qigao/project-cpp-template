@@ -1,7 +1,6 @@
 
 #include "client.hpp"
 #include "server.hpp"
-#include "system_tray.h"
 #include <cassert>
 #include <chrono>
 #include <cxxopts.hpp>
@@ -57,7 +56,4 @@ int main(int argc, char **argv)
   client.conn(ip, port);
   loop->run();
   loop = nullptr;
-
-  tray_and_menu t;
-  tray_and_menu::run_tray();
 }
