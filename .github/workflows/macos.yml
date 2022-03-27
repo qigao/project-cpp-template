@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.15]
+        os: [macos-11.0]
 
     steps:
       - uses: actions/checkout@v2
@@ -46,14 +46,20 @@ jobs:
             !${{ env.vcpkg_dir }}/downloads
             ${{ env.pythonLocation }}
           key: vcpkg-${{ env.vcpkg_triplet }}-${{ matrix.os }}
-      - name: Install vcpkg packages
-        shell: bash
-        run: |
-          vcpkg install --triplet ${{ env.vcpkg_triplet }} $(jq -r '.dependencies | @tsv' packages/vcpkg.json)
       - name: Install tools
         run: |
           brew install ninja
           brew install clang-format
+      - name: Update Clang
+        if: matrix.config.os == 'macos-11.0'
+        run: |
+          curl --output clang.tar.xz -L https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.1/clang+llvm-13.0.1-x86_64-apple-darwin.tar.xz
+          mkdir clang
+          tar -xvJf clang.tar.xz -C clang
+          cd clang/clang+llvm-13.0.1-x86_64-apple-darwin
+          sudo cp -R * /usr/local/
+          export CC=/usr/local/bin/clang
+          export CXX=/usr/local/bin/clang++
       - name: Install conan
         run: |
           pip install conan --upgrade
@@ -67,6 +73,8 @@ jobs:
           -DBUILD_SHARED_LIBS=TRUE
           -DCMAKE_BUILD_TYPE=Release
           -G Ninja
+          -DCMAKE_C_COMPILER=/usr/local/bin/clang
+          -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++
           -DCMAKE_TOOLCHAIN_FILE=${{ env.vcpkg_dir }}/scripts/buildsystems/vcpkg.cmake
       - name: Build
         run: cmake --build build --target install --config Release
