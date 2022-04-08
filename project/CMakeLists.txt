@@ -17,3 +17,4 @@ if (BUILD_BENCHMARKS)
 endif ()
 
 add_subdirectory(examples)
+add_subdirectory(shared)

@@ -55,6 +55,9 @@ set(PKG_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/pkgs)
 set(CMAKE_MODULE_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_MODULE_PATH})
 set(CMAKE_PREFIX_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_PREFIX_PATH})
 
+# Define Shared folder for the project
+set(SHARED_DIR ${PROJECT_SOURCE_DIR}/project/shared)
+
 # Define binary folder for the project
 set(BINARY_INSTALL_DIR ${PROJECT_SOURCE_DIR}/bin)
 

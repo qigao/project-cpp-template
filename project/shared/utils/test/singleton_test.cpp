@@ -1,8 +1,6 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
 #include "singleton.hpp"
-#include <doctest/doctest.h>
 #include <future>
+#include <gtest/gtest.h>
 #include <string>
 
 class SingletonDemo : public Singleton<SingletonDemo>
@@ -23,9 +21,9 @@ std::string ThreadBarWithMutex()
 
   return singleton->value();
 }
-TEST_CASE("thread safe singleton")
+TEST(Singleton, GetInstance)
 {
   auto future_t1 = std::async(ThreadBarWithMutex);
   auto future_t2 = std::async(ThreadFoo);
-  CHECK_EQ(future_t1.get(), future_t2.get());
+  ASSERT_EQ(future_t1.get(), future_t2.get());
 }
