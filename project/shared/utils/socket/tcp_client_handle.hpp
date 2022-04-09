@@ -3,13 +3,13 @@
 
 #include "socket/base_queue.hpp"
 #include "typedef.h"
+#include "types.h"
 #include <future>
 #include <iostream>
-#include <rpcndr.h>
+#include <memory>
 #include <thread>
 #include <uvw.hpp>
-#include <uvw/stream.h>
-#include <uvw/tcp.h>
+
 class TcpClientHandle : public BaseQueue
 {
 public:
@@ -58,7 +58,7 @@ public:
   {
     auto len    = data.length();
     auto frame  = std::make_shared<DataFrame>();
-    frame->data = std::make_shared<char[]>(len + 1);
+    frame->data = make_array<u8>(len + 1);
     frame->len  = len;
     std::memcpy(frame->data.get(), data.data(), len);
     write_queue(frame);
@@ -67,7 +67,7 @@ public:
   void queue_data(const char *data, size_t len)
   {
     auto frame  = std::make_shared<DataFrame>();
-    frame->data = std::make_shared<char[]>(len + 1);
+    frame->data = make_array<u8>(len);
     frame->len  = len;
     std::memcpy(frame->data.get(), data, len);
     write_queue(frame);
@@ -78,7 +78,7 @@ private:
   {
     while (!m_shouldExit) {
       auto frame  = std::make_shared<DataFrame>();
-      frame->data = std::make_shared<char[]>(1024);
+      frame->data = make_array<u8>(256);
       bool status = read_queue(frame);
       if (status) {
         auto len = frame->len;

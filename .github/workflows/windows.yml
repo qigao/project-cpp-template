@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         qt_arch: [win64_msvc2019_64]
-        os: [windows-2019]
+        os: [windows-2019,windows-2022]
 
     steps:
       - name: Perform checkout

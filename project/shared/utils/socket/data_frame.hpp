@@ -1,14 +1,15 @@
 #ifndef __DATA_FRAME_H__
 #define __DATA_FRAME_H__
 
+#include "types.h"
 #include <memory>
-
 
 typedef struct DataFrame
 {
-  std::shared_ptr<char[]> data;
+  std::shared_ptr<u8> data;
+
   size_t len;
 
-}DataFrame;
+} DataFrame;
 
 #endif// __DATA_FRAME_H__
