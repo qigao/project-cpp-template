@@ -2,8 +2,6 @@
   "name": "networking",
   "version": "1.0.0",
   "dependencies": [
-    "cppzmq",
-    "uvw",
     "fmt",
     "tinyfiledialogs",
     "range-v3"

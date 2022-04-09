@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include <uvw.hpp>
-#include <vcruntime.h>
 class AsyncHandle
 {
 public:

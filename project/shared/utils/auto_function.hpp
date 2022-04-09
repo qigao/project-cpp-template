@@ -1,7 +1,7 @@
 #ifndef __AUTO_FUNCTION_H__
 #define __AUTO_FUNCTION_H__
 
-#include <utility>
+#include <functional>
 
 template<typename Fn, typename... Args>
 decltype(auto) Call(Fn &&fun, Args &&...args)

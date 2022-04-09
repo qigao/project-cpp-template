@@ -6,7 +6,7 @@
 #include <string>
 #include <utility>
 #include <uvw.hpp>
-#include <uvw/util.h>
+
 auto get_interface_list()
 {
   std::map<std::string, std::string> if_map;

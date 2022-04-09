@@ -56,4 +56,10 @@ using uptr = std::uintptr_t;
 using if_streamer   = std::ifstream;
 using string_stream = std::stringstream;
 
+template<typename T>
+inline std::shared_ptr<T> make_array(int len)
+{
+  return std::shared_ptr<T>(new T[len], std::default_delete<T[]>());
+}
+
 #endif// __TYPES_H__

@@ -2,6 +2,7 @@
 #include <future>
 #include <gtest/gtest.h>
 #include <string>
+#include <thread>
 
 class SingletonDemo : public Singleton<SingletonDemo>
 {
