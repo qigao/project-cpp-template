@@ -1,5 +1,5 @@
 
-file(GLOB TARGET_SOURCES *.cpp )
+file(GLOB TARGET_SOURCES *.cpp)
 file(GLOB TARGET_HEADERS ../include/*.h ../include/*.hpp)
 
 foreach(TARGET ${TARGET_SOURCES})
@@ -11,7 +11,7 @@ foreach(TEST_CASE ${TEST_CASES})
   add_executable(${TEST_CASE} ${TEST_CASE}.cpp ${TARGET_HEADERS})
   target_link_libraries(${TEST_CASE}
     PUBLIC Threads::Threads
-    PRIVATE  GTest::gmock_main hellolib
+    PRIVATE GTest::gmock_main hellolib
   )
   target_compile_options(${TEST_CASE} PRIVATE ${compiler_options})
   target_compile_definitions(
@@ -28,8 +28,10 @@ foreach(TEST_CASE ${TEST_CASES})
     ${TEST_CASE}
     PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
     PRIVATE ../include
+
     # Any other extra include required
   )
   include(GoogleTest)
   gtest_discover_tests(${TEST_CASE})
+  target_code_coverage(${TEST_CASE} AUTO EXTERNAL)
 endforeach()
