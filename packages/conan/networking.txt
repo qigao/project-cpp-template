@@ -3,7 +3,6 @@
 # Networking
 cpp-httplib/0.10.4
 uvw/2.12.1
-cppzmq/4.8.1
 
 [generators]
 cmake_find_package

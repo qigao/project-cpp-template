@@ -4,6 +4,7 @@
   "dependencies": [
     "fmt",
     "tinyfiledialogs",
+    "cppzmq",
     "range-v3"
   ]
 }

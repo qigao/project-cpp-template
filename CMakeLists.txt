@@ -96,6 +96,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/sanitizers.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/code_coverage.cmake)
 
 # ##############################################################################
 # Source Directories
