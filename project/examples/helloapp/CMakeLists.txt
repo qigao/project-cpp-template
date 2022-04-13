@@ -48,4 +48,4 @@ target_include_directories(
 
 # link against hellolib
 target_link_libraries(${TARGET_NAME} PUBLIC hellolib baselib cxxopts::cxxopts)
-target_code_coverage(${TARGET_NAME} AUTO EXTERNAL)
+target_code_coverage(${TARGET_NAME} AUTO)
