@@ -78,4 +78,4 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
-target_code_coverage(${TARGET_NAME} AUTO EXTERNAL)
+target_code_coverage(${TARGET_NAME} AUTO)
