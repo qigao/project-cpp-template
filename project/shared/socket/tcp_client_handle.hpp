@@ -1,25 +1,26 @@
 #ifndef __TCP_CLIENT_HANDLE_H__
 #define __TCP_CLIENT_HANDLE_H__
 
-#include "socket/base_queue.hpp"
+#include "base_queue.hpp"
 #include "typedef.h"
-#include "types.h"
+#include "utils/types.h"
 #include <future>
 #include <iostream>
 #include <memory>
 #include <thread>
 #include <uvw.hpp>
 
+
 class TcpClientHandle : public BaseQueue
 {
 public:
-  TcpClientHandle(std::string &ip, int &port, tcp_handle &handle)
-    : m_handle(handle),//
+  TcpClientHandle(std::string &ip, int &port, shared_loop &loop)
+    : m_tcp(loop->resource<uvw::TCPHandle>()),//
       m_ip(ip), m_port(port),//
       m_shouldExit(false)
   {}
 
-  bool is_active() { return !m_shouldExit; }
+  bool is_active()const { return !m_shouldExit; }
   void start()
   {
     m_shouldExit = false;
@@ -29,29 +30,29 @@ public:
 
   void close()
   {
-    m_handle->stop();
-    m_handle->close();
+    m_tcp->stop();
+    m_tcp->close();
     m_shouldExit = true;
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     if (m_thread_write.joinable()) m_thread_write.join();
   }
   void setup()
   {
-    m_handle->on<uvw::ErrorEvent>(
+    m_tcp->on<uvw::ErrorEvent>(
       [](const uvw::ErrorEvent &event, uvw::TCPHandle &) {
         std::cout << "client error: " << event.what() << std::endl;
       });
-    m_handle->once<uvw::ConnectEvent>([&](const auto &, auto &) {
+    m_tcp->once<uvw::ConnectEvent>([&](const auto &, auto &) {
       std::cout << "connect event ..." << std::endl;
     });
-    m_handle->once<uvw::CloseEvent>([&](const auto &, auto &) {
+    m_tcp->once<uvw::CloseEvent>([&](const auto &, auto &) {
       std::cout << "close event ..." << std::endl;
       m_shouldExit = true;
     });
-    m_handle->once<uvw::WriteEvent>([&](const auto &, auto &) {
+    m_tcp->once<uvw::WriteEvent>([&](const auto &, auto &) {
       std::cout << "write event ..." << std::endl;
     });
-    m_handle->connect(m_ip, m_port);
+    m_tcp->connect(m_ip, m_port);
     m_shouldExit = false;
   }
   void queue_data(const std::string &data)
@@ -85,7 +86,7 @@ private:
 
         auto dataWrite = std::make_unique<char[]>(len);
         std::memcpy(dataWrite.get(), frame->data.get(), len);
-        m_handle->tryWrite(std::move(dataWrite), len);
+        m_tcp->tryWrite(std::move(dataWrite), len);
       } else {
         std::cout << " empty queue" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -98,7 +99,7 @@ private:
 
 private:
   /* data */
-  tcp_handle        m_handle;
+  tcp_handle        m_tcp;
   std::string       m_ip;
   int               m_port;
   std::atomic<bool> m_shouldExit;

@@ -1,7 +1,7 @@
 #ifndef __DATA_FRAME_H__
 #define __DATA_FRAME_H__
 
-#include "types.h"
+#include "utils/types.h"
 #include <memory>
 
 typedef struct DataFrame

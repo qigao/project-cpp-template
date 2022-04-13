@@ -21,7 +21,7 @@ protected:
     // Avoid reallocating static objects if called in subclasses of FooTest.
     if (tcp_server == nullptr) {
       auto loop   = UvLoop();
-      auto handle = loop.get_tcp();
+      auto handle = loop.get_loop();
       tcp_server  = new TcpServerHandle(ip, port, handle);
       tcp_server->listen();
     }
@@ -44,8 +44,9 @@ TcpServerHandle *TcpClientHandleTest::tcp_server = nullptr;
 TEST_F(TcpClientHandleTest, sendMessage)
 {
   UvLoop loop = UvLoop();
+  loop.setup();
   // create & setup tcp_client
-  auto handle     = loop.get_tcp();
+  auto handle     = loop.get_loop();
   auto tcp_client = TcpClientHandle(ip, port, handle);
   tcp_client.setup();
   tcp_client.start();
@@ -58,6 +59,6 @@ TEST_F(TcpClientHandleTest, sendMessage)
   tcp_client.queue_data("test-12");
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-  loop.stop();
   tcp_client.close();
+  loop.stop();
 }

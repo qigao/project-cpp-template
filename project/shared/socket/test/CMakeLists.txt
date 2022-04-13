@@ -30,7 +30,7 @@ foreach(TEST_CASE ${TEST_CASES})
   target_include_directories(
     ${TEST_CASE}
     PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-    PRIVATE ${SHARED_DIR}/utils
+    PRIVATE ${SHARED_DIR}
 
     # Any other extra include required
   )

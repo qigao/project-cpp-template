@@ -27,6 +27,10 @@ This repository aims to represent a template for Modern C++ projects, including 
 * BUILD_SHARED_LIBS - enables or disables the generation of shared libraries
 * BUILD_WITH_MT - valid only for MSVC, builds libraries as MultiThreaded DLL
 * BUILD_WITH_QT6 - enables or disables the generation of qt6 widgets&qml style application demo
+* CODE_COVERAGE - enables or disables the generation of code coverage
+* USE_SANITIZER - enables or disables the generation of code coverage, could be Address,Leak,Memory,Thread,Undefined
+
+
 
 == Add third party libs
 

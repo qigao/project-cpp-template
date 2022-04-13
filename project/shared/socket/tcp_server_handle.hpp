@@ -1,7 +1,7 @@
 #ifndef __SERVER_H__
 #define __SERVER_H__
 
-#include "socket/base_queue.hpp"
+#include "base_queue.hpp"
 #include "typedef.h"
 #include <cassert>
 #include <iostream>
@@ -14,17 +14,17 @@ class TcpServerHandle : public BaseQueue
 {
 private:
   /* data */
-  tcp_handle   m_handle;
-  std::string  m_ip;
-  int          m_port;
+  tcp_handle  m_handle;
+  std::string m_ip;
+  int         m_port;
 
 public:
   /**---------------------------------------------------------------------------
    **                             public method
    *
    *----------------------------------------------------------------------------**/
-  TcpServerHandle(std::string &ip, int port, tcp_handle &handle)
-    : m_handle(handle),//
+  TcpServerHandle(std::string &ip, int port, shared_loop &loop)
+    : m_handle(loop->resource<uvw::TCPHandle>()),//
       m_ip(ip), m_port(port)
   {}
   ~TcpServerHandle() {}
