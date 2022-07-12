@@ -1,4 +1,6 @@
 if(BUILD_TESTING)
   add_subdirectory(utils/test)
   add_subdirectory(socket/test)
+  add_subdirectory(csv_reader/test)
 endif()
+   add_subdirectory(http_parser)

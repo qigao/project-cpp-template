@@ -12,9 +12,5 @@ include(${CMAKE_SOURCE_DIR}/cmake/git_info.cmake)
 # ##############################################################################
 # Define Targets
 # ##############################################################################
-if (BUILD_BENCHMARKS)
-  add_subdirectory(benchmarks)
-endif ()
-
 add_subdirectory(examples)
 add_subdirectory(shared)
