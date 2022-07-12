@@ -1,8 +1,5 @@
 #include "singleton.hpp"
 #include <benchmark/benchmark.h>
-#include <chrono>
-#include <future>
-#include <iostream>
 #include <string>
 class SingletonDemo : public Singleton<SingletonDemo>
 {

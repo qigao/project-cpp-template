@@ -14,7 +14,7 @@ cmake_policy(SET CMP0091 NEW)
 # Define the Project Name and Description
 project(
   moderncpp-project
-  LANGUAGES CXX
+  LANGUAGES CXX C
   DESCRIPTION "moderncpp-project for Modern C++")
 
 # Set additional project information
@@ -70,12 +70,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 # ##############################################################################
 # Define Options
 # ##############################################################################
-option(BUILD_TESTING "Build tests" OFF)
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(BUILD_TESTING "Build tests" ON)
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_WITH_MT "Build libraries as MultiThreaded DLL (Windows Only)" OFF)
 option(BUILD_WITH_DOCS "Build documentation" OFF)
 option(BUILD_WITH_QT6 "Build QT6 examples" OFF)
-option(BUILD_BENCHMARKS "Build benchmarks" OFF)
+option(BUILD_BENCHMARKS "Build benchmarks" ON)
 
 # vcpkg config
 set(VCPKG_TARGET_ARCHITECTURE x64)
@@ -98,7 +98,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/sanitizers.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/code_coverage.cmake)
-
+include(${CMAKE_SOURCE_DIR}/cmake/ragel.cmake)
 # ##############################################################################
 # Source Directories
 # ##############################################################################

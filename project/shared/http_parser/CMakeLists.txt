@@ -1,0 +1,7 @@
+if (BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks/http_parser_ragel)
+    add_subdirectory(benchmarks/http_parser_nodejs)
+ endif ()
+if(BUILD_TESTING)
+   add_subdirectory(test)
+endif()
