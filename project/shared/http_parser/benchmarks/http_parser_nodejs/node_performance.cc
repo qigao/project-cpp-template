@@ -1,6 +1,6 @@
+#include "test_defines.h"
+#include <benchmark/benchmark.h>
 #include <string>
-#include "defines.h"
- #include <benchmark/benchmark.h>
 
 static void NODEJS_HTTP(benchmark::State &state){
   http_parser_settings settings_null = {};

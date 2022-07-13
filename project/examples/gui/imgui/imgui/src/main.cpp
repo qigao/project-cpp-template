@@ -23,8 +23,7 @@
 // that is adequate for your version of Visual Studio.
 static const int width  = 1280;
 static const int height = 720;
-#if defined(_MSC_VER) && (_MSC_VER >= 1900) \
-  && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
+#if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
@@ -63,8 +62,8 @@ int main(int, char **)
 #endif
 
   // Create window with graphics context
-  GLFWwindow *window = glfwCreateWindow(
-    width, height, "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+  GLFWwindow *window =
+    glfwCreateWindow(width, height, "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
   if (window == nullptr) return 1;
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);// Enable vsync
@@ -153,16 +152,12 @@ int main(int, char **)
         &show_demo_window);// Edit bools storing our window open/close state
       ImGui::Checkbox("Another Window", &show_another_window);
 
-      ImGui::SliderFloat("float",
-        &f,
-        0.0f,
+      ImGui::SliderFloat("float", &f, 0.0f,
         1.0f);// Edit 1 float using a slider from 0.0f to 1.0f
       ImGui::ColorEdit3("clear color",
-        reinterpret_cast<float *>(
-          &clear_color));// Edit 3 floats representing a color
+        reinterpret_cast<float *>(&clear_color));// Edit 3 floats representing a color
 
-      if (ImGui::Button(
-            "Button")) {// Buttons return true when clicked (most widgets
+      if (ImGui::Button("Button")) {// Buttons return true when clicked (most widgets
         // return true when edited/activated)
         counter++;
       }

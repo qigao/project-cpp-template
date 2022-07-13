@@ -10,6 +10,7 @@ gtest/1.11.0
 
 # serialization
 flatbuffers/2.0.0
+protobuf/3.21.1
 
 # Tasks and Events
 sigslot/1.2.1
