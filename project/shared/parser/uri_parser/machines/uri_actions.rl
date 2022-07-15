@@ -1,8 +1,8 @@
 
-#include "uri_func.h"
-#include "uri_parser.h"
+#include "URIParser.h"
+#include "uri_values.h"
 #include <iostream>
-#include  <string>
+#include <string>
 /*
  * capitalizes all lower-case ASCII characters,
  * converts dashes to underscores.

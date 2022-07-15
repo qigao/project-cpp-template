@@ -1,11 +1,10 @@
-set(TARGET_NAME uri_benchmark)
-find_program(RAGEL 6.10)
-RAGEL_TARGET(URI ../uri_parser.rl ${CMAKE_CURRENT_BINARY_DIR}/uri_parser.cpp)
+set(TARGET_NAME URIParser_benchmark)
+
 file(GLOB TARGET_SOURCES *.cpp)
 file(GLOB TARGET_HEADERS ../*.h)
 
-add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${TARGET_HEADERS} ${RAGEL_URI_OUTPUTS} uri_main.cpp)
-target_link_libraries(${TARGET_NAME} benchmark::benchmark)
+add_executable(${TARGET_NAME} ${TARGET_SOURCES} ${TARGET_HEADERS})
+target_link_libraries(${TARGET_NAME} benchmark::benchmark URIParser)
 
 # add target properties such as debug postfix, MSVC Runtime and library version
 set_target_properties(
@@ -31,9 +30,8 @@ target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
 target_include_directories(${TARGET_NAME}
     PRIVATE
 	    ${PROJECT_BINARY_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../
         ${CMAKE_CURRENT_BINARY_DIR}
-		../
     PUBLIC
 	    ${DEFAULT_INCLUDE_DIRECTORIES}
 )

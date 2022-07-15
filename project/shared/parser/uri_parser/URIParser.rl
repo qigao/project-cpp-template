@@ -1,5 +1,7 @@
-#include "uri_parser.h"
-
+#include "URIParser.h"
+#include "uri_values.h"
+#include <string>
+namespace Parser {
 %%{
   machine m_uri;
   include actions "machines/uri_actions.rl";
@@ -13,18 +15,18 @@
 }%%
 
   /* -------------------------------------------------------------------------- */
-  /*                         class uri_parser implement                         */
+  /*                         class URIParser implement                         */
   /* -------------------------------------------------------------------------- */
 
-uri_parser::uri_parser() : cs(0),nread(0), mark(0)
+URIParser::URIParser() : cs(0),nread(0), mark(0)
 {
   %% write init;
 }
-bool uri_parser::is_finished() { return cs == m_uri_first_final; }
+bool URIParser::is_finished() { return cs == m_uri_first_final; }
 
-bool uri_parser::has_error() { return cs == m_uri_error; }
+bool URIParser::has_error() { return cs == m_uri_error; }
 
-size_t uri_parser::execute(char *buffer, size_t len, size_t off, NamedValues &named_values)
+size_t URIParser::execute(char *buffer, size_t len, size_t off, NamedValues &named_values)
 {
   assert(off <= len && "offset past end of buffer");
 
@@ -43,3 +45,4 @@ size_t uri_parser::execute(char *buffer, size_t len, size_t off, NamedValues &na
   assert(mark < len && "mark is after buffer end");
   return (nread);
 }
+}// namespace Parser

@@ -1,12 +1,15 @@
 #ifndef URI_PARSER_H
 #define URI_PARSER_H
-#include "uri_func.h"
+#include "URIParser_export.h"
+#include "uri_values.h"
 #include <cassert>
 #include <map>
 #include <memory>
 #include <string>
 
-class uri_parser
+namespace Parser {
+
+class URIPARSER_EXPORT URIParser
 {
 private:
   int       cs;
@@ -14,7 +17,7 @@ private:
   ptrdiff_t mark;
 
 public:
-  uri_parser();
+  URIParser();
 
   /**
    * @brief parse the given data
@@ -59,4 +62,5 @@ public:
     }
   }
 };
+}// namespace Parser
 #endif /* URI_PARSER_H */
