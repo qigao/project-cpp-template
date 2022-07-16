@@ -1,4 +1,4 @@
-#include "defines.h"
+#include "test_defines.h"
 #include <gtest/gtest.h>
 #include <string>
 TEST(ParserPerformance, ragel_dump)
@@ -16,7 +16,6 @@ TEST(ParserPerformance, ragel_dump)
   http_parser_init(&parser, HTTP_REQUEST);
 
   ASSERT_EQ(kMessage.size(),
-    http_parser_execute(
-      &parser, &settings_dump, kMessage.c_str(), kMessage.size()));
+    http_parser_execute(&parser, &settings_dump, kMessage.c_str(), kMessage.size()));
   printf("method: %s\n", http_method_str((http_method)parser.method));
 }

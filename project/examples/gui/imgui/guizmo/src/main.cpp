@@ -361,7 +361,7 @@ int main(int, char **)
 
   ImVec4 clear_color    = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
   float  cameraView[16] = {
-    1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f
+     1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f
   };
 
   float cameraProjection[16];
@@ -408,7 +408,6 @@ int main(int, char **)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
 
     ImGuiIO &io = ImGui::GetIO();
     if (isPerspective) {

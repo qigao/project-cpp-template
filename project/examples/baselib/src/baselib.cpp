@@ -17,11 +17,10 @@ void printInfo()
   std::cout << "Connecting to " << last_endpoint << std::endl;
   sock2.connect(last_endpoint);
 
-  std::array<zmq::const_buffer, 2> send_msgs = { zmq::str_buffer("foo"),
-    zmq::str_buffer("bar!") };
+  std::array<zmq::const_buffer, 2> send_msgs = { zmq::str_buffer("foo"), zmq::str_buffer("bar!") };
   if (!zmq::send_multipart(sock1, send_msgs)) return;
   std::vector<zmq::message_t> recv_msgs;
-  const auto ret = zmq::recv_multipart(sock2, std::back_inserter(recv_msgs));
+  const auto                  ret = zmq::recv_multipart(sock2, std::back_inserter(recv_msgs));
   if (!ret) return;
   std::cout << "Got " << *ret << " messages" << std::endl;
   std::string dataPath = "data";

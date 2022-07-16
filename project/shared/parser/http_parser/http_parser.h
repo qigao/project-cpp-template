@@ -1,23 +1,4 @@
-/* Copyright Joyent, Inc. and other Node contributors. All rights reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- */
+
 #ifndef _HTTP_PARSER_H
 #define _HTTP_PARSER_H
 
@@ -26,8 +7,8 @@ extern "C" {
 #endif
 
 #include <sys/types.h>
-#if defined(_WIN32) && !defined(__MINGW32__) \
-  && (!defined(_MSC_VER) || _MSC_VER < 1600) && !defined(__WINE__)
+#if defined(_WIN32) && !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER < 1600) \
+  && !defined(__WINE__)
 #include <BaseTsd.h>
 #include <stddef.h>
 typedef __int8           int8_t;
@@ -202,45 +183,44 @@ enum flags {
  *
  * The provided argument should be a macro that takes 2 arguments.
  */
-#define HTTP_ERRNO_MAP(XX)                                                 \
-  /* No error */                                                           \
-  XX(OK, "success")                                                        \
-                                                                           \
-  /* Callback-related errors */                                            \
-  XX(CB_message_begin, "the on_message_begin callback failed")             \
-  XX(CB_url, "the on_url callback failed")                                 \
-  XX(CB_header_field, "the on_header_field callback failed")               \
-  XX(CB_header_value, "the on_header_value callback failed")               \
-  XX(CB_headers_complete, "the on_headers_complete callback failed")       \
-  XX(CB_body, "the on_body callback failed")                               \
-  XX(CB_message_complete, "the on_message_complete callback failed")       \
-  XX(CB_status, "the on_status callback failed")                           \
-  XX(CB_chunk_header, "the on_chunk_header callback failed")               \
-  XX(CB_chunk_complete, "the on_chunk_complete callback failed")           \
-                                                                           \
-  /* Parsing-related errors */                                             \
-  XX(INVALID_EOF_STATE, "stream ended at an unexpected time")              \
-  XX(HEADER_OVERFLOW, "too many header bytes seen; overflow detected")     \
-  XX(CLOSED_CONNECTION,                                                    \
-    "data received after completed connection: close message")             \
-  XX(INVALID_VERSION, "invalid HTTP version")                              \
-  XX(INVALID_STATUS, "invalid HTTP status code")                           \
-  XX(INVALID_METHOD, "invalid HTTP method")                                \
-  XX(INVALID_URL, "invalid URL")                                           \
-  XX(INVALID_HOST, "invalid host")                                         \
-  XX(INVALID_PORT, "invalid port")                                         \
-  XX(INVALID_PATH, "invalid path")                                         \
-  XX(INVALID_QUERY_STRING, "invalid query string")                         \
-  XX(INVALID_FRAGMENT, "invalid fragment")                                 \
-  XX(LF_EXPECTED, "LF character expected")                                 \
-  XX(INVALID_HEADER_TOKEN, "invalid character in header")                  \
-  XX(INVALID_CONTENT_LENGTH, "invalid character in content-length header") \
-  XX(UNEXPECTED_CONTENT_LENGTH, "unexpected content-length header")        \
-  XX(INVALID_CHUNK_SIZE, "invalid character in chunk size header")         \
-  XX(INVALID_CONSTANT, "invalid constant string")                          \
-  XX(INVALID_INTERNAL_STATE, "encountered unexpected internal state")      \
-  XX(STRICT, "strict mode assertion failed")                               \
-  XX(PAUSED, "parser is paused")                                           \
+#define HTTP_ERRNO_MAP(XX)                                                         \
+  /* No error */                                                                   \
+  XX(OK, "success")                                                                \
+                                                                                   \
+  /* Callback-related errors */                                                    \
+  XX(CB_message_begin, "the on_message_begin callback failed")                     \
+  XX(CB_url, "the on_url callback failed")                                         \
+  XX(CB_header_field, "the on_header_field callback failed")                       \
+  XX(CB_header_value, "the on_header_value callback failed")                       \
+  XX(CB_headers_complete, "the on_headers_complete callback failed")               \
+  XX(CB_body, "the on_body callback failed")                                       \
+  XX(CB_message_complete, "the on_message_complete callback failed")               \
+  XX(CB_status, "the on_status callback failed")                                   \
+  XX(CB_chunk_header, "the on_chunk_header callback failed")                       \
+  XX(CB_chunk_complete, "the on_chunk_complete callback failed")                   \
+                                                                                   \
+  /* Parsing-related errors */                                                     \
+  XX(INVALID_EOF_STATE, "stream ended at an unexpected time")                      \
+  XX(HEADER_OVERFLOW, "too many header bytes seen; overflow detected")             \
+  XX(CLOSED_CONNECTION, "data received after completed connection: close message") \
+  XX(INVALID_VERSION, "invalid HTTP version")                                      \
+  XX(INVALID_STATUS, "invalid HTTP status code")                                   \
+  XX(INVALID_METHOD, "invalid HTTP method")                                        \
+  XX(INVALID_URL, "invalid URL")                                                   \
+  XX(INVALID_HOST, "invalid host")                                                 \
+  XX(INVALID_PORT, "invalid port")                                                 \
+  XX(INVALID_PATH, "invalid path")                                                 \
+  XX(INVALID_QUERY_STRING, "invalid query string")                                 \
+  XX(INVALID_FRAGMENT, "invalid fragment")                                         \
+  XX(LF_EXPECTED, "LF character expected")                                         \
+  XX(INVALID_HEADER_TOKEN, "invalid character in header")                          \
+  XX(INVALID_CONTENT_LENGTH, "invalid character in content-length header")         \
+  XX(UNEXPECTED_CONTENT_LENGTH, "unexpected content-length header")                \
+  XX(INVALID_CHUNK_SIZE, "invalid character in chunk size header")                 \
+  XX(INVALID_CONSTANT, "invalid constant string")                                  \
+  XX(INVALID_INTERNAL_STATE, "encountered unexpected internal state")              \
+  XX(STRICT, "strict mode assertion failed")                                       \
+  XX(PAUSED, "parser is paused")                                                   \
   XX(UNKNOWN, "an unknown error occurred")
 
 /* Define HPE_* values for each errno value above */
