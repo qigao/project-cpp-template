@@ -14,7 +14,7 @@ TEST(URIParser, ExampleURI)
 
   auto parser  = std::make_unique<URIParser>();
   auto sip_uri = std::string("http://foo@example.com:81/a/b/c?x=7&y=11#hola");
-  parser->execute(sip_uri.data(), sip_uri.length(), 0, values);
+  parser->execute(&sip_uri[0], sip_uri.length(), 0, values);
   EXPECT_THAT(values,
     UnorderedElementsAre(Pair("schema", "http"),
       Pair("host", "example.com"),

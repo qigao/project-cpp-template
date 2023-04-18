@@ -3,7 +3,7 @@ RAGEL_TARGET(HTTP_MACHINE ../http_parser.rl ${CMAKE_CURRENT_BINARY_DIR}/http_par
 file(GLOB TARGET_SOURCES *.cpp)
 file(GLOB TARGET_HEADERS ../gtest_helper/*.h)
 foreach (TARGET ${TARGET_SOURCES})
-    #cmake_path(GET TARGET STEM MYFILE_WITHOUT_EXT)
+    cmake_path(GET TARGET STEM MYFILE_WITHOUT_EXT)
     list(APPEND TEST_CASES ${MYFILE_WITHOUT_EXT})
 endforeach ()
 
