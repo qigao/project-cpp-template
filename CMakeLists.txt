@@ -50,7 +50,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 # Define installation folder and the module path (used by conan)
-set(PKG_INSTALL_PREFIX ${PROJECT_BINARY_DIR})
+set(PKG_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 set(CMAKE_MODULE_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_MODULE_PATH})
 set(CMAKE_PREFIX_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_PREFIX_PATH})
 
@@ -87,7 +87,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/clang_format.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
-#include(${CMAKE_SOURCE_DIR}/cmake/sanitizers.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/sanitizers.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/code_coverage.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/ragel.cmake)
 # ##############################################################################

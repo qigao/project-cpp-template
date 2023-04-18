@@ -13,7 +13,7 @@ flatbuffers/23.1.21
 protobuf/3.21.9
 
 # Tools
-benchmark/1.6.0
+benchmark/1.7.1
 concurrentqueue/1.0.3
 readerwriterqueue/1.0.6
 
