@@ -8,7 +8,7 @@ meshoptimizer/0.17
 
 
 [generators]
-cmake_find_package
+CMakeDeps
 
 [options]
 

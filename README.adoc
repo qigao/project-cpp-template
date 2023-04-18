@@ -35,6 +35,12 @@ This repository aims to represent a template for Modern C++ projects, including 
 == Add third party libs
 
 update conanfile.txt from project root
+[source,shell]
+----
+conan install -s compiler.cppstd=14 -s compiler.version=7.3 --build=missing  -of build  packages/base.txt
+~/vcpkg/vcpkg install --triplet x64-linux  $(jq -r '.dependencies | @tsv' packages/vcpkg.json) --x-install-root=/home/qigao/projects/project-cpp-template/build/
+
+----
 
 == How to build from command line
 

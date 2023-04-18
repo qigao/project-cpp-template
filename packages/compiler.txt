@@ -1,0 +1,17 @@
+[requires]
+ 
+# compiler
+bison/3.5.3
+yasm/1.3.0
+
+[generators]
+CMakeDeps
+
+[options]
+
+
+[imports]
+"bin, ragel* -> ./bin"
+"bin, *yasm* -> ./bin"
+"bin, bison* -> ./bin/bison/bin"
+"bin, yasm* -> ./bin"

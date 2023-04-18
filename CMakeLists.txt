@@ -3,8 +3,6 @@
 # ##############################################################################
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
-set(VCPKG_MANIFEST_DIR ${CMAKE_SOURCE_DIR}/packages/)
-
 # Enables the Visibility Property on all target types
 cmake_policy(SET CMP0063 NEW)
 
@@ -34,7 +32,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 # Set required C++ Standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
@@ -52,7 +50,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 # Define installation folder and the module path (used by conan)
-set(PKG_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/pkgs)
+set(PKG_INSTALL_PREFIX ${PROJECT_BINARY_DIR})
 set(CMAKE_MODULE_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_MODULE_PATH})
 set(CMAKE_PREFIX_PATH ${PKG_INSTALL_PREFIX} ${CMAKE_PREFIX_PATH})
 
@@ -75,15 +73,9 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_WITH_MT "Build libraries as MultiThreaded DLL (Windows Only)" OFF)
 option(BUILD_WITH_DOCS "Build documentation" OFF)
 option(BUILD_WITH_QT6 "Build QT6 examples" OFF)
+option(BUILD_WITH_IMGUI "Build Imgui examples" OFF)
 option(BUILD_BENCHMARKS "Build benchmarks" ON)
 
-# vcpkg config
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
-
-if(BUILD_SHARED_LIBS)
-  set(VCPKG_LIBRARY_LINKAGE dynamic)
-endif()
 
 # ##############################################################################
 # Define CMake Module Imports
@@ -94,9 +86,8 @@ include(GenerateExportHeader)
 include(${CMAKE_SOURCE_DIR}/cmake/clang_format.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/conan.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/sanitizers.cmake)
+#include(${CMAKE_SOURCE_DIR}/cmake/sanitizers.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/code_coverage.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/ragel.cmake)
 # ##############################################################################
