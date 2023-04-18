@@ -1,5 +1,4 @@
 find_package(cppzmq REQUIRED)
-
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
@@ -70,6 +69,7 @@ target_include_directories(
 
 target_link_libraries(${TARGET_NAME}
   PUBLIC
+  benchmark::benchmark
   cppzmq)
 
 # ##############################################################################

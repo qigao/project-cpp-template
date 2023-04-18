@@ -3,7 +3,7 @@ file(GLOB TARGET_SOURCES *.cpp)
 file(GLOB TARGET_HEADERS ../include/*.h ../include/*.hpp)
 
 foreach(TARGET ${TARGET_SOURCES})
-  cmake_path(GET TARGET STEM MYFILE_WITHOUT_EXT)
+ # cmake_path(GET TARGET STEM MYFILE_WITHOUT_EXT)
   list(APPEND TEST_CASES ${MYFILE_WITHOUT_EXT})
 endforeach()
 

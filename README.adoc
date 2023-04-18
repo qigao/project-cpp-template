@@ -34,7 +34,16 @@ This repository aims to represent a template for Modern C++ projects, including 
 
 == Add third party libs
 
-update conanfile.txt from project root
+conan package build type should be defined in conan profile, such as Release/Debug
+default is Release, cmake must be built by Release too.
+[source,shell]
+----
+$ pip install conan
+$ conan profile detect
+$ conan install  --build=missing  -of build  packages/base.txt
+$ ~/vcpkg/vcpkg install --triplet x64-linux  $(jq -r '.dependencies | @tsv' packages/vcpkg.json) --x-install-root=/home/qigao/projects/project-cpp-template/build/
+
+----
 
 == How to build from command line
 
