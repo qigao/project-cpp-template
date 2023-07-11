@@ -14,3 +14,4 @@ include(${CMAKE_SOURCE_DIR}/cmake/git_info.cmake)
 # ##############################################################################
 add_subdirectory(examples)
 add_subdirectory(shared)
+ 

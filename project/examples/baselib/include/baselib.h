@@ -12,4 +12,4 @@ namespace baselib {
  */
 BASELIB_EXPORT void printInfo();
 
-}// namespace baselib
+}  // namespace baselib

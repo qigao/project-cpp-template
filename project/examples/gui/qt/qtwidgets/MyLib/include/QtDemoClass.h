@@ -1,17 +1,17 @@
 #pragma once
-#include "QtDemoLib_export.h"
 #include <QString>
+#include "QtDemoLib_export.h"
+
 namespace app {
 
-class QTDEMOLIB_EXPORT QtDemoClass
-{
+class QTDEMOLIB_EXPORT QtDemoClass {
   QString _text;
 
-public:
+ public:
   explicit QtDemoClass(QString text);
 
-  QString appendIt(const QString &extra) const;
+  QString appendIt(const QString& extra) const;
   QString text() const;
 };
 
-}// namespace app
+}  // namespace app
