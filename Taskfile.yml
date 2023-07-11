@@ -1,0 +1,45 @@
+version: "3"
+env:
+  CONFIG: '{{.CONFIG | default "Debug"}}'
+tasks:
+  default:
+    cmds:
+      - task -l
+  conan:all:
+    cmds:
+      - task conan:base
+      - task conan:marshall
+      - task conan:opengl
+      - task conan:compiler
+      - task conan:networking
+  conan:base:
+    cmds:
+      - conan install packages/base.txt -of build/pkg --build=missing -s build_type={{.CONFIG}}
+
+  conan:marshall:
+    cmds:
+      - conan install packages/marshall.txt -of build/pkg --build=missing -s build_type={{.CONFIG}}
+
+  conan:opengl:
+    cmds:
+      - conan install packages/opengl.txt -of build/pkg --build=missing -s build_type={{.CONFIG}}
+
+  conan:compiler:
+    cmds:
+      - conan install packages/compiler.txt -of build/pkg --build=missing -s build_type={{.CONFIG}}
+
+  conan:networking:
+    cmds:
+      - conan install packages/networking.txt -of build/pkg --build=missing -s build_type={{.CONFIG}}
+
+  cmake:gen:
+    cmds:
+      - cmake -S . -B build -DCMAKE_BUILD_TYPE={{.CONFIG}} -G "Ninja" 
+    deps:
+      - conan:base
+      - conan:marshall
+      - conan:networking
+
+  cmake:clean:
+    cmds:
+      - rm -fr build

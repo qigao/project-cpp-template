@@ -1,0 +1,16 @@
+[requires]
+
+# serialization
+flatbuffers/23.1.21
+protobuf/3.21.9
+yaml-cpp/0.7.0
+jsoncpp/1.9.5
+
+[generators]
+CMakeDeps
+
+[options]
+
+
+ 
+ 

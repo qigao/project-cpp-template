@@ -6,4 +6,4 @@
 
 using NamedValues = std::multimap<std::string, std::string>;
 
-#endif// __URI_FUNC_H__
+#endif  // __URI_FUNC_H__

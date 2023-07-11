@@ -1,22 +1,21 @@
 #ifndef URI_PARSER_H
 #define URI_PARSER_H
-#include "URIParser_export.h"
-#include "uri_values.h"
 #include <cassert>
 #include <map>
 #include <memory>
 #include <string>
+#include "URIParser_export.h"
+#include "uri_values.h"
 
 namespace Parser {
 
-class URIPARSER_EXPORT URIParser
-{
-private:
-  int       cs;
-  size_t    nread;
+class URIPARSER_EXPORT URIParser {
+ private:
+  int cs;
+  size_t nread;
   ptrdiff_t mark;
 
-public:
+ public:
   URIParser();
 
   /**
@@ -28,7 +27,8 @@ public:
    * @param values
    * @return size_t
    */
-  size_t execute(char *buffer, size_t len, size_t off, NamedValues &named_values);
+  size_t execute(char* buffer, size_t len, size_t off,
+                 NamedValues& named_values);
 
   /**
    * @brief parse error occured
@@ -51,8 +51,7 @@ public:
    *
    * @return int  -1: has error, 1: finished; 0: not finished
    */
-  int finished()
-  {
+  int finished() {
     if (has_error()) {
       return -1;
     } else if (is_finished()) {
@@ -62,5 +61,5 @@ public:
     }
   }
 };
-}// namespace Parser
+}  // namespace Parser
 #endif /* URI_PARSER_H */

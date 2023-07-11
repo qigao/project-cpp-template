@@ -3,13 +3,8 @@
 # Networking
 cpp-httplib/0.10.4
 cppzmq/4.9.0
+c-ares/1.17.2
 
 [generators]
 CMakeDeps
-
-
-[options]
-
-
-[imports]
-
+ 
