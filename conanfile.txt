@@ -1,0 +1,60 @@
+# Docs at https://docs.conan.io/en/latest/reference/conanfile_txt.html
+
+[requires]
+docopt.cpp/0.6.3
+cxxopts/3.2.0
+cpp-httplib/0.10.4
+uvw/2.12.1
+
+# Basic libs
+spdlog/1.9.2
+openssl/3.2.1
+
+# Test
+gtest/1.14.0
+
+# serialization
+protobuf/3.21.12
+
+# Tasks and Events
+sigslot/1.2.1
+taskflow/3.3.0
+
+# Tools
+easy_profiler/2.1.0
+benchmark/1.8.4
+concurrentqueue/1.0.3
+readerwriterqueue/1.0.6
+
+# compiler
+bison/3.8.2
+c-ares/1.28.1
+libiconv/1.15
+ragel/6.10
+yasm/1.3.0
+lemon/3.32.3
+
+# OpenGL
+glfw/3.3.6
+imgui/1.87
+glm/0.9.9.8
+meshoptimizer/0.17
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
+
+[imports]
+./res/bindings,imgui_impl_glfw.cpp -> ../bindings
+./res/bindings,imgui_impl_opengl3.cpp -> ../bindings
+./res/bindings,imgui_impl_glfw.h -> ../bindings
+./res/bindings,imgui_impl_opengl3.h -> ../bindings
+./res/bindings,imgui_impl_opengl3_loader.h -> ../bindings
+"bin, ragel* -> ./bin"
+"bin, *yasm* -> ./bin"
+"bin, bison* -> ./bin/bison/bin"
+"bin, ragel* -> ./bin"
+"bin, ytasm* -> ./bin"
