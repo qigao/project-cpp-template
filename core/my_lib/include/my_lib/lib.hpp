@@ -2,6 +2,4 @@
 
 int some_fun();
 
-constexpr int some_constexpr_fun() {
-  return 0;
-}
+constexpr int some_constexpr_fun() { return 0; }

@@ -1,14 +1,12 @@
 version: 3
 
 includes:
-  cpp_core_project: 
+  cpp_core_project:
     taskfile: ./core/Taskfile.yml
     optional: true
     dir: ./core
     vars:
-  docs:
-    taskfile: ./docs/Taskfile.yml
-    dir: ./docs
+
 
 vars:
   CMAKE_GENERATOR: "Ninja Multi-Config"
@@ -17,44 +15,23 @@ vars:
 
 tasks:
   test:
-    - task: myproj:test
+    - task: myproj:test.all
     - task: myproj:test.release
     - task: install
 
-  lint.cspell: npx -y cspell lint --no-progress --show-suggestions
-  lint.vcpkg:
-    cmds:
-      - cmd: ~/vcpkg/vcpkg format-manifest ./vcpkg.json
-
   lint:
     deps:
-      - lint.vcpkg
+      - task: cpp_core_project:lint::all
     cmds:
-      - task: cpp_core_project:lint 
+      - ~/vcpkg/vcpkg format-manifest ./vcpkg.json
+      - npx -y cspell lint --no-progress --show-suggestions
 
   clean:
-    deps:
-      - myproj:clean
-      - install:clean
-      - minimal:clean
     cmds:
-      - cmd: powershell -c 'function rmrf($path) { if (test-path $path) { rm -r -force $path }}; rmrf ./install'
+      - cmd: powershell -c 'function rmrf($path) { if (test-path $path) { rm -r -force $path }}; rmrf ./build; rmrf ./install'
         platforms: [windows]
-      - cmd: rm -rf ./install
+      - cmd: rm -rf ./install ./build
         platforms: [linux, darwin]
 
-  docs:
-    deps:
-      - docs:docs
-  docs.preview:
-    deps:
-      - docs:docs.preview
-  docs.deploy:
-    deps:
-      - docs:docs.deploy
-      - docs:docs.deploy
-  config:
-    - cmake --preset=developer
-      - docs:docs.deploy 
   config:
     - cmake --preset=developer

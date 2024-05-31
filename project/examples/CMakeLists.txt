@@ -2,7 +2,7 @@
 # Define Targets
 # ##############################################################################
 ## dependencies
-set(DEPENDENCIES_CONFIGURED fmt cxxopts docopt)
+set(DEPENDENCIES_CONFIGURED fmt cxxopts)
 
 foreach(DEPENDENCY ${DEPENDENCIES_CONFIGURED})
   find_package(${DEPENDENCY} CONFIG REQUIRED)

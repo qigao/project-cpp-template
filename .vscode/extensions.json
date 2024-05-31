@@ -1,0 +1,24 @@
+{
+    "recommendations": [
+        "asciidoctor.asciidoctor-vscode",
+        "ms-vscode.cpptools",
+        "amiralizadeh9480.cpp-helper",
+        "tostc.vscl",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "twxs.cmake",
+        "yifei-zhang.cmake-test-tools",
+        "ms-vscode.cmake-tools",
+        "federandink.cpp-reference-and-documentation",
+        "editorconfig.editorconfig",
+        "mhutchie.git-graph",
+        "donjayamanne.githistory",
+        "codezombiech.gitignore",
+        "eamodio.gitlens",
+        "ionutvmi.path-autocomplete",
+        "mechatroner.rainbow-csv",
+        "task.vscode-task",
+        "gruntfuggly.todo-tree",
+        "aaron-bond.better-comments",
+        "ms-vscode-remote.remote-containers"
+    ]
+}

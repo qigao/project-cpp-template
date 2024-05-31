@@ -4,13 +4,14 @@
 
 #include "baselib.h"
 #include "hellolib.h"
-using namespace hello;
+
+static constexpr const int fixed_option_width = 100;
 int main(int argc, char **argv)
 {
   cxxopts::Options options("test", "A brief description");
   // clang-format off
   options
-    .set_width(70)
+    .set_width(fixed_option_width)
     .set_tab_expansion()
     .allow_unrecognised_options()
     .add_options()
@@ -20,29 +21,29 @@ int main(int argc, char **argv)
       ("h,help", "Print usage");
   // clang-format on
   auto  result    = options.parse(argc, argv);
-  auto &unmatched = result.unmatched();// get the unmatched arguments
-  if (unmatched.size() > 0) {
-    std::cout << "unmatched: " << unmatched.size() << std::endl;
-    for (auto &u : unmatched) { std::cout << u << std::endl; }
+  const auto &unmatched = result.unmatched();// get the unmatched arguments
+  if (!unmatched.empty()) {
+    std::cout << "unmatched: " << unmatched.size() << '\n';
+    for (auto &u : unmatched) { std::cout << u << '\n'; }
   }
   if (result.count("help") != 0U) {
-    std::cout << options.help() << std::endl;
+    std::cout << options.help() << '\n';
     return 0;
   }
   bool debug = result["debug"].as<bool>();
   if (debug) {
-    std::cout << "Debug mode is enabled" << std::endl;
+    std::cout << "Debug mode is enabled" << '\n';
     baselib::printInfo();
   }
   std::string bar;
   if (result.count("bar") != 0U) {
     bar = result["bar"].as<std::string>();
-    std::cout << "bar: " << bar << std::endl;
+    std::cout << "bar: " << bar << '\n';
   }
 
   int foo = result["foo"].as<int>();
-  std::cout << "foo: " << foo << std::endl;
-  hellolib hello{};
+  std::cout << "foo: " << foo << '\n';
+  hello::hellolib hello{};
   int32_t  error_code = hello.saySomething("Hello Modern C++ Development");
   if (error_code > 0) { return error_code; }
 #ifdef WITH_OPENSSL

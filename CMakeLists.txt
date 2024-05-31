@@ -20,31 +20,33 @@ endif()
 # install vcpkg dependencies: - should be called before defining project()
 run_vcpkg()
 run_conan()
-# Set the project name and language
-project(
-  cpp_vcpkg_project
-  DESCRIPTION "multi-module cpp project template for modern C++"
-  HOMEPAGE_URL "https://github.com/aminya/cpp_vcpkg_project"
-  LANGUAGES CXX C)
+
 # Set additional project information
-set(CMAKE_PROJECT_VERSION_MAJOR 1)
-set(CMAKE_PROJECT_VERSION_MINOR 0)
-set(CMAKE_PROJECT_VERSION_PATCH 0)
-set(CMAKE_PROJECT_VERSION
+file(READ "version.txt" ver)
+
+string(REGEX MATCH "VERSION_MAJOR ([0-9]*)" _ ${ver})
+set(CMAKE_PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
+
+string(REGEX MATCH "VERSION_MINOR ([0-9]*)" _ ${ver})
+set(CMAKE_PROJECT_VERSION_MINOR ${CMAKE_MATCH_1})
+
+string(REGEX MATCH "VERSION_PATCH ([0-9]*)" _ ${ver})
+set(CMAKE_PROJECT_VERSION_PATCH ${CMAKE_MATCH_1})
+
+set(PROJECT_VERSION
   ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
 )
-set(APPLICATION_COMPANY_NAME "DemoApp Research")
-set(APPLICATION_COMPANY_DOMAIN "github.com")
-set(APPLICATION_WEBSITE "https://github.com/qigao/cmake-template")
-set(APPLICATION_COPYRIGHT "Copyright Since 2016, Qi Gao")
+set(PROJECT_NAME "DemoApp Research")
+set(PROJECT_WEBSITE "https://github.com/qigao/cmake-template")
 set(APPLICATION_LICENSE "MIT License")
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-# Generate the compile_commands.json file
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-# Configure the visibility of symbols 
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+# Set the project name and language
+project(
+        cpp_core_project
+        VERSION ${PROJECT_VERSION}
+        DESCRIPTION "multi-module project template for modern C++"
+        HOMEPAGE_URL "https://github.com/qigao/project-cpp-template"
+        LANGUAGES CXX C)
 
 if(FEATURE_TESTS)
   # enable sanitizers and analyzers if running the tests
@@ -110,10 +112,13 @@ project_options(
 )
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
-include(gitversion)
+include(gitVersion)
+
 add_subdirectory(core)
 add_subdirectory(project)
-# set the startup project for the "play" button in MSVC
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT my_exe)
-include(install)
-include(PrintTargetInfo)
+
+# if(NOT CMAKE_SKIP_INSTALL_RULES)
+#   include(install)
+# endif()
+
+message("build info: ${PROJECT_NAME} ${PROJECT_VERSION}")

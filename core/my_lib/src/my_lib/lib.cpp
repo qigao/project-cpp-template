@@ -1,6 +1,7 @@
 #include <fmt/core.h>
 
-int some_fun() {
-  fmt::print("Hello {} !", "world");
-  return 0;
+int some_fun()
+{
+    fmt::print("Hello {} !", "world");
+    return 0;
 }

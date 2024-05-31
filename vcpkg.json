@@ -4,6 +4,7 @@
   "version-string": "0.1.0",
   "builtin-baseline": "10e052511428d6b0c7fcc63a139e8024bb146032",
   "dependencies": [
+    "cppzmq",
     {
       "name": "eigen3",
       "version>=": "3.4.0#2"
@@ -11,7 +12,9 @@
     {
       "name": "fmt",
       "version>=": "10.1.1"
-    },"range-v3", "tinyfiledialogs","cppzmq"
+    },
+    "range-v3",
+    "tinyfiledialogs"
   ],
   "features": {
     "tests": {

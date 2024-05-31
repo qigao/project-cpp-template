@@ -44,8 +44,7 @@ set_target_properties(
   ${TARGET_NAME}
   PROPERTIES DEBUG_POSTFIX "-d"
   MSVC_RUNTIME_LIBRARY "${MSVC_RUNTIME_TYPE}"
-  VERSION ${CMAKE_PROJECT_VERSION}
-  SOVERSION ${CMAKE_PROJECT_VERSION})
+  VERSION ${PROJECT_VERSION})
 
 # set target compile options as defined in the cmake/compiler_options.cmake
 # Module

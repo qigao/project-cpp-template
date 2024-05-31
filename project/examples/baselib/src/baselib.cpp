@@ -1,5 +1,5 @@
 
-#include "version.h"
+#include "gitversion.h"
 #include <baselib.h>
 #include <fstream>
 #include <iostream>
@@ -24,10 +24,10 @@ void printInfo()
   if (!ret) return;
   std::cout << "Got " << *ret << " messages" << std::endl;
   std::string dataPath = "data";
-  std::cout << "Version: " << PROJECT_VERSION << "\n"
-            << "Author: " << GIT_AUTHOR_NAME << "\n"
-            << "Branch: " << GIT_BRANCH << "\n"
-            << "Date: " << GIT_COMMIT_DATE_ISO8601 << "\n\n"
+  std::cout << "Version: " << GIT::PROJECT_VERSION << "\n"
+            << "Branch: " << GIT::BRANCH << "\n"
+            << "Name: " << GIT::PROJECT_NAME << "\n"
+            << "Website" << GIT::PROJECT_WEBSITE << "\n"
             << std::endl;
   // Library name
   std::cout << "Library template::baselib" << std::endl;

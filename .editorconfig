@@ -7,8 +7,8 @@ root = true
 [*]
 # Use spaces for indentation
 indent_style = space
-# Each indent should contain 2 spaces
-indent_size = 2
+# Each indent should contain 4 spaces
+indent_size = 4
 # Use Unix line endings
 end_of_line = lf
 # The files are utf-8 encoded
