@@ -1,22 +1,27 @@
-
 file(GLOB TARGET_SOURCES *.cpp)
-file(GLOB TARGET_HEADERS ../include/*.h ../include/*.hpp)
+file(
+  GLOB
+  TARGET_HEADERS
+  ../include/*.h
+  ../include/*.hpp)
 
 foreach(TARGET ${TARGET_SOURCES})
-  cmake_path(GET TARGET STEM MYFILE_WITHOUT_EXT)
+  cmake_path(
+    GET
+    TARGET
+    STEM
+    MYFILE_WITHOUT_EXT)
   list(APPEND TEST_CASES ${MYFILE_WITHOUT_EXT})
 endforeach()
 
 foreach(TEST_CASE ${TEST_CASES})
   add_executable(${TEST_CASE} ${TEST_CASE}.cpp ${TARGET_HEADERS})
-  target_link_libraries(${TEST_CASE}
+  target_link_libraries(
+    ${TEST_CASE}
     PUBLIC Threads::Threads
-    PRIVATE GTest::gmock_main hellolib
-  )
+    PRIVATE GTest::gmock_main hellolib)
   target_compile_options(${TEST_CASE} PRIVATE ${compiler_options})
-  target_compile_definitions(
-    ${TEST_CASE} PRIVATE ${compiler_definitions}
-  )
+  target_compile_definitions(${TEST_CASE} PRIVATE ${compiler_definitions})
 
   target_link_options(${TEST_CASE} PRIVATE ${linker_flags})
 
@@ -28,7 +33,6 @@ foreach(TEST_CASE ${TEST_CASES})
     ${TEST_CASE}
     PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
     PRIVATE ../include
-
     # Any other extra include required
   )
   include(GoogleTest)

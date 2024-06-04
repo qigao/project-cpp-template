@@ -1,20 +1,17 @@
 # Docs at https://docs.conan.io/en/latest/reference/conanfile_txt.html
 
 [requires]
-docopt.cpp/0.6.3
 cxxopts/3.2.0
-cpp-httplib/0.10.4
+cpp-httplib/0.15.3
 uvw/2.12.1
 
 # Basic libs
 spdlog/1.9.2
 openssl/3.2.1
 
-# Test
-gtest/1.14.0
-
 # serialization
 protobuf/3.21.12
+nlohmann_json/3.11.3
 
 # Tasks and Events
 sigslot/1.2.1

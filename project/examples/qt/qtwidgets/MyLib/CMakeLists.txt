@@ -29,8 +29,7 @@ endif()
 # ##############################################################################
 
 # generate an export header to expose symbols when using the library
-generate_export_header(${TARGET_NAME} EXPORT_FILE_NAME
-                       ${CMAKE_BINARY_DIR}/exports/${TARGET_NAME}_export.h)
+generate_export_header(${TARGET_NAME} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/${TARGET_NAME}_export.h)
 
 # add target properties such as debug postfix, MSVC Runtime and library version
 set_target_properties(
@@ -46,9 +45,8 @@ target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
 
 # add compiler definition WITH_OPENSSL, if found
 target_compile_definitions(
-  ${TARGET_NAME}
-  PRIVATE ${compiler_definitions} $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>
-          $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:${target_id}_STATIC_DEFINE>)
+  ${TARGET_NAME} PRIVATE ${compiler_definitions} $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>
+                         $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:${target_id}_STATIC_DEFINE>)
 
 # set target link options as defined in the cmake/compiler_options.cmake Module
 target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})

@@ -10,21 +10,25 @@
 
 #include <URI/File.hpp>
 
-namespace URI {
-UnitTest::Suite FileTestSuite{ "URI::File",
+namespace URI
+{
+UnitTest::Suite FileTestSuite{"URI::File",
 
-  { "it can construct file url from path",
-    [](UnitTest::Examiner &examiner) {
-      URI::File uri("foo/bar", false);
+                              {"it can construct file url from path",
+                               [](UnitTest::Examiner& examiner)
+                               {
+                                   URI::File uri("foo/bar", false);
 
-      examiner.expect(uri.scheme) == "file";
-      examiner.expect(uri.path) == "foo/bar";
-    } },
+                                   examiner.expect(uri.scheme) == "file";
+                                   examiner.expect(uri.path) == "foo/bar";
+                               }},
 
-  { "it can generate directory paths", [](UnitTest::Examiner &examiner) {
-     URI::File  uri("foo/bar", true);
+                              {"it can generate directory paths",
+                               [](UnitTest::Examiner& examiner)
+                               {
+                                   URI::File uri("foo/bar", true);
 
-     examiner.expect(uri.scheme) == "file";
-     examiner.expect(uri.path) == "foo/bar/";
-   } } };
+                                   examiner.expect(uri.scheme) == "file";
+                                   examiner.expect(uri.path) == "foo/bar/";
+                               }}};
 }

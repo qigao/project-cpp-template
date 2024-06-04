@@ -3,8 +3,7 @@
 # ##############################################################################
 set(TARGET_NAME qml-app)
 if(WIN32)
-  configure_file(${CMAKE_SOURCE_DIR}/project/application.rc.in
-                 "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
+  configure_file(${CMAKE_SOURCE_DIR}/project/application.rc.in "${CMAKE_CURRENT_BINARY_DIR}/application.rc")
   set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
 endif(WIN32)
 file(GLOB TARGET_HEADERS include/*.hpp)
@@ -26,19 +25,21 @@ source_group(
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
-qt_add_executable(${TARGET_NAME} ${TARGET_HEADERS} ${APPLICATION_RESOURCE}
-                  ${TARGET_SOURCES} ${QT_RESOURCES})
+qt_add_executable(
+  ${TARGET_NAME}
+  ${TARGET_HEADERS}
+  ${APPLICATION_RESOURCE}
+  ${TARGET_SOURCES}
+  ${QT_RESOURCES})
 
 # ##############################################################################
 # Define Target Properties
 # ##############################################################################
 
 # add target properties such as debug postfix and MSVC runtime
-set_target_properties(
-  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
-                                               "${MSVC_RUNTIME_TYPE}")
-set_target_properties(${TARGET_NAME} PROPERTIES QT_QML_MODULE_VERSION 1.0
-                                                QT_QML_MODULE_URI Qt6App)
+set_target_properties(${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
+                                                                   "${MSVC_RUNTIME_TYPE}")
+set_target_properties(${TARGET_NAME} PROPERTIES QT_QML_MODULE_VERSION 1.0 QT_QML_MODULE_URI Qt6App)
 # set target compile options as defined in the cmake/compiler_options.cmake
 # Module
 target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
@@ -57,8 +58,12 @@ endif()
 target_include_directories(${TARGET_NAME} PRIVATE ../plugins/fancy)
 
 # link the libraries
-target_link_libraries(${TARGET_NAME} PRIVATE Qt6::Qml Qt6::Quick fancy-plugin
-                                             fancy)
+target_link_libraries(
+  ${TARGET_NAME}
+  PRIVATE Qt6::Qml
+          Qt6::Quick
+          fancy-plugin
+          fancy)
 
 # ##############################################################################
 # Define Install Targets

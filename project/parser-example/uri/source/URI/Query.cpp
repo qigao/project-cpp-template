@@ -12,35 +12,40 @@
 
 #include <iostream>
 
-namespace URI {
-Query Query::operator+(const Query &other)
+namespace URI
 {
-  // Ensure neither side is empty:
-  if (empty()) return other;
-  if (other.empty()) return *this;
+Query Query::operator+(const Query& other)
+{
+    // Ensure neither side is empty:
+    if (empty())
+        return other;
+    if (other.empty())
+        return *this;
 
-  // Join them together:
-  return value + '&' + other.value;
+    // Join them together:
+    return value + '&' + other.value;
 }
 
 std::multimap<std::string, std::string> Query::to_map() const
 {
-  using namespace QueryParser;
+    using namespace QueryParser;
 
-  NamedValues named_values;
+    NamedValues named_values;
 
-  auto result =
-    parse((const Byte *)value.data(), (const Byte *)value.data() + value.size(), named_values);
+    auto result = parse((const Byte*)value.data(),
+                        (const Byte*)value.data() + value.size(), named_values);
 
-  if (result != value.size()) throw std::invalid_argument("could not parse entire query string");
+    if (result != value.size())
+        throw std::invalid_argument("could not parse entire query string");
 
-  return named_values;
+    return named_values;
 }
 
-std::ostream &operator<<(std::ostream &output, const Query &query)
+std::ostream& operator<<(std::ostream& output, const Query& query)
 {
-  if (query.empty()) return output;
+    if (query.empty())
+        return output;
 
-  return output << '?' << query.value;
+    return output << '?' << query.value;
 }
-}// namespace URI
+} // namespace URI

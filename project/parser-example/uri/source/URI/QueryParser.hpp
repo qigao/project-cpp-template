@@ -8,16 +8,17 @@
 
 #pragma once
 
-#include <string>
 #include <map>
+#include <string>
 
 namespace URI
 {
-	namespace QueryParser
-	{
-		using Byte = unsigned char;
-		using NamedValues = std::multimap<std::string, std::string>;
-		
-		std::size_t parse(const Byte * begin, const Byte * end, NamedValues & named_values);
-	}
-}
+namespace QueryParser
+{
+using Byte = unsigned char;
+using NamedValues = std::multimap<std::string, std::string>;
+
+std::size_t parse(const Byte* begin, const Byte* end,
+                  NamedValues& named_values);
+} // namespace QueryParser
+} // namespace URI

@@ -20,18 +20,16 @@ add_executable(${TARGET_NAME} ${TARGET_SOURCES})
 # ##############################################################################
 
 # add target properties such as debug postfix and MSVC runtime
-set_target_properties(
-  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
-  "${MSVC_RUNTIME_TYPE}")
+set_target_properties(${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
+                                                                   "${MSVC_RUNTIME_TYPE}")
 
 # set target compile options as defined in the cmake/compiler_options.cmake
 # Module
 target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
 
 # add compiler definition WITH_OPENSSL, if found
-target_compile_definitions(
-  ${TARGET_NAME} PRIVATE ${compiler_definitions}
-  $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>)
+target_compile_definitions(${TARGET_NAME} PRIVATE ${compiler_definitions}
+                                                  $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>)
 
 # set target link options as defined in the cmake/compiler_options.cmake Module
 target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
@@ -40,12 +38,9 @@ target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
 target_include_directories(
   ${TARGET_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-  PRIVATE ${TARGET_INCLUDE_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../hellolib/include
-
-  # Any other extra include required
-  ${CMAKE_CURRENT_SOURCE_DIR}/../baselib/include)
+  PRIVATE ${TARGET_INCLUDE_FOLDER} ${CMAKE_CURRENT_SOURCE_DIR}/../hellolib/include
+          # Any other extra include required
+          ${CMAKE_CURRENT_SOURCE_DIR}/../baselib/include)
 
 # link against hellolib
 target_link_libraries(${TARGET_NAME} PUBLIC hellolib baselib cxxopts::cxxopts)
-

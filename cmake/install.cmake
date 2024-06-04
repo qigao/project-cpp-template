@@ -1,4 +1,3 @@
-
 # the variables set using CACHE STRING "" are passed to package_project
 
 # Package the project

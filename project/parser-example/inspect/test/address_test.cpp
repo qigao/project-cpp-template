@@ -29,7 +29,6 @@
 
 class AddressTest : public testing::Test
 {
-
 };
 
 TEST_F(AddressTest, constructionFromColumnAndRow)

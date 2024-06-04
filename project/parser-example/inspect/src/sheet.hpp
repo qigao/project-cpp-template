@@ -23,7 +23,7 @@ public:
      *
      * @returns true if the Cell was previously set, false otherwise
      */
-    bool erase(const Address &);
+    bool erase(const Address&);
 
     /**
      * Retrieve the formula for a Cell identified by an address string, in
@@ -36,7 +36,7 @@ public:
      *
      * @returns a string containing the formula for a Cell.
      */
-    std::string getFormula(const Address &) const;
+    std::string getFormula(const Address&) const;
 
     /**
      * Retrieve the value of a Cell, identified by an address string, in string
@@ -49,7 +49,7 @@ public:
      *
      * @returns a string containing the value of the Cell
      */
-    std::string getValue(const Address &) const;
+    std::string getValue(const Address&) const;
 
     /**
      * Query a Cell, identified by an Address object, to see if it has been set.
@@ -58,7 +58,7 @@ public:
      *
      * @returns true if the Cell has been set, false otherwise.
      */
-    bool isSet(const Address & address) const;
+    bool isSet(const Address& address) const;
 
     /**
      * Print values of all cells
@@ -81,15 +81,14 @@ public:
      *
      * @returns true if cell updated successfully, false otherwise
      */
-    bool setFormula(const Address & address, const std::string & formula);
+    bool setFormula(const Address& address, const std::string& formula);
 
 private:
-
     /// Disabled copy constructor
-    Sheet(const Sheet &);
+    Sheet(const Sheet&);
 
     /// Disabled copy assignment operator
-    Sheet & operator=(const Sheet &);
+    Sheet& operator=(const Sheet&);
 
     std::unique_ptr<Cells> m_pCells;
 

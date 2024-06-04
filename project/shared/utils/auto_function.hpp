@@ -3,10 +3,10 @@
 
 #include <functional>
 
-template<typename Fn, typename... Args>
-decltype(auto) Call(Fn &&fun, Args &&...args)
+template <typename Fn, typename... Args>
+decltype(auto) Call(Fn&& fun, Args&&... args)
 {
-  return std::invoke(std::forward<Fn>(fun), std::forward<Args>(args)...);
+    return std::invoke(std::forward<Fn>(fun), std::forward<Args>(args)...);
 }
 
-#endif// __AUTO_FUNCTION_H__
+#endif // __AUTO_FUNCTION_H__

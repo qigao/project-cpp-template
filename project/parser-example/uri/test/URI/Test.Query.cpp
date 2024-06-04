@@ -11,31 +11,34 @@
 #include <URI/Generic.hpp>
 #include <URI/Query.hpp>
 
-namespace URI {
+namespace URI
+{
 UnitTest::Suite QueryTestSuite{
-  "URI::Query",
+    "URI::Query",
 
-  { "it can join two queries",
-    [](UnitTest::Examiner &examiner) {
-      Query q1 = "foo=bar", q2 = "bob=dole";
+    {"it can join two queries",
+     [](UnitTest::Examiner& examiner)
+     {
+         Query q1 = "foo=bar", q2 = "bob=dole";
 
-      examiner.expect(q1 + q2) == "foo=bar&bob=dole";
-    } },
+         examiner.expect(q1 + q2) == "foo=bar&bob=dole";
+     }},
 
-  { "it can decode arguments",
-    [](UnitTest::Examiner &examiner) {
-      std::string remote =
-        "http://s3.fakeamazon.com/data/"
-        "floop.jpg?AccessKey[]=BLEEPBLOOP&SignatureHcM%2D1Ius%3D";
-      std::string target = "/render?remote_uri=" + Encoding::encode(remote);
+    {"it can decode arguments",
+     [](UnitTest::Examiner& examiner)
+     {
+         std::string remote =
+             "http://s3.fakeamazon.com/data/"
+             "floop.jpg?AccessKey[]=BLEEPBLOOP&SignatureHcM%2D1Ius%3D";
+         std::string target = "/render?remote_uri=" + Encoding::encode(remote);
 
-      auto target_uri = URI::Generic(target);
+         auto target_uri = URI::Generic(target);
 
-      auto arguments  = target_uri.query.to_map();
-      auto remote_uri = arguments.find("remote_uri");
+         auto arguments = target_uri.query.to_map();
+         auto remote_uri = arguments.find("remote_uri");
 
-      examiner.check(remote_uri != arguments.end());
-      examiner.expect(remote_uri->second) == remote;
-    } },
+         examiner.check(remote_uri != arguments.end());
+         examiner.expect(remote_uri->second) == remote;
+     }},
 };
 }

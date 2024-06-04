@@ -24,29 +24,40 @@ run_conan()
 # Set additional project information
 file(READ "version.txt" ver)
 
-string(REGEX MATCH "VERSION_MAJOR ([0-9]*)" _ ${ver})
+string(
+  REGEX MATCH
+        "VERSION_MAJOR ([0-9]*)"
+        _
+        ${ver})
 set(CMAKE_PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
 
-string(REGEX MATCH "VERSION_MINOR ([0-9]*)" _ ${ver})
+string(
+  REGEX MATCH
+        "VERSION_MINOR ([0-9]*)"
+        _
+        ${ver})
 set(CMAKE_PROJECT_VERSION_MINOR ${CMAKE_MATCH_1})
 
-string(REGEX MATCH "VERSION_PATCH ([0-9]*)" _ ${ver})
+string(
+  REGEX MATCH
+        "VERSION_PATCH ([0-9]*)"
+        _
+        ${ver})
 set(CMAKE_PROJECT_VERSION_PATCH ${CMAKE_MATCH_1})
 
 set(PROJECT_VERSION
-  ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
-)
+    ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH})
 set(PROJECT_NAME "DemoApp Research")
 set(PROJECT_WEBSITE "https://github.com/qigao/cmake-template")
 set(APPLICATION_LICENSE "MIT License")
 
 # Set the project name and language
 project(
-        cpp_core_project
-        VERSION ${PROJECT_VERSION}
-        DESCRIPTION "multi-module project template for modern C++"
-        HOMEPAGE_URL "https://github.com/qigao/project-cpp-template"
-        LANGUAGES CXX C)
+  cpp_core_project
+  VERSION ${PROJECT_VERSION}
+  DESCRIPTION "multi-module project template for modern C++"
+  HOMEPAGE_URL "https://github.com/qigao/project-cpp-template"
+  LANGUAGES CXX C)
 
 if(FEATURE_TESTS)
   # enable sanitizers and analyzers if running the tests

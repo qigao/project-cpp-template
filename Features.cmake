@@ -6,7 +6,7 @@ endif()
 
 # building the docs
 option(FEATURE_DOCS "Enable the docs" OFF)
-
+option(ENABLE_OPENSSL "Enable OpenSSL support" OFF)
 # fuzz tests
 option(FEATURE_FUZZ_TESTS "Enable the fuzz tests" OFF)
 
