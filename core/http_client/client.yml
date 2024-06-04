@@ -1,0 +1,4 @@
+remote:
+  port: 5060
+  host: localhost
+  auth-token: 123456

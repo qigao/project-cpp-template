@@ -1,0 +1,80 @@
+name: ci-linux
+on:
+    push:
+        branches:
+            - main
+            - develop
+            - master
+        paths:
+            - "core/**"
+
+    pull_request:
+        types: [opened, reopened, synchronize]
+
+jobs:
+    setup-build:
+        strategy:
+            matrix:
+                os: [ubuntu-22.04]
+                include:
+                    - compiler: gcc
+                      profile: gcc-12-x64-debug
+                #   - compiler: clang
+                #     profile: ubuntu-22.04-clang-debug
+                preset: [developer]
+
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - uses: actions/checkout@v4
+            - name: Cache
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ${{ github.workspace }}/build
+                      ~/.conan2
+                  key: ${{ runner.os }}-${{ matrix.compiler }}-${{matrix.preset}}-${{ matrix.profile}}-${{ hashFiles('**/CMakeLists.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-${{ matrix.compiler }}-${{matrix.preset}}-${{ matrix.profile}}-${{ hashFiles('**/CMakeLists.txt') }}-
+            - name: Install Conan 2
+              run: |
+                  pip install conan
+                  conan --version
+            - name: Install Task
+              uses: arduino/setup-task@v2
+            - name: Install tools (Unix)
+              if: ${{  contains(matrix.os, 'ubuntu')  }}
+              run: |
+                  sudo apt-get install -y ccache cppcheck clang-tidy
+                  pip install gcovr
+            - name: Install CMake and Ninja
+              uses: lukka/get-cmake@latest
+            - name: Generate .env file
+              run: |
+                  touch .env
+                  echo "CONAN_PROFILE=${{matrix.profile}}" >> .env
+                  echo "CMAKE_PRESET=${{matrix.preset}}" >> .env
+                  cat .env
+            - name: config and setup project
+              run: |
+                  task setup:ext.conan.setup
+                  task preset
+            - name: build all the project
+              run: task compile
+            - name: Test
+              run: task test
+            - name: Test/Coverage
+              run: task coverage
+            - name: Publish Tagged Release
+              uses: softprops/action-gh-release@v2
+              if: ${{ startsWith(github.ref, 'refs/tags/')  }}
+              with:
+                  files: |
+                      build/*-*Release*-*.*
+            - name: Publish to codecov
+              uses: codecov/codecov-action@v4.0.1
+              with:
+                  flags: ${{ runner.os }}
+                  name: ${{ runner.os }}-coverage
+                  files: ./build/coverage.xml
+                  token: ${{ secrets.CODECOV_TOKEN  }}

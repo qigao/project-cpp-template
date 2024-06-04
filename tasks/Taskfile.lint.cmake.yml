@@ -1,0 +1,39 @@
+version: 3
+tasks:
+    lint:cmake:win:
+        platforms: [windows]
+        internal: true
+        cmds:
+            - cmd: echo "Linting CMakeLists.txt and *.cmake files on windows"
+            - cmd: powershell -c '$files=(git ls-files cmake core ':!:examples/*' ':!:cmake/options/*'); `
+                   foreach ($file in $files) `
+                   { `
+                        $item=(get-item $file); `
+                        if (($item.Name -eq "CMakeLists.txt") -or ($item.Extension -in ".cmake")) `
+                        { `
+                            Write-Output "Processing $file"; `
+                            cmake-format --in-place $file; `
+                            cmake-lint $file  `
+                            {{.CMAKE_LINT_FLAGS}} `
+                        } `
+                    } '
+
+    lint:cmake:unix:
+        platforms: [linux, darwin]
+        internal: true
+        cmds:
+            - cmd: echo "Linting CMakeLists.txt and *.cmake files on Unix based OS"
+            - |
+                git ls-files -- ':!:external/*' ':!:examples/*' | \
+                grep -E '(CMakeLists\.txt)|(\.(cmake))$' | \
+                xargs cmake-format --in-place | \
+                xargs cmake-lint {{.CMAKE_LINT_FLAGS}}
+
+    # Lint the project
+    lint:
+        internal: true
+        cmds:
+            - task: lint:cmake:win
+            - task: lint:cmake:unix
+        vars:
+            CMAKE_LINT_FLAGS: --disabled-codes C0103 C0301 R0912 R0915 R0913 --suppress-decorations

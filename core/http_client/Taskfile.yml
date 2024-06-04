@@ -1,0 +1,29 @@
+version: 3
+tasks:
+  http_client.test.build:
+    cmds:
+      - cmd: $CMAKE_BUILD  test.http_client.demo
+  http_client.test.run:
+    deps:
+      - task: http_client.test.build
+    cmds:
+      - cmd: $CMAKE_TEST ^test\.http_client\.demo$
+  http_client.dll.build:
+    cmds:
+      - cmd: $CMAKE_BUILD  http_client
+  client_config.test.build:
+    cmds:
+      - cmd: $CMAKE_BUILD  test.http_client.client_config
+  client_config.test.run:
+    deps:
+      - task: client_config.test.build
+    cmds:
+      - cmd: $CMAKE_TEST ^test\.http_client\.client_config$
+  client_yml.test.build:
+    cmds:
+      - cmd: $CMAKE_BUILD  test.http_client.client_yml
+  client_yml.test.run:
+    deps:
+      - task: client_yml.test.build
+    cmds:
+      - cmd: $CMAKE_TEST ^test\.http_client\.client_yml$

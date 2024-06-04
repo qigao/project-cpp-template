@@ -1,6 +1,5 @@
 {
     "C_Cpp.autocompleteAddParentheses": true,
-    "C_Cpp.default.intelliSenseMode": "clang-x64",
     "C_Cpp.workspaceSymbols": "All",
     "C_Cpp.intelliSenseEngine": "disabled",
     /**********
@@ -17,7 +16,7 @@
         "--completion-style=bundled",
         "--enable-config",
         // 默认格式化风格: 谷歌开源项目代码指南（可用的有 LLVM, Google, Chromium, Mozilla, Webkit, Microsoft, GNU 等）
-        "--fallback-style=Google",
+        "--fallback-style=LLVM",
         // 启用这项时，补全函数时，将会给参数提供占位符，键入后按 Tab 可以切换到下一占位符，乃至函数末
         // 我选择禁用
         "--function-arg-placeholders=false",
@@ -34,10 +33,10 @@
         // 建议排序模型
         "--ranking-model=heuristics",
         // 同时开启的任务数量
-        "-j=24"
+        "-j=64"
     ],
     // 自动检测 clangd 更新
-    "clangd.checkUpdates": true,
+    "clangd.checkUpdates": false,
     // clangd的snippets有很多的跳转点，不用这个就必须手动触发Intellisense了
     "editor.suggest.snippetsPreventQuickSuggestions": false,
     /********
@@ -46,7 +45,7 @@
     // 输出窗口
     "[Log]": {
         // 字体大小
-        "editor.fontSize": 15
+        "editor.fontSize": 14
     },
     // CodeLens的字体系列: Fira Code Retina
     "editor.codeLensFontFamily": "Fira Code Retina",
@@ -55,7 +54,20 @@
     // 启用连字体
     "editor.fontLigatures": true,
     // 字体大小
-    "editor.fontSize": 16,
+    "editor.fontSize": 14,
     // 集成终端字体大小
-    "terminal.integrated.fontSize": 14
+    "terminal.integrated.fontSize": 14,
+    "cmake.skipConfigureIfCachePresent": true,
+    "cmake.buildBeforeRun": true,
+    //http collection 保存路径
+    "flashpost.saveDataToWorkspace": false,
+    "flashpost.workspaceDataRelativePath": "rest-api-test",
+    "liveServer.settings.port": 5501,
+    "yaml.schemas": {
+        "https://taskfile.dev/schema.json": "tasks/Taskfile*.yml"
+    },
+    "files.associations": {
+        "**/conan/*.txt": "ini",
+        "**/conan/profiles/*": "ini"
+      }
 }

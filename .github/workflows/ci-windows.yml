@@ -1,0 +1,61 @@
+name: ci-windows
+on:
+    push:
+        branches:
+            - main
+            - develop
+            - master
+        paths:
+            - "core/**"
+
+    pull_request:
+        types: [opened, reopened, synchronize]
+
+jobs:
+    setup-build:
+        strategy:
+            matrix:
+                os:
+                    - windows-2019
+                compiler:
+                    - msvc
+                profile:
+                    - msvc-2019-x64-debug
+                preset:
+                    - windows-msvc-debug
+
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - uses: actions/checkout@v4
+            - name: Cache
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ${{ github.workspace }}/build
+                      ~/.conan2
+                  key: ${{ runner.os }}-${{ matrix.compiler }}-${{matrix.preset}}-${{ matrix.profile}}-${{ hashFiles('**/CMakeLists.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-${{ matrix.compiler }}-${{matrix.preset}}-${{ matrix.profile}}-${{ hashFiles('**/CMakeLists.txt') }}-
+            - name: Install Task
+              uses: arduino/setup-task@v2
+            - name: Install CMake and Ninja
+              uses: lukka/get-cmake@latest
+            - name: Install Conan
+              run: |
+                  pip install conan
+                  conan --version
+            - name: Generate .env file
+              run: |
+                  touch .env
+                  echo "CONAN_PROFILE=${{matrix.profile}}" >> .env
+                  echo "CMAKE_PRESET=${{matrix.preset}}" >> .env
+                  cat .env
+            - name: config and setup project
+              run: |
+                  task setup:ext.conan.setup
+                  task preset
+            - name: build all the project
+              run: task compile
+        #   - name: Test
+        #     run: task test

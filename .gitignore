@@ -1,22 +1,16 @@
 # Build directories and binary files
-build/
+build*/
 install/
+bin/
 out/
 cmake-build-*/
 conan-cache/
 coverage.xml
 
-# User specific settings
-CMakeUserPresets.json
-
 # IDE files
 .vs/
 .idea/
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode
 *.swp
 *~
 _ReSharper*
@@ -65,4 +59,10 @@ $RECYCLE.BIN/
 .TemporaryItems
 ehthumbs.db
 Thumbs.db
+
+# User specific settings
 compile_commands.json
+CMakeUserPresets.json
+.env
+.env.config.cmake
+external

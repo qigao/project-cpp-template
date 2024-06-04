@@ -1,37 +1,52 @@
 version: 3
-
 includes:
-  cpp_core_project:
-    taskfile: ./core/Taskfile.yml
-    optional: true
-    dir: ./core
-    vars:
-
-
-vars:
-  CMAKE_GENERATOR: "Ninja Multi-Config"
-  CWD:
-    sh: git rev-parse --show-toplevel
-
+    core: ./core/Taskfile.yml
+    clang: ./tasks/Taskfile.lint.clang.yml
+    cmake: ./tasks/Taskfile.lint.cmake.yml
+    coverage: ./tasks/Taskfile.coverage.yml
+    setup: ./tasks/Taskfile.setup.yml
+dotenv:
+    - .env
+    - .env.config.cmake
+env:
+    CMAKE_BUILD: cmake --build {{.CMAKE_BUILD_DIR}} --target
+    CMAKE_TEST: ctest -T test --build-config {{.CMAKE_BUILD_TYPE}} --test-dir {{.CMAKE_BUILD_DIR}} --stop-on-failure --no-tests=error -R
+    CONAN_CONFIG: -pr:h  tasks/conan/profiles/{{.CONAN_PROFILE}} -pr:b  tasks/conan/profiles/{{.CONAN_PROFILE}}
 tasks:
-  test:
-    - task: myproj:test.all
-    - task: myproj:test.release
-    - task: install
+    lint:
+        desc: linting cpp and cmake files
+        deps:
+            - task: cmake:lint
+            - task: clang:lint
+    ext.setup:
+        desc: install 3rd packages from conan and local,then config by preset
+        cmds:
+            - task: setup:ext.conan.setup
+            - task: setup:ext.libs.setup
+    preset:
+        desc: configure cmake project for dev and test purpose
+        requires:
+            vars: [CONAN_PROFILE, CMAKE_PRESET]
+        cmds:
+            - cmake --list-presets all
+            - cmake --preset $CMAKE_PRESET
+    compile:
+        cmds:
+            - task: setup:build.all
+    test:
+        desc: all the test tasks from modules
+        cmds:
+            - ctest --preset $CMAKE_PRESET
+    coverage:
+        cmds:
+            - cmd: echo "Generating coverage"
+            - task: coverage:all
+            - cmd: echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
 
-  lint:
-    deps:
-      - task: cpp_core_project:lint::all
-    cmds:
-      - ~/vcpkg/vcpkg format-manifest ./vcpkg.json
-      - npx -y cspell lint --no-progress --show-suggestions
-
-  clean:
-    cmds:
-      - cmd: powershell -c 'function rmrf($path) { if (test-path $path) { rm -r -force $path }}; rmrf ./build; rmrf ./install'
-        platforms: [windows]
-      - cmd: rm -rf ./install ./build
-        platforms: [linux, darwin]
-
-  config:
-    - cmake --preset=developer
+    default:
+        desc: list all tasks
+        cmds:
+            - task -a
+            - echo "Use task <taskname> to run a task"
+            - echo ".env must be set before further steps"
+            - echo "to install libs from github, use task ext.setup"

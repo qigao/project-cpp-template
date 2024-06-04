@@ -1,0 +1,12 @@
+[requires]
+# Tools
+#easy_profiler/2.1.0
+nanobench/4.3.11
+
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
