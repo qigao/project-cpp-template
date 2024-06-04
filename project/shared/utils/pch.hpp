@@ -1,9 +1,7 @@
 #ifndef __PCH_H__
 #define __PCH_H__
 
-
-
-//!Header files for the C++ standard library and extensions, by category.
+//! Header files for the C++ standard library and extensions, by category.
 
 #include <algorithm>
 #include <cstring>
@@ -11,31 +9,30 @@
 #include <iostream>
 #include <string>
 
-//!C++ Style
-#include <stdexcept>
-#include <vector>
+//! C++ Style
 #include <list>
 #include <map>
+#include <stack>
+#include <stdexcept>
 #include <string>
 #include <string_view>
-#include <stack>
+#include <vector>
 
-//!Algorithms
+//! Algorithms
 #include <algorithm>
 #include <cstdlib>
 #include <numeric>
 
-
 /*C++ Standard Library Containers*/
 
-//!Sequence containers
+//! Sequence containers
 #include <array>
 #include <deque>
 #include <forward_list>
 #include <list>
 #include <vector>
 
-//!Ordered associative containers
+//! Ordered associative containers
 #include <map>
 #include <set>
 
@@ -43,26 +40,24 @@
 #include <unordered_map>
 #include <unordered_set>
 
-//!Container adaptors
+//! Container adaptors
 #include <queue>
 #include <stack>
 
-//!Errors and exception handling
+//! Errors and exception handling
 #include <cassert>
 #include <exception>
 #include <stdexcept>
 #include <system_error>
 
-//!General utilities
+//! General utilities
 #include <any>
 
 #include <bitset>
 #include <cstdlib>
 
-
 #include <functional>
 #include <memory>
-
 
 #include <optional>
 #include <ratio>
@@ -73,7 +68,7 @@
 #include <utility>
 #include <variant>
 
-//!Multithreading
+//! Multithreading
 #include <atomic>
 #include <condition_variable>
 #include <future>
@@ -81,10 +76,9 @@
 #include <shared_mutex>
 #include <thread>
 
-//!I/O and formatting
+//! I/O and formatting
 #include <cinttypes>
 #include <cstdio>
-
 
 #include <fstream>
 #include <iomanip>
@@ -96,15 +90,13 @@
 #include <sstream>
 #include <streambuf>
 
-
-//!Iterators
+//! Iterators
 #include <iterator>
 
-//!Language support
+//! Language support
 #include <cfloat>
 #include <climits>
 #include <codecvt>
-
 
 #include <csetjmp>
 #include <csignal>
@@ -118,16 +110,14 @@
 #include <new>
 #include <typeinfo>
 
-
-//!Regular expressions
+//! Regular expressions
 #include <regex>
 
-//!Strings and character data
-#include <charconv>
+//! Strings and character data
 #include <cctype>
+#include <charconv>
 #include <cstdlib>
 #include <cstring>
-
 
 #include <cwchar>
 #include <cwctype>
@@ -135,11 +125,11 @@
 #include <string>
 #include <string_view>
 
-//!Time
+//! Time
 #include <chrono>
 #include <ctime>
 
-//!C-style Under C++
+//! C-style Under C++
 #include <cassert>
 #include <cctype>
 #include <cerrno>
@@ -162,12 +152,12 @@
 #include <cwchar>
 #include <cwctype>
 
-//!Localization
+//! Localization
 #include <clocale>
 #include <codecvt>
 #include <locale>
 
-//!Math and numerics
+//! Math and numerics
 
 #include <cfenv>
 #include <cmath>
@@ -179,17 +169,17 @@
 #include <ratio>
 #include <valarray>
 
-//!Memory management
+//! Memory management
 #ifdef __has_include
-# if __has_include(<allocators>)
-#   include <allocators>
-# endif
+#if __has_include(<allocators>)
+#include <allocators>
+#endif
 #endif
 #include <memory>
 #ifdef __has_include
-# if __has_include(<memory_resource>)
-#   include <memory_resource>
-# endif
+#if __has_include(<memory_resource>)
+#include <memory_resource>
+#endif
 #endif
 #include <new>
 #include <scoped_allocator>
@@ -197,6 +187,5 @@
 #ifdef _MSC_VER
 #include <intrin.h>
 #endif
-
 
 #endif // __PCH_H__

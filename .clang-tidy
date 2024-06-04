@@ -6,167 +6,230 @@
 
 HeaderFilterRegex: '^.*/(base|src|programs|utils)/.*(h|hpp)$'
 
-Checks: [
-  '*',
+Checks: '-*,
+  abseil-*,
+  -abseil-cleanup-ctad,
+  -abseil-no-namespace,
+  bugprone-*,
+  -bugprone-assignment-in-if-condition,
+  -bugprone-branch-clone,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-empty-catch,
+  -bugprone-exception-escape,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-infinite-loop,
+  -bugprone-narrowing-conversions,
+  -bugprone-not-null-terminated-result,
+  -bugprone-reserved-identifier,
+  -bugprone-signed-char-misuse,
+  -bugprone-sizeof-expression,
+  -bugprone-switch-missing-default-case,
+  -bugprone-too-small-loop-variable,
+  -bugprone-unchecked-optional-access,
+  google-*,
+  -google-readability-casting,
+  -google-runtime-int,
+  -google-runtime-references,
+  performance-*,
+  -performance-avoid-endl,
+  -performance-no-automatic-move,
+  -performance-no-int-to-ptr,
+  -performance-noexcept-swap,
+  -performance-unnecessary-copy-initialization,
+  -performance-unnecessary-value-param,
+  clang-diagnostic-deprecated-declarations,
+  clang-diagnostic-deprecated-register,
+  clang-diagnostic-expansion-to-defined,
+  clang-diagnostic-ignored-attributes,
+  clang-diagnostic-non-pod-varargs,
+  clang-diagnostic-shadow-field,
+  clang-diagnostic-shift-sign-overflow,
+  clang-diagnostic-tautological-undefined-compare,
+  clang-diagnostic-thread-safety*,
+  clang-diagnostic-undefined-bool-conversion,
+  clang-diagnostic-unreachable-code,
+  clang-diagnostic-unreachable-code-loop-increment,
+  clang-diagnostic-unused-const-variable,
+  clang-diagnostic-unused-lambda-capture,
+  clang-diagnostic-unused-local-typedef,
+  clang-diagnostic-unused-private-field,
+  clang-diagnostic-user-defined-warnings,
+  misc-definitions-in-headers,
+  misc-static-assert,
+  misc-unconventional-assign-operator,
+  misc-uniqueptr-reset-release,
+  misc-unused-alias-decls,
+  misc-unused-using-decls,
+  modernize-make-shared,
+  modernize-make-unique,
+  modernize-replace-auto-ptr,
+  modernize-replace-random-shuffle,
+  modernize-shrink-to-fit,
+  modernize-unary-static-assert,
+  modernize-use-bool-literals,
+  modernize-use-noexcept,
+  modernize-use-nullptr,
+  modernize-use-override,
+  modernize-use-transparent-functors,
+  readability-braces-around-statements,
+  readability-const-return-type,
+  readability-container-size-empty,
+  readability-delete-null-pointer,
+  readability-deleted-default,
+  readability-duplicate-include,
+  readability-function-size,
+  readability-inconsistent-declaration-parameter-name,
+  readability-misleading-indentation,
+  readability-misplaced-array-index,
+  readability-redundant-access-specifiers,
+  readability-redundant-control-flow,
+  readability-redundant-function-ptr-dereference,
+  readability-redundant-smartptr-get,
+  readability-redundant-string-cstr,
+  readability-redundant-string-init,
+  readability-simplify-boolean-expr,
+  readability-static-definition-in-anonymous-namespace,
+  readability-string-compare,
+  readability-uniqueptr-delete-release'
 
-  '-abseil-*',
-
-  '-altera-*',
-
-  '-android-*',
-
-  '-bugprone-assignment-in-if-condition',
-  '-bugprone-branch-clone',
-  '-bugprone-easily-swappable-parameters',
-  '-bugprone-exception-escape',
-  '-bugprone-forward-declaration-namespace',
-  '-bugprone-implicit-widening-of-multiplication-result',
-  '-bugprone-multi-level-implicit-pointer-conversion',
-  '-bugprone-narrowing-conversions',
-  '-bugprone-not-null-terminated-result',
-  '-bugprone-reserved-identifier', # useful but too slow, TODO retry when https://reviews.llvm.org/rG1c282052624f9d0bd273bde0b47b30c96699c6c7 is merged
-  '-bugprone-unchecked-optional-access',
-
-  '-cert-dcl16-c',
-  '-cert-dcl37-c',
-  '-cert-dcl51-cpp',
-  '-cert-err58-cpp',
-  '-cert-msc32-c',
-  '-cert-msc51-cpp',
-  '-cert-oop54-cpp',
-  '-cert-oop57-cpp',
-
-  '-clang-analyzer-optin.core.EnumCastOutOfRange', # https://github.com/abseil/abseil-cpp/issues/1667
-  '-clang-analyzer-optin.performance.Padding',
-
-  '-clang-analyzer-unix.Malloc',
-
-  '-cppcoreguidelines-*', # impractical in a codebase as large as ClickHouse, also slow
-
-  '-darwin-*',
-
-  '-fuchsia-*',
-
-  '-google-build-using-namespace',
-  '-google-readability-braces-around-statements',
-  '-google-readability-casting',
-  '-google-readability-function-size',
-  '-google-readability-namespace-comments',
-  '-google-readability-todo',
-
-  '-hicpp-avoid-c-arrays',
-  '-hicpp-avoid-goto',
-  '-hicpp-braces-around-statements',
-  '-hicpp-explicit-conversions',
-  '-hicpp-function-size',
-  '-hicpp-member-init',
-  '-hicpp-move-const-arg',
-  '-hicpp-multiway-paths-covered',
-  '-hicpp-named-parameter',
-  '-hicpp-no-array-decay',
-  '-hicpp-no-assembler',
-  '-hicpp-no-malloc',
-  '-hicpp-signed-bitwise',
-  '-hicpp-special-member-functions',
-  '-hicpp-uppercase-literal-suffix',
-  '-hicpp-use-auto',
-  '-hicpp-use-emplace',
-  '-hicpp-vararg',
-
-  '-linuxkernel-*',
-
-  '-llvm-*',
-
-  '-llvmlibc-*',
-
-  '-openmp-*',
-
-  '-misc-const-correctness',
-  '-misc-include-cleaner', # useful but far too many occurrences
-  '-misc-no-recursion',
-  '-misc-non-private-member-variables-in-classes',
-  '-misc-confusable-identifiers', # useful but slooo
-  '-misc-use-anonymous-namespace',
-
-  '-modernize-avoid-c-arrays',
-  '-modernize-concat-nested-namespaces',
-  '-modernize-macro-to-enum',
-  '-modernize-pass-by-value',
-  '-modernize-return-braced-init-list',
-  '-modernize-use-auto',
-  '-modernize-use-constraints', # This is a good check, but clang-tidy crashes, see https://github.com/llvm/llvm-project/issues/91872
-  '-modernize-use-default-member-init',
-  '-modernize-use-emplace',
-  '-modernize-use-nodiscard',
-  '-modernize-use-trailing-return-type',
-
-  '-performance-enum-size',
-  '-performance-inefficient-string-concatenation',
-  '-performance-no-int-to-ptr',
-  '-performance-avoid-endl',
-  '-performance-unnecessary-value-param',
-
-  '-portability-simd-intrinsics',
-
-  '-readability-avoid-nested-conditional-operator',
-  '-readability-avoid-unconditional-preprocessor-if',
-  '-readability-braces-around-statements',
-  '-readability-convert-member-functions-to-static',
-  '-readability-else-after-return',
-  '-readability-function-cognitive-complexity',
-  '-readability-function-size',
-  '-readability-identifier-length',
-  '-readability-identifier-naming', # useful but too slow
-  '-readability-implicit-bool-conversion',
-  '-readability-isolate-declaration',
-  '-readability-magic-numbers',
-  '-readability-named-parameter',
-  '-readability-redundant-declaration',
-  '-readability-redundant-inline-specifier', # useful but incompatible with __attribute((always_inline))__ (aka. ALWAYS_INLINE, base/base/defines.h).
-        # ALWAYS_INLINE only has an effect if combined with `inline`: https://godbolt.org/z/Eefd74qdM
-  '-readability-redundant-member-init', # Useful but triggers another problem. Imagine a struct S with multiple String members. Structs are often instantiated via designated
-        # initializer S s{.s1 = [...], .s2 = [...], [...]}. In this case, compiler warning `missing-field-initializers` requires to specify all members which are not in-struct
-        # initialized (example: s1 in struct S { String s1; String s2{};}; is not in-struct initialized, therefore it must be specified at instantiation time). As explicitly
-        # specifying all members is tedious for large structs, `missing-field-initializers` makes programmers initialize as many members as possible in-struct. Clang-tidy
-        # warning `readability-redundant-member-init` does the opposite thing, both are not compatible with each other.
-  '-readability-simplify-boolean-expr',
-  '-readability-suspicious-call-argument',
-  '-readability-uppercase-literal-suffix',
-  '-readability-use-anyofallof',
-
-  '-zircon-*'
-]
-
-WarningsAsErrors: '*'
-
-ExtraArgs:
-# clang-tidy 17 started to complain (for unknown reasons) that various pragmas are unknown ("clang-diagnostic-unknown-pragmas").
-# This is technically a compiler error, not a clang-tidy error. We could litter the code base with more pragmas that suppress
-# this error but it is better to pass the following flag to the compiler:
-- '-Wno-unknown-pragmas'
-- '-Wno-unused-command-line-argument' # similar issue
+WarningsAsErrors: ''
 
 CheckOptions:
-  readability-identifier-naming.ClassCase: CamelCase
-  readability-identifier-naming.EnumCase: CamelCase
-  readability-identifier-naming.LocalVariableCase: lower_case
-  readability-identifier-naming.StaticConstantCase: aNy_CasE
-  readability-identifier-naming.MemberCase: lower_case
-  readability-identifier-naming.PrivateMemberPrefix: ''
-  readability-identifier-naming.ProtectedMemberPrefix: ''
-  readability-identifier-naming.PublicMemberCase: lower_case
-  readability-identifier-naming.MethodCase: camelBack
-  readability-identifier-naming.PrivateMethodPrefix: ''
-  readability-identifier-naming.ProtectedMethodPrefix: ''
-  readability-identifier-naming.ParameterPackCase: lower_case
-  readability-identifier-naming.StructCase: CamelCase
-  readability-identifier-naming.TemplateTemplateParameterCase: CamelCase
-  readability-identifier-naming.TemplateParameterCase: lower_case
-  readability-identifier-naming.TypeTemplateParameterCase: CamelCase
-  readability-identifier-naming.TypedefCase: CamelCase
-  readability-identifier-naming.UnionCase: CamelCase
-  modernize-loop-convert.UseCxx20ReverseRanges: false
-  performance-move-const-arg.CheckTriviallyCopyableMove: false
-  # Workaround clang-tidy bug: https://github.com/llvm/llvm-project/issues/46097
-  readability-identifier-naming.TypeTemplateParameterIgnoredRegexp: expr-type
-  cppcoreguidelines-avoid-do-while.IgnoreMacros: true
+  - key: 'bugprone-argument-comment.StrictMode'
+    value: 'true'
+  # Prefer using enum classes with 2 values for parameters instead of bools
+  - key: 'bugprone-argument-comment.CommentBoolLiterals'
+    value: 'true'
+  - key: 'bugprone-misplaced-widening-cast.CheckImplicitCasts'
+    value: 'true'
+  - key: 'bugprone-sizeof-expression.WarnOnSizeOfIntegerExpression'
+    value: 'true'
+  - key: 'bugprone-suspicious-string-compare.WarnOnLogicalNotComparison'
+    value: 'true'
+  - key: 'readability-simplify-boolean-expr.ChainedConditionalReturn'
+    value: 'true'
+  - key: 'readability-simplify-boolean-expr.ChainedConditionalAssignment'
+    value: 'true'
+  - key: 'readability-uniqueptr-delete-release.PreferResetCall'
+    value: 'true'
+  - key: 'cppcoreguidelines-init-variables.MathHeader'
+    value: '<cmath>'
+  - key: 'cppcoreguidelines-narrowing-conversions.PedanticMode'
+    value: 'true'
+  - key: 'readability-else-after-return.WarnOnUnfixable'
+    value: 'true'
+  - key: 'readability-else-after-return.WarnOnConditionVariables'
+    value: 'true'
+  - key: 'readability-inconsistent-declaration-parameter-name.Strict'
+    value: 'true'
+  - key: 'readability-qualified-auto.AddConstToQualified'
+    value: 'true'
+  - key: 'readability-redundant-access-specifiers.CheckFirstDeclaration'
+    value: 'true'
+  # These seem to be the most common identifier styles
+  - key: 'readability-identifier-naming.AbstractClassCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ClassCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ClassConstantCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ClassMemberCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ClassMethodCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ConstantCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ConstantMemberCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ConstantParameterCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ConstantPointerParameterCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ConstexprFunctionCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ConstexprMethodCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ConstexprVariableCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.EnumCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.EnumConstantCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.FunctionCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.GlobalConstantCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.GlobalConstantPointerCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.GlobalFunctionCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.GlobalPointerCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.GlobalVariableCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.InlineNamespaceCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.LocalConstantCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.LocalConstantPointerCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.LocalPointerCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.LocalVariableCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.MacroDefinitionCase'
+    value: 'UPPER_CASE'
+  - key: 'readability-identifier-naming.MemberCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.MethodCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.NamespaceCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ParameterCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ParameterPackCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.PointerParameterCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.PrivateMemberCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.PrivateMemberPrefix'
+    value: 'm_'
+  - key: 'readability-identifier-naming.PrivateMethodCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ProtectedMemberCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ProtectedMemberPrefix'
+    value: 'm_'
+  - key: 'readability-identifier-naming.ProtectedMethodCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.PublicMemberCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.PublicMethodCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ScopedEnumConstantCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.StaticConstantCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.StaticVariableCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.StructCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.TemplateParameterCase'
+    value: 'CamelCase'
+  - key: 'readability-identifier-naming.TemplateTemplateParameterCase'
+    value: 'CamelCase'
+  - key: 'readability-identifier-naming.TypeAliasCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.TypedefCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.TypeTemplateParameterCase'
+    value: 'CamelCase'
+  - key: 'readability-identifier-naming.UnionCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.ValueTemplateParameterCase'
+    value: 'CamelCase'
+  - key: 'readability-identifier-naming.VariableCase'
+    value: 'lower_case'
+  - key: 'readability-identifier-naming.VirtualMethodCase'
+    value: 'lower_case'

@@ -24,9 +24,6 @@ target_link_libraries(my_exe PRIVATE my_project_options my_project_warnings)
 # Includes, just link the library part
 target_link_libraries(my_exe PRIVATE my_exe_lib)
 
-# Find dependencies:
-target_find_dependencies(my_exe PRIVATE_CONFIG fmt)
-
 # Link dependencies
 target_link_system_libraries(my_exe PRIVATE fmt::fmt)
 

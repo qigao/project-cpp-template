@@ -12,93 +12,125 @@
 
 #include <stdexcept>
 
-namespace URI {
-Generic::Generic(const char *begin, const char *end)
+namespace URI
 {
-  using namespace GenericParser;
+Generic::Generic(const char* begin, const char* end)
+{
+    using namespace GenericParser;
 
-  auto result = GenericParser::parse((unsigned char *)begin, (unsigned char *)end, *this);
+    auto result =
+        GenericParser::parse((unsigned char*)begin, (unsigned char*)end, *this);
 
-  if (result != std::size_t(end - begin))
-    throw std::invalid_argument("could not parse entire uri string");
+    if (result != std::size_t(end - begin))
+        throw std::invalid_argument("could not parse entire uri string");
 }
 
-std::ostream &operator<<(std::ostream &output, const Generic &generic)
+std::ostream& operator<<(std::ostream& output, const Generic& generic)
 {
-  if (!generic.scheme.empty()) { output << generic.scheme << ":"; }
+    if (!generic.scheme.empty())
+    {
+        output << generic.scheme << ":";
+    }
 
-  if (!generic.host.empty()) {
-    output << "//";
+    if (!generic.host.empty())
+    {
+        output << "//";
 
-    if (!generic.userinfo.empty()) { output << generic.userinfo << '@'; }
+        if (!generic.userinfo.empty())
+        {
+            output << generic.userinfo << '@';
+        }
 
-    output << generic.host;
+        output << generic.host;
 
-    if (!generic.port.empty()) { output << ':' << generic.port; }
-  }
+        if (!generic.port.empty())
+        {
+            output << ':' << generic.port;
+        }
+    }
 
-  output << generic.path;
-  output << generic.query;
+    output << generic.path;
+    output << generic.query;
 
-  if (!generic.fragment.empty()) { output << '#' << generic.fragment; }
+    if (!generic.fragment.empty())
+    {
+        output << '#' << generic.fragment;
+    }
 
-  return output;
+    return output;
 }
 
-bool Generic::operator==(const Generic &other) const noexcept
+bool Generic::operator==(const Generic& other) const noexcept
 {
-  return scheme == other.scheme && userinfo == other.userinfo && host == other.host
-         && port == other.port && path == other.path && query == other.query
-         && fragment == other.fragment;
+    return scheme == other.scheme && userinfo == other.userinfo &&
+           host == other.host && port == other.port && path == other.path &&
+           query == other.query && fragment == other.fragment;
 }
 
-bool Generic::operator!=(const Generic &other) const noexcept { return !(*this == other); }
-
-bool Generic::operator<(const Generic &other) const noexcept
+bool Generic::operator!=(const Generic& other) const noexcept
 {
-  if (scheme < other.scheme) return true;
-
-  if (userinfo < other.userinfo) return true;
-
-  if (host < other.host) return true;
-
-  if (port < other.port) return true;
-
-  if (path < other.path) return true;
-
-  if (query < other.query) return true;
-
-  if (fragment < other.fragment) return true;
-
-  return false;
+    return !(*this == other);
 }
 
-Generic Generic::operator+(const Generic &other) const
+bool Generic::operator<(const Generic& other) const noexcept
 {
-  if (other.is_absolute()) { return other; }
+    if (scheme < other.scheme)
+        return true;
 
-  Generic result = *this;
+    if (userinfo < other.userinfo)
+        return true;
 
-  result.query    = other.query;
-  result.fragment = other.fragment;
+    if (host < other.host)
+        return true;
 
-  if (other.path.is_absolute()) {
-    result.path = other.path;
-  } else {
-    result.path = path + other.path;
-  }
+    if (port < other.port)
+        return true;
 
-  return result;
+    if (path < other.path)
+        return true;
+
+    if (query < other.query)
+        return true;
+
+    if (fragment < other.fragment)
+        return true;
+
+    return false;
+}
+
+Generic Generic::operator+(const Generic& other) const
+{
+    if (other.is_absolute())
+    {
+        return other;
+    }
+
+    Generic result = *this;
+
+    result.query = other.query;
+    result.fragment = other.fragment;
+
+    if (other.path.is_absolute())
+    {
+        result.path = other.path;
+    }
+    else
+    {
+        result.path = path + other.path;
+    }
+
+    return result;
 }
 
 std::string Generic::hostname() const
 {
-  // Must have at least 2 characters to unwrap:
-  if (host.size() < 2) return host;
+    // Must have at least 2 characters to unwrap:
+    if (host.size() < 2)
+        return host;
 
-  if (host.front() == '[' && host.back() == ']')
-    return host.substr(1, host.size() - 2);
-  else
-    return host;
+    if (host.front() == '[' && host.back() == ']')
+        return host.substr(1, host.size() - 2);
+    else
+        return host;
 }
-}// namespace URI
+} // namespace URI

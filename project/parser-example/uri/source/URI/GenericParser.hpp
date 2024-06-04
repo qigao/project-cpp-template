@@ -12,10 +12,10 @@
 
 namespace URI
 {
-	namespace GenericParser
-	{
-		using Byte = unsigned char;
-		
-		std::size_t parse(const Byte * begin, const Byte * end, Generic & generic);
-	}
-}
+namespace GenericParser
+{
+using Byte = unsigned char;
+
+std::size_t parse(const Byte* begin, const Byte* end, Generic& generic);
+} // namespace GenericParser
+} // namespace URI

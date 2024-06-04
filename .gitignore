@@ -7,16 +7,16 @@ conan-cache/
 coverage.xml
 
 # User specific settings
-CMakeUserPresets.json
+CMakeUserPresets.nJson
 
 # IDE files
 .vs/
 .idea/
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+!.vscode/settings.nJson
+!.vscode/tasks.nJson
+!.vscode/launch.nJson
+!.vscode/extensions.nJson
 *.swp
 *~
 _ReSharper*
@@ -65,4 +65,4 @@ $RECYCLE.BIN/
 .TemporaryItems
 ehthumbs.db
 Thumbs.db
-compile_commands.json
+compile_commands.nJson

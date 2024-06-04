@@ -6,10 +6,10 @@
 
 typedef struct DataFrame
 {
-  std::shared_ptr<u8> data;
+    std::shared_ptr<u8> data;
 
-  size_t len;
+    size_t len;
 
 } DataFrame;
 
-#endif// __DATA_FRAME_H__
+#endif // __DATA_FRAME_H__

@@ -10,4 +10,4 @@ extern int radio_rssi_threshold_index;
 extern int radio_lna_gain_index;
 extern int radio_baseband_bandwidth_index;
 
-#endif //ATCOMMANDS_RADIO_HPP
+#endif // ATCOMMANDS_RADIO_HPP

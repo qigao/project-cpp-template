@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <map>
 #include <iostream>
+#include <map>
 
 #include "gtest/gtest.h"
 
@@ -34,7 +34,6 @@ using namespace std;
 
 class SheetTest : public testing::Test
 {
-
 };
 
 TEST_F(SheetTest, setFormula_and_getFormula_basic)
@@ -54,8 +53,10 @@ TEST_F(SheetTest, setFormula_and_getFormula_basic)
     formulas["=\"Hello\"+3.25"] = "Hello3.25";
     formulas["=3.25+\"Hello\""] = "3.25Hello";
 
-    for (Formulas::const_iterator itr = formulas.begin(); itr != formulas.end(); itr++) {
-        const string & expectedFormula = itr->first;
+    for (Formulas::const_iterator itr = formulas.begin(); itr != formulas.end();
+         itr++)
+    {
+        const string& expectedFormula = itr->first;
         EXPECT_TRUE(sheet.setFormula(address, expectedFormula));
 
         string retrievedFormula = sheet.getFormula(address);
@@ -63,7 +64,7 @@ TEST_F(SheetTest, setFormula_and_getFormula_basic)
 
         sheet.recalculate();
 
-        const string & expectedValue = itr->second;
+        const string& expectedValue = itr->second;
         string retrievedValue = sheet.getValue(address);
         EXPECT_EQ(expectedValue, retrievedValue);
     }
@@ -91,7 +92,7 @@ TEST_F(SheetTest, setFormula_and_getFormula_with_addresses)
 
     sheet.recalculate();
 
-    const string & expectedValue = "25.5";
+    const string& expectedValue = "25.5";
     string retrievedValue = sheet.getValue(address2);
     EXPECT_EQ(expectedValue, retrievedValue);
 }

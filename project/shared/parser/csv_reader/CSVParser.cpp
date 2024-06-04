@@ -5,20 +5,25 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
-namespace Parser {
-  CSVParser::CSVParser() {}
-  void CSVParser::parse(const char *csv_file_name, std::vector<std::string> results)
-  {
-    auto file_stream =
-      std::make_unique<std::ifstream>(csv_file_name, std::ios_base::in | std::ios_base::binary);
-    auto reader = CSVStreamParser<>(std::make_unique<StreamReader>(*file_stream));
+namespace Parser
+{
+CSVParser::CSVParser() {}
+void CSVParser::parse(const char* csv_file_name,
+                      std::vector<std::string> results)
+{
+    auto file_stream = std::make_unique<std::ifstream>(
+        csv_file_name, std::ios_base::in | std::ios_base::binary);
+    auto reader =
+        CSVStreamParser<>(std::make_unique<StreamReader>(*file_stream));
     reader.readLine(results);
-  }
-  void CSVParser::parse_by_line(const char *csv_data, std::vector<std::string> results)
-  {
-    auto file_stream =
-      std::make_unique<std::ifstream>(csv_data, std::ios_base::in | std::ios_base::binary);
-    auto reader = CSVStreamParser<>(std::make_unique<StreamReader>(*file_stream));
+}
+void CSVParser::parse_by_line(const char* csv_data,
+                              std::vector<std::string> results)
+{
+    auto file_stream = std::make_unique<std::ifstream>(
+        csv_data, std::ios_base::in | std::ios_base::binary);
+    auto reader =
+        CSVStreamParser<>(std::make_unique<StreamReader>(*file_stream));
     reader.readLine(results);
-  }
-}// namespace Parser
+}
+} // namespace Parser

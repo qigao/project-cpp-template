@@ -46,7 +46,7 @@
     // 输出窗口
     "[Log]": {
         // 字体大小
-        "editor.fontSize": 15
+        "editor.fontSize": 14
     },
     // CodeLens的字体系列: Fira Code Retina
     "editor.codeLensFontFamily": "Fira Code Retina",
@@ -55,7 +55,7 @@
     // 启用连字体
     "editor.fontLigatures": true,
     // 字体大小
-    "editor.fontSize": 16,
+    "editor.fontSize": 14,
     // 集成终端字体大小
     "terminal.integrated.fontSize": 14
 }

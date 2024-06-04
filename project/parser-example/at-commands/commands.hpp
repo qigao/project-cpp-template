@@ -5,9 +5,9 @@
 #ifndef ATCOMMANDS_COMMANDS_HPP
 #define ATCOMMANDS_COMMANDS_HPP
 
-#include <cstring>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "radio.hpp"
 
@@ -18,14 +18,15 @@ extern const char* FREQ_TEXT[];
 extern bool quiet;
 extern bool verbose;
 
-enum Response {
+enum Response
+{
     RESPONSE_OK = 0,
     RESPONSE_ERROR_BAD_COMMAND,
     RESPONSE_ERROR_INDEX_OUT_OF_BOUNDS,
 
     RESPONSE_ERROR_END,
-    RESPONSE_ERROR_BEGIN = RESPONSE_ERROR_INDEX_OUT_OF_BOUNDS };
-
+    RESPONSE_ERROR_BEGIN = RESPONSE_ERROR_INDEX_OUT_OF_BOUNDS
+};
 
 extern const char* response_messages[RESPONSE_ERROR_END];
 
@@ -58,4 +59,4 @@ bool sample_rssi(float duration_seconds);
 
 bool inquiry(int inquiry_index);
 
-#endif //ATCOMMANDS_COMMANDS_HPP
+#endif // ATCOMMANDS_COMMANDS_HPP
