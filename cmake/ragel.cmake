@@ -41,10 +41,7 @@
 # /usr/share/cmake/Modules/FindFLEX.cmake
 # /usr/share/cmake/Modules/FindBISON.cmake
 
-find_program(
-  RAGEL_EXECUTABLE
-  NAMES ragel
-  DOC "path to the ragel executable")
+find_program(RAGEL_EXECUTABLE NAMES ragel DOC "path to the ragel executable")
 mark_as_advanced(RAGEL_EXECUTABLE)
 
 if(RAGEL_EXECUTABLE)
@@ -54,29 +51,24 @@ if(RAGEL_EXECUTABLE)
     OUTPUT_VARIABLE RAGEL_version_output
     ERROR_VARIABLE RAGEL_version_error
     RESULT_VARIABLE RAGEL_version_result
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
 
   if(${RAGEL_version_result} EQUAL 0)
-    string(
-      REGEX
-      REPLACE "^Ragel State Machine Compiler version ([^ ]+) .*$"
-              "\\1"
-              RAGEL_VERSION
-              "${RAGEL_version_output}")
+    string(REGEX REPLACE "^Ragel State Machine Compiler version ([^ ]+) .*$" "\\1" RAGEL_VERSION
+                         "${RAGEL_version_output}"
+    )
   else()
     message(SEND_ERROR "Command \"${RAGEL_EXECUTABLE} --version\" failed with output:
-${RAGEL_version_error}")
+${RAGEL_version_error}"
+    )
   endif()
 
   #============================================================
   # RAGEL_TARGET (public macro)
   #============================================================
   #
-  macro(
-    RAGEL_TARGET
-    Name
-    Input
-    Output)
+  macro(RAGEL_TARGET Name Input Output)
     set(RAGEL_TARGET_usage "RAGEL_TARGET(<Name> <Input> <Output> [COMPILE_FLAGS <string>]")
     if(${ARGC} GREATER 3)
       if(${ARGC} EQUAL 5)
@@ -96,7 +88,8 @@ ${RAGEL_version_error}")
       COMMAND ${RAGEL_EXECUTABLE} ARGS ${RAGEL_EXECUTABLE_opts} -o${Output} ${Input}
       DEPENDS ${Input}
       COMMENT "[RAGEL][${Name}] Compiling state machine with Ragel ${RAGEL_VERSION}"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
 
     set(RAGEL_${Name}_DEFINED TRUE)
     set(RAGEL_${Name}_OUTPUTS ${Output})
@@ -110,7 +103,4 @@ endif()
 #include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
 # use this include when module file is located in build tree
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(
-  RAGEL
-  REQUIRED_VARS RAGEL_EXECUTABLE
-  VERSION_VAR RAGEL_VERSION)
+find_package_handle_standard_args(RAGEL REQUIRED_VARS RAGEL_EXECUTABLE VERSION_VAR RAGEL_VERSION)

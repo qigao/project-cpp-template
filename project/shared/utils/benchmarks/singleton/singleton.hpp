@@ -1,9 +1,5 @@
-#include <algorithm>
-#include <iostream>
-#include <memory>
 #include <mutex>
 #include <string>
-#include <thread>
 /**
  * The Singleton class defines the `GetInstance` method that serves as an
  * alternative to constructor and lets clients access the same instance of this

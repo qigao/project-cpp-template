@@ -5,7 +5,8 @@ include(FetchContent)
 set(PROJECT_OPTIONS_VERSION "v0.35.1")
 FetchContent_Declare(
   _project_options
-  URL https://github.com/aminya/project_options/archive/refs/tags/${PROJECT_OPTIONS_VERSION}.zip)
+  URL https://github.com/aminya/project_options/archive/refs/tags/${PROJECT_OPTIONS_VERSION}.zip
+)
 
 FetchContent_MakeAvailable(_project_options)
 

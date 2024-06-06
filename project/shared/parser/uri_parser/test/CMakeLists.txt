@@ -2,11 +2,7 @@ file(GLOB TARGET_SOURCES *.cpp)
 file(GLOB TARGET_HEADERS ../*.h)
 
 foreach(TARGET ${TARGET_SOURCES})
-  cmake_path(
-    GET
-    TARGET
-    STEM
-    MYFILE_WITHOUT_EXT)
+  cmake_path(GET TARGET STEM MYFILE_WITHOUT_EXT)
   list(APPEND TEST_CASES ${MYFILE_WITHOUT_EXT})
 endforeach()
 
@@ -20,10 +16,8 @@ foreach(TEST_CASE ${TEST_CASES})
   target_link_options(${TEST_CASE} PRIVATE ${linker_flags})
 
   target_include_directories(
-    ${TEST_CASE}
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../
-    # Any other extra include required
+    ${TEST_CASE} PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ # Any other extra include required
   )
   include(GoogleTest)
   gtest_discover_tests(${TEST_CASE})

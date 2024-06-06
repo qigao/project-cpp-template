@@ -7,7 +7,8 @@ package_project(
   my_lib
   my_header_lib
   my_project_options
-  my_project_warnings)
+  my_project_warnings
+)
 
 # Experience shows that explicit package naming can help make it easier to sort
 # out potential ABI related issues before they start, while helping you

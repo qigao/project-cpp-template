@@ -1,17 +1,22 @@
-#pragma once
-#include <httplib.h>
+#ifndef __HELPERS_H__
+#define __HELPERS_H__
 
 #include "constants.hpp"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 #include <cmath>
 #include <fmt/core.h>
+#include <httplib.h>
 #include <iostream>
+using namespace rapidjson;
 inline int some_fun()
 {
     fmt::print("Hello {} !", "helpers");
     return 0;
 }
 
-void login(const httplib::Request& req, httplib::Response& res)
+inline void login(const httplib::Request& req, httplib::Response& res)
 {
     std::string str;
     if (req.body == R"({"password": "secret"})")
@@ -25,7 +30,7 @@ void login(const httplib::Request& req, httplib::Response& res)
     res.set_content(R"({"result": ")" + str + "\"}", APP_JSON);
 }
 
-std::string load_assets(const std::string& path)
+inline std::string load_assets(const std::string& path)
 {
 
     std::ifstream file(path.c_str(), std::ios::in);
@@ -41,7 +46,7 @@ std::string load_assets(const std::string& path)
     return assets;
 }
 
-std::string dump_headers(const httplib::Headers& headers)
+inline std::string dump_headers(const httplib::Headers& headers)
 {
     std::string s;
     char buf[BUFSIZ];
@@ -55,7 +60,8 @@ std::string dump_headers(const httplib::Headers& headers)
     return s;
 }
 
-std::string log(const httplib::Request& req, const httplib::Response& res)
+inline std::string log(const httplib::Request& req,
+                       const httplib::Response& res)
 {
     std::string s;
     char buf[BUFSIZ];
@@ -95,3 +101,12 @@ std::string log(const httplib::Request& req, const httplib::Response& res)
 
     return s;
 }
+inline std::string stringify(const rapidjson::Value& o)
+{
+    StringBuffer sb;
+    Writer<StringBuffer> writer(sb);
+    o.Accept(writer);
+    return sb.GetString();
+}
+
+#endif // __HELPERS_H__

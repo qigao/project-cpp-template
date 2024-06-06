@@ -3,7 +3,9 @@
 # ##############################################################################
 set(TARGET_NAME nodejs_http_parser_benchmark)
 
-add_executable(${TARGET_NAME} node_performance.cc ${RAGEL_HTTP_MACHINE_OUTPUTS} nodejs_http_parser.c)
+add_executable(
+  ${TARGET_NAME} ${RAGEL_HTTP_MACHINE_OUTPUTS} node_performance.cc nodejs_http_parser.c
+)
 target_link_libraries(${TARGET_NAME} benchmark::benchmark)
 
 # add target properties such as debug postfix, MSVC Runtime and library version
@@ -12,7 +14,8 @@ set_target_properties(
   PROPERTIES DEBUG_POSTFIX "-d"
              MSVC_RUNTIME_LIBRARY "${MSVC_RUNTIME_TYPE}"
              VERSION ${CMAKE_PROJECT_VERSION}
-             SOVERSION ${CMAKE_PROJECT_VERSION})
+             SOVERSION ${CMAKE_PROJECT_VERSION}
+)
 
 # set target compile options as defined in the cmake/compiler_options.cmake
 # Module
