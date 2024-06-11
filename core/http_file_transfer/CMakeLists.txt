@@ -1,19 +1,24 @@
-# Separate library part and executable part (`main()` function) to simplify testing.
-set(PROJECT_NAME http_download)
-# ----------------------------------------------------------------------------------------------------------------------
+# =================================================================================
+# PROJECT
+# =================================================================================
+
+# Project Name
+set(PROJECT_NAME http_file_transfer)
+
 
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
 
-file(GLOB TARGET_SOURCES src/*.cpp)
-file(GLOB TARGET_HEADERS include/http/*.hpp)
+file(GLOB TARGET_SOURCES private/src/*.cpp)
+file(GLOB TARGET_HEADERS private/include/*.hpp)
 
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Find dependencies:
 #set(OS_WINDOWS TRUE)
@@ -27,7 +32,7 @@ find_package(Threads REQUIRED)
 find_package(spdlog)
 # ----------------------------------------------------------------------------------------------------------------------
 # executable part
-add_executable(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})
+add_library(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})
 # Link dependencies:
 target_link_libraries(
   ${PROJECT_NAME}
@@ -38,30 +43,40 @@ target_link_libraries(
          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )
-
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_EXPORTS)
 target_compile_definitions(
   ${PROJECT_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
-target_link_libraries(${PROJECT_NAME} PRIVATE my_project_options my_project_warnings)
-
+target_compile_options(${PROJECT_NAME} PRIVATE  my_project_options my_project_warnings)
 # include all the necessary directories
 target_include_directories(
-  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/public
                           # Any other extra include required
 )
-# ----------------------------------------------------------------------------------------------------------------------
-# install
-add_custom_command(
-  TARGET ${PROJECT_NAME}
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
-          ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}
-  COMMENT "Copying cmake file as demo to build dir"
+# =================================================================================
+# INSTALL
+# =================================================================================
+
+# Import GNU Install Rules
+include(GNUInstallDirs)
+
+# Files to Install
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}Targets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
 )
-# ----------------------------------------------------------------------------------------------------------------------
-# tests
-if(FEATURE_TESTS)
-  add_subdirectory("./test")
-endif()
+
+install(
+  EXPORT ${PROJECT_NAME}Targets
+  FILE ${PROJECT_NAME}Targets.cmake
+  NAMESPACE ${PROJECT_NAME}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)

@@ -4,7 +4,7 @@ add_subdirectory(my_lib)
 add_subdirectory(my_exe)
 add_subdirectory(http_client_lib)
 add_subdirectory(http_server)
-add_subdirectory(http_download)
+add_subdirectory(http_file_transfer)
 
 # ===============================================================================
 if(FEATURE_FUZZ_TESTS)
