@@ -1,34 +1,45 @@
-# Separate library part and executable part (`main()` function) to simplify testing.
+# =================================================================================
+# PROJECT
+# =================================================================================
 
-# ----------------------------------------------------------------------------------------------------------------------
-# library part
-add_library(my_exe_lib INTERFACE) # use interface or normal library according to the implementation
-# link project_options/warnings
-target_link_libraries(my_exe_lib INTERFACE my_project_options my_project_warnings)
+# Project Name
+set(PROJECT_NAME "myExe")
 
-# Includes
-target_include_interface_directories(my_exe_lib include)
+# =================================================================================
+# CONFIG
+# =================================================================================
 
-# Find dependencies:
-target_find_dependencies(my_exe_lib INTERFACE_CONFIG fmt)
+# =================================================================================
+# HEADERS
+# =================================================================================
 
-# Link dependencies:
-target_link_system_libraries(my_exe_lib INTERFACE fmt::fmt)
+set(MY_EXE_HEADERS #
+    "pch.hpp"
+)
 
-# ----------------------------------------------------------------------------------------------------------------------
-# executable part
-add_executable(my_exe "./src/main.cpp") # just for `main.cpp` which contains `main()` function
-# link project_options/warnings
-target_link_libraries(my_exe PRIVATE my_project_options my_project_warnings)
+# =================================================================================
+# SOURCES
+# =================================================================================
 
-# Includes, just link the library part
-target_link_libraries(my_exe PRIVATE my_exe_lib)
+set(MY_EXE_SOURCES #
+    "main.cpp"
+)
 
-# Link dependencies
-target_link_system_libraries(my_exe PRIVATE fmt::fmt)
+message(STATUS "Lib = ${mylib}")
 
-# ----------------------------------------------------------------------------------------------------------------------
-# tests
-if(FEATURE_TESTS)
-  add_subdirectory("./test")
-endif()
+# =================================================================================
+# BUILD
+# =================================================================================
+
+# Add Executable-Object
+add_executable(myexe ${MY_EXE_HEADERS} ${MY_EXE_SOURCES})
+
+# Configure Executable-Object
+set_target_properties(
+  myexe PROPERTIES OUTPUT_NAME "shared_library_example" RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
+)
+
+# Include MyLib Public-Headers
+include_directories("../lib/public")
+
+target_link_libraries(myexe mylib)

@@ -3,7 +3,6 @@
 
 #include <fmt/core.h>
 #include <httplib.h>
-#include <rapidjson/document.h>
 
 class HttpHandler
 {

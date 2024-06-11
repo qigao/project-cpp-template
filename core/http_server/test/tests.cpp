@@ -294,7 +294,7 @@ TEST_CASE("HttpServer download file", "[server]")
             std::bind(&HttpFileHandle::handle_file_download, handler, _1, _2));
     svr.start();
     httplib::Client cli(HOST, PORT);
-    auto unix_file = "ubuntu-14.04.6-server-amd64.template";
+    auto unix_file = "hello.txt";
     auto remote_url = fmt::format("/download/{}", unix_file);
     auto local_file = fmt::format("./{}", unix_file);
     std::ofstream ofs(local_file, std::ofstream::binary);

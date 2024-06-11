@@ -21,7 +21,6 @@ if(ENABLE_OPENSSL)
 endif()
 
 find_package(httplib)
-find_package(RapidJSON REQUIRED)
 find_package(cpp_yyjson REQUIRED)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -39,7 +38,6 @@ target_link_libraries(
   PRIVATE httplib::httplib
           spdlog::spdlog_header_only
           Threads::Threads
-          rapidjson
           cpp_yyjson::cpp_yyjson
           ryml::ryml
           $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>

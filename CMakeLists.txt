@@ -11,7 +11,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(fetch_project_options)
 
 # Define the features of the project
-include(Features.cmake)
+include(Config.cmake)
 
 # enable cross-compiling: - should be called before run_vcpkg()
 if(ENABLE_CROSS_COMPILING)
@@ -34,7 +34,8 @@ set(PROJECT_NAME "DemoApp Research")
 set(PROJECT_DESCRIPTION "multi-module project template for modern C++")
 set(PROJECT_WEBSITE "https://github.com/qigao/cmake-template")
 set(APPLICATION_LICENSE "MIT License")
-
+# Binary Output Dir
+set(BIN_DIR "${CMAKE_SOURCE_DIR}/bin/${BUILD_TYPE_DIR}")
 # Set the project name and language
 project(
   cpp_core_project
@@ -104,14 +105,9 @@ project_options(
   # LINKER "lld"
   # CONAN_PROFILE ${profile_path}
 )
-include(CMakePackageConfigHelpers)
-include(GenerateExportHeader)
 include(gitVersion)
-include(cotire)
+
 add_subdirectory(core)
 if(ENABLE_SAMPLE_PROJECT_COMPILING)
   add_subdirectory(project)
-endif()
-if(CMAKE_SKIP_INSTALL_RULES)
-  include(install)
 endif()
