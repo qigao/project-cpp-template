@@ -23,7 +23,7 @@ HttpFileHandle::HttpFileHandle(const std::string& shared_folder)
  * @throws None
  */
 void HttpFileHandle::list_upload_form(const httplib::Request& /* req */,
-                                httplib::Response& res)
+                                      httplib::Response& res)
 {
     auto html = R"(
                     <!DOCTYPE html>
@@ -56,6 +56,8 @@ void HttpFileHandle::handle_file_download(const httplib::Request& req,
     bf::path path(req.path);
     auto file_name =
         fmt::format("{}/{}", shared_folder_, path.filename().string());
+    spdlog::info("trying to download: {} from: {}", path.filename().string(),
+                 shared_folder_);
     // 没有请求的文件,返回404
     if (!bf::exists(file_name))
     {
@@ -119,7 +121,7 @@ void HttpFileHandle::handle_file_download(const httplib::Request& req,
 }
 
 bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
-                                int64_t& len)
+                                 int64_t& len)
 {
     // 检查格式
     auto pos1 = range.find('=');
@@ -144,40 +146,26 @@ bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
 
 /**
  * download file by byte order in binary form
- * @param req
+ * @param file_name
  * @param res
  */
 void HttpFileHandle::download_file_by_order(const httplib::Request& req,
                                     httplib::Response& res)
 {
-    bf::path file_path(req.path);
-    auto file_name =
-        fmt::format("{}/{}", shared_folder_, file_path.filename().string());
-    if (!bf::exists(file_name))
-    {
-        spdlog::error("file not found: {}", file_name);
-        res.status = 404;
-        return;
-    }
-    if (bf::is_directory(file_name))
-    {
-        spdlog::error("file is directory: {}", file_name);
-        res.status = 403;
-        return;
-    }
-
-    res.set_content_provider(
+     res.set_content_provider(
         OCTET_STREAM, // Content type
         [&](size_t offset, httplib::DataSink& sink)
         {
+            bf::path file_path(req.path);
+        auto file_name =
+            fmt::format("{}/{}", shared_folder_, file_path.filename().string());
             // open file
-            std::ifstream file_reader(file_name, std::ifstream::binary |
-                                                     std::ifstream::in);
+            std::ifstream file_reader(file_name, std::ios::in);
             // can't open file, cancel process
             if (!file_reader.good())
             {
                 res.status = 404;
-                res.set_content("404 not found", "text/plain; charset=UTF-8");
+                res.set_content(R"({"message":"404 not found"})", APP_JSON);
                 return false;
             }
 
@@ -218,7 +206,7 @@ void HttpFileHandle::download_file_by_order(const httplib::Request& req,
         });
 }
 void HttpFileHandle::upload_file_by_multiform(const httplib::Request& req,
-                                       httplib::Response& res)
+                                              httplib::Response& res)
 {
     for (const auto& data : req.files)
     {
@@ -243,7 +231,7 @@ void HttpFileHandle::upload_file_by_multiform(const httplib::Request& req,
 }
 
 void HttpFileHandle::handle_file_lists(const httplib::Request& /* req */,
-                                 httplib::Response& res)
+                                       httplib::Response& res)
 {
     auto kv_list = std::vector<std::map<std::string, std::string>>();
     bf::directory_iterator item_begin(shared_folder_);
@@ -272,8 +260,7 @@ void HttpFileHandle::handle_file_lists(const httplib::Request& /* req */,
 }
 
 void HttpFileHandle::handle_stream_file(
-    const std::string& file_name,
-    const httplib::ContentReader& content_reader) const
+    const std::string& file_name, const httplib::ContentReader& content_reader)
 {
     auto file_path_str = fmt::format("{}/{}", shared_folder_, file_name);
 
@@ -289,7 +276,7 @@ void HttpFileHandle::handle_stream_file(
 }
 
 void HttpFileHandle::handle_multipart_file(
-    const httplib::ContentReader& content_reader) const
+    const httplib::ContentReader& content_reader)
 {
     httplib::MultipartFormDataItems files;
     content_reader(

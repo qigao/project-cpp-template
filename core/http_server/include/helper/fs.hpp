@@ -39,7 +39,7 @@ inline void rename(std::string const& oname, std::string const& nname)
     }
 }
 
-void append(std::string const& filename, char const* data, size_t size)
+inline void append(std::string const& filename, char const* data, size_t size)
 {
     std::ofstream outfile(filename.c_str(),
                           std::ios_base::out | std::ios_base::app);

@@ -1,3 +1,4 @@
+#include "helper/fs.hpp"
 #include "helper/human_readable.hpp"
 #include "http/http_file_handle.hpp"
 #include "http/http_json_handle.hpp"
@@ -189,8 +190,8 @@ TEST_CASE("HttpServer upload file by multipart", "[server]")
     // Register handler
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
     svr.Get("/", std::bind(&HttpFileHandle::list_upload_form, handler, _1, _2));
-    svr.Post("/multipart",
-             std::bind(&HttpFileHandle::upload_file_by_multiform, handler, _1, _2));
+    svr.Post("/multipart", std::bind(&HttpFileHandle::upload_file_by_multiform,
+                                     handler, _1, _2));
     svr.start();
     httplib::MultipartFormDataItems items = {
         {"text_file", "h\ne\n\nl\nl\no\n", "hello.txt", "text/plain"},
@@ -274,7 +275,8 @@ TEST_CASE("HttpServer list all files", "[server]")
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
-    svr.Get("/", std::bind(&HttpFileHandle::handle_file_lists, handler, _1, _2));
+    svr.Get("/",
+            std::bind(&HttpFileHandle::handle_file_lists, handler, _1, _2));
     svr.start();
     httplib::Client cli(HOST, PORT);
     auto resp = cli.Get("/");
@@ -288,8 +290,25 @@ TEST_CASE("HttpServer download file", "[server]")
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
-    svr.Get("/", std::bind(&HttpFileHandle::handle_file_download, handler, _1, _2));
+    svr.Get("/download/(.*)",
+            std::bind(&HttpFileHandle::handle_file_download, handler, _1, _2));
     svr.start();
     httplib::Client cli(HOST, PORT);
-    auto resp = cli.Get("/");
+    auto unix_file = "ubuntu-14.04.6-server-amd64.template";
+    auto remote_url = fmt::format("/download/{}", unix_file);
+    auto local_file = fmt::format("/home/qigao/{}", unix_file);
+    std::ofstream ofs(local_file, std::ofstream::binary);
+    auto resp = cli.Get(
+        remote_url,
+        [&](const httplib::Response& response)
+        {
+            std::cerr << "Client read:" << response.status << std::endl;
+            return true;
+        },
+        [&](const char* data, size_t data_length)
+        {
+            ofs.write(data, data_length);
+            std::cerr << "Client write:" << data_length << std::endl;
+            return true;
+        });
 }
