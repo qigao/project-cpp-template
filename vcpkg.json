@@ -11,7 +11,6 @@
       "name": "c-ares",
       "version>=": "1.25.0"
     },
-    "cppzmq",
     {
       "name": "eigen3",
       "version>=": "3.4.0#2"
@@ -20,7 +19,14 @@
       "name": "fmt",
       "version>=": "10.1.1"
     },
-    "gtest",
+    {
+      "name": "gtest",
+      "version>=": "1.13.0"
+    },
+    {
+      "name": "nanobench",
+      "version>=": "4.3.11"
+    },
     {
       "name": "openssl",
       "version>=": "3.1.0"
@@ -29,18 +35,6 @@
     {
       "name": "spdlog",
       "version>=": "1.13.0"
-    },
-    "tinyfiledialogs"
-  ],
-  "features": {
-    "tests": {
-      "description": "Build the tests of the package's tests",
-      "dependencies": [
-        {
-          "name": "catch2",
-          "version>=": "3.4.0"
-        }
-      ]
     }
-  }
+  ]
 }

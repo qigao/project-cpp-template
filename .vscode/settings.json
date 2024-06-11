@@ -37,7 +37,7 @@
         "-j=64"
     ],
     // 自动检测 clangd 更新
-    "clangd.checkUpdates": true,
+    "clangd.checkUpdates": false,
     // clangd的snippets有很多的跳转点，不用这个就必须手动触发Intellisense了
     "editor.suggest.snippetsPreventQuickSuggestions": false,
     /********
@@ -62,5 +62,14 @@
     "spellright.documentTypes": [
         "markdown",
         "latex"
-    ]
+    ],
+    "cmake.skipConfigureIfCachePresent": true,
+    "cmake.buildBeforeRun": true,
+    "task": {
+        "path": "/usr/bin/go-task"
+    },
+    //http collection 保存路径
+    "flashpost.saveDataToWorkspace": false,
+    "flashpost.workspaceDataRelativePath": "rest-api-test",
+    "liveServer.settings.port": 5501,
 }

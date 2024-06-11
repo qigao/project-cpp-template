@@ -1,0 +1,31 @@
+version: 3
+tasks:
+  func:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target function_test
+  func:test:run:
+    deps: [func:test:build]
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest -R AutoFunction
+  singleton:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target singleton_test
+  singleton:test:run:
+    deps: [singleton:test:build]
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest -R SingletonTest
+  human_read:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target hr_test
+  human_read:test:run:
+    deps: [human_read:test:build]
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest -R HumanReadableTest
+
+  random:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target random_test
+  random:test:run:
+    deps: [random:test:build]
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest -R RandomTest

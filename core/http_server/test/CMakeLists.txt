@@ -1,65 +1,43 @@
-set(PROJECT_NAME http_server_tests)
-# ----------------------------------------------------------------------------------------------------------------------
-
-# ##############################################################################
-# Define Target Information
-# ##############################################################################
-
-file(GLOB TARGET_SOURCES ../src/http/*.cpp)
-file(GLOB TARGET_HEADERS ../include/helper/*.hpp ../include/http/*.hpp)
-
-# ##############################################################################
-# Support IDE Visualization
-# ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/.. PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/.. PREFIX "Header Files" FILES ${TARGET_HEADERS})
-# ----------------------------------------------------------------------------------------------------------------------
-# Find dependencies:
-#set(OS_WINDOWS TRUE)
-if(ENABLE_OPENSSL)
-  find_package(OpenSSL REQUIRED)
-endif()
-
-find_package(httplib)
-find_package(RapidJSON REQUIRED)
-find_package(cpp_yyjson REQUIRED)
-find_package(ryml REQUIRED)
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
-find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
-
-# ----------------------------------------------------------------------------------------------------------------------
-# executable part
-add_executable(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES} tests.cpp)
-# Link dependencies:
+find_package(GTest REQUIRED)
+# --------------- YAML_CONVERT TEST -------------------
+add_executable(yaml_convert_test yaml_convert_test.cpp)
 target_link_libraries(
-  ${PROJECT_NAME}
-  PRIVATE httplib::httplib
-          spdlog::spdlog_header_only
-          Threads::Threads
-          rapidjson
-          cpp_yyjson::cpp_yyjson
-          ryml::ryml
-          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
-          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
+  yaml_convert_test
+  PRIVATE GTest::gtest
+          GTest::gtest_main
+          GTest::gmock
+          GTest::gmock_main
+          http_server_lib
+          starter_project_options
+          starter_project_warnings
 )
 
-target_compile_definitions(
-  ${PROJECT_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
-)
+gtest_discover_tests(yaml_convert_test)
 
-# link project_options/warnings
+# ---------------- HTTP_SERVER TEST ---------------------
+add_executable(http_server_test http_server_test.cpp)
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE my_project_options my_project_warnings catch2_test_common
+  http_server_test
+  PRIVATE GTest::gtest
+          GTest::gtest_main
+          GTest::gmock
+          GTest::gmock_main
+          http_server_lib
+          starter_project_options
+          starter_project_warnings
 )
+gtest_discover_tests(http_server_test)
 
-# include all the necessary directories
-target_include_directories(
-  ${PROJECT_NAME}
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include
-          # Any other extra include required
-          ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS}
+# --------------- YAML_PROPERTIES ---------------------
+add_executable(yaml_properties_test yaml_properties_test.cpp)
+target_link_libraries(
+  yaml_properties_test
+  PRIVATE GTest::gtest
+          GTest::gtest_main
+          GTest::gmock
+          GTest::gmock_main
+          http_server_lib
+          starter_project_options
+          starter_project_warnings
 )
-add_test(NAME MyTest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${UNIT_TEST_BIN_OUTPUT_DIR})
+gtest_discover_tests(yaml_properties_test)

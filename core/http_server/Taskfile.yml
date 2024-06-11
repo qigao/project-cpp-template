@@ -1,0 +1,26 @@
+version: 3
+tasks:
+  yaml_convert:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target yaml_convert_test
+  yaml_convert:test:run:
+    deps:
+      - task: yaml_convert:test:build
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest -R YmlTest
+  yaml_properties:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target yaml_properties_test
+  yaml_properties:test:run:
+    deps:
+      - task: yaml_properties:test:build
+    cmds:
+      - cmd:  cd $BUILD_DIR && ctest  -R YamlPropertiesTest
+  http_server:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target http_server_test
+  http_server:test:run:
+    deps:
+      - task: http_server:test:build
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest  -R HttpServerTest

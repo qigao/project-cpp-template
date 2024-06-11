@@ -4,8 +4,8 @@ If you have [Docker](https://www.docker.com/) installed, you can run this
 in your terminal, when the Dockerfile is inside the `.devcontainer` directory:
 
 ```bash
-docker build -f ./.devcontainer/Dockerfile --tag=my_project:latest .
-docker run -it my_project:latest
+docker build -f ./.devcontainer/Dockerfile --tag=starter_project:latest .
+docker run -it starter_project:latest
 ```
 
 This command will put you in a `bash` session in a Ubuntu 20.04 Docker container,
@@ -25,7 +25,7 @@ If you wish to use clang as your default CC and CXX environment variables, you
 may do so like this:
 
 ```bash
-docker build --tag=my_project:latest --build-arg USE_CLANG=1 .
+docker build --tag=starter_project:latest --build-arg USE_CLANG=1 .
 ```
 
 You will be logged in as root, so you will see the `#` symbol as your prompt.
@@ -39,7 +39,7 @@ TLDR:
 ```bash
 docker run -it \
 	-v absolute_path_on_host_machine:absolute_path_in_guest_container \
-	my_project:latest
+	starter_project:latest
 ```
 
 You can configure and build [as directed above](#build) using these commands:

@@ -1,17 +1,8 @@
-## dependencies
-set(DEPENDENCIES_CONFIGURED fmt Eigen3)
-
-foreach(DEPENDENCY ${DEPENDENCIES_CONFIGURED})
-  find_package(${DEPENDENCY} CONFIG REQUIRED)
-endforeach()
-add_subdirectory(my_exe)
-add_subdirectory(my_lib)
-add_subdirectory(my_header_lib)
-add_subdirectory(http_client_lib)
+# ===============================================================================
+add_subdirectory(http_client)
 add_subdirectory(http_server)
-add_subdirectory(http_download)
-if(FEATURE_FUZZ_TESTS)
-  add_subdirectory(fuzz_test)
-endif()
+add_subdirectory(shared)
+# ===============================================================================
+
 # set the startup project for the "play" button in MSVC
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT my_exe)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT http_server)

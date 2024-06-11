@@ -2,13 +2,10 @@
     "recommendations": [
         "asciidoctor.asciidoctor-vscode",
         "ms-vscode.cpptools",
-        "amiralizadeh9480.cpp-helper",
         "tostc.vscl",
         "llvm-vs-code-extensions.vscode-clangd",
         "twxs.cmake",
-        "yifei-zhang.cmake-test-tools",
         "ms-vscode.cmake-tools",
-        "federandink.cpp-reference-and-documentation",
         "editorconfig.editorconfig",
         "mhutchie.git-graph",
         "donjayamanne.githistory",
@@ -20,6 +17,18 @@
         "gruntfuggly.todo-tree",
         "aaron-bond.better-comments",
         "ms-vscode-remote.remote-containers",
-        "maciejdems.add-to-gitignore"
+        "maciejdems.add-to-gitignore",
+        "humao.rest-client",
+        "vasubasraj.flashpost",
+        "amiralizadeh9480.cpp-helper",
+        "matepek.vscode-catch2-test-adapter",
+        "lfs.vscode-emacs-friendly",
+        "github.vscode-pull-request-github",
+        "ms-vscode.hexeditor",
+        "christian-kohler.path-intellisense",
+        "daohong-emilio.yash",
+        "ritwickdey.liveserver",
+        "vadimcn.vscode-lldb",
+        "amazonwebservices.amazon-q-vscode"
     ]
 }

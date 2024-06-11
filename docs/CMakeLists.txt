@@ -45,8 +45,11 @@ endif()
 set(conf_copyright "MIT - Copyright (c) 2022-2100 Amin Yahyaabadi")
 set(conf_docs "${CMAKE_CURRENT_SOURCE_DIR}") # Location of your index.rst
 set(conf_path "${CMAKE_CURRENT_SOURCE_DIR}") # Location of your conf.py
-set(conf_out_path "${CMAKE_CURRENT_BINARY_DIR}") # Location of the output directory
-set(conf_version "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(conf_out_path "${CMAKE_CURRENT_BINARY_DIR}"
+)# Location of the output directory
+set(conf_version
+    "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+)
 set(conf_release "${PROJECT_VERSION}")
 set(conf_name "project_options")
 set(conf_author "Amin Yahyaabadi")
@@ -65,11 +68,13 @@ configure_file(conf.py.in conf.py @ONLY)
 set(doc_formats "")
 if(SPHINX_HTML)
   list(APPEND doc_formats html)
-  set(html_extra_commands COMMAND ${CMAKE_COMMAND} -E copy_directory
-                          ${CMAKE_CURRENT_LIST_DIR}/root/ ${CMAKE_CURRENT_BINARY_DIR}
+  set(html_extra_commands
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_CURRENT_LIST_DIR}/root/ ${CMAKE_CURRENT_BINARY_DIR}
   )
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/js/versions.js
-       "var ar_versions = [{\"version\": \"build\", \"folder\": \"html\", \"has_pdf\": false}]"
+  file(
+    WRITE ${CMAKE_CURRENT_BINARY_DIR}/js/versions.js
+    "var ar_versions = [{\"version\": \"build\", \"folder\": \"html\", \"has_pdf\": false}]"
   )
 endif()
 if(SPHINX_MAN)
@@ -91,7 +96,8 @@ if(SPHINX_INFO)
   # Sphinx texinfo builder supports .info, .txt, .html and .pdf output.
   # SPHINX_INFO controls the .info output.
   set(texinfo_extra_commands
-      COMMAND ${MAKEINFO_EXECUTABLE} --no-split -o ${CMAKE_CURRENT_BINARY_DIR}/texinfo/cmake.info
+      COMMAND ${MAKEINFO_EXECUTABLE} --no-split -o
+      ${CMAKE_CURRENT_BINARY_DIR}/texinfo/cmake.info
       ${CMAKE_CURRENT_BINARY_DIR}/texinfo/cmake.texi
   )
 endif()
@@ -104,12 +110,14 @@ foreach(format ${doc_formats})
   add_custom_command(
     OUTPUT ${doc_format_output}
     COMMAND
-      ${SPHINX_EXECUTABLE} -c ${CMAKE_CURRENT_BINARY_DIR} -d ${CMAKE_CURRENT_BINARY_DIR}/doctrees -b
-      ${format} ${sphinx_flags} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${format} >
+      ${SPHINX_EXECUTABLE} -c ${CMAKE_CURRENT_BINARY_DIR} -d
+      ${CMAKE_CURRENT_BINARY_DIR}/doctrees -b ${format} ${sphinx_flags}
+      ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${format} >
       ${CMAKE_CURRENT_BINARY_DIR}/${doc_format_log} # log stdout, pass stderr
       ${${format}_extra_commands}
     DEPENDS ${doc_format_last}
-    COMMENT "sphinx-build ${format}: see ${CMAKE_CURRENT_BINARY_DIR}/${doc_format_log}"
+    COMMENT
+      "sphinx-build ${format}: see ${CMAKE_CURRENT_BINARY_DIR}/${doc_format_log}"
     VERBATIM
   )
   set_property(SOURCE ${doc_format_output} PROPERTY SYMBOLIC 1)
@@ -120,8 +128,8 @@ endforeach()
 add_custom_target(documentation ALL DEPENDS ${doc_format_outputs})
 
 if(SPHINX_INFO)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/texinfo/cmake.info DESTINATION ${CMAKE_INFO_DIR}
-          ${COMPONENT}
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/texinfo/cmake.info
+          DESTINATION ${CMAKE_INFO_DIR} ${COMPONENT}
   )
 endif()
 

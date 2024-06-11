@@ -1,32 +1,21 @@
 version: 3
-
 includes:
-  core_project:
+  core:
     taskfile: ./core/Taskfile.yml
-    optional: true
-    dir: ./core
-    vars:
-
-
-vars:
-  CMAKE_GENERATOR: "Ninja Multi-Config"
-  CWD:
-    sh: git rev-parse --show-toplevel
-
+dotenv: ['.env', 'task_vars.env']
+env:
+  CONFIG: '{{.CONFIG | default "developer"}}'
+  BUILD_DIR: '{{ .CMAKE_BUILD_DIR }}'
+  BUILD_TYPE: '{{ .CMAKE_BUILD_TYPE }}'
+  OUTPUT_DIR: '{{.CNMAKE_OUTPUT_DIR}}'
 tasks:
-  test:
-    - task: myproj:test.all
-    - task: myproj:test.release
-    - task: install
-
-  lint::clang-format:
+  lint:clang-format:
     cmds:
       - cmd: powershell -c '$files=(git ls-files --exclude-standard); foreach ($file in $files) { if ((get-item $file).Extension -in ".cpp", ".hpp", ".c", ".cc", ".cxx", ".hxx", ".ixx") { clang-format -i -style=file $file } }'
         platforms: [windows]
       - cmd: git ls-files --exclude-standard | grep -E '\.(cpp|hpp|c|cc|cxx|hxx|ixx)$' | xargs clang-format -i -style=file
         platforms: [linux, darwin]
-
-  lint::cmake:
+  lint:cmake:
     cmds:
       - cmd: powershell -c '$files=(git ls-files --exclude-standard); foreach ($file in $files) { $item=(get-item $file); if (($item.Name -eq "CMakeLists.txt") -or ($item.Extension -in ".cmake")) { cmake-format --in-place $file; cmake-lint $file {{.CMAKE_LINT_FLAGS}} } }'
         platforms: [windows]
@@ -34,20 +23,80 @@ tasks:
         platforms: [linux, darwin]
     vars:
       CMAKE_LINT_FLAGS: --disabled-codes C0103 C0301 R0912 R0915 R0913 --suppress-decorations
+  # Run with coverage analysis
+  coverage.all:
+    cmds:
+      # Set --sources "your_source_folder\*" and --filter "your_source_folder/" to have a clean coverage report
+      - |
+        {{if eq OS "windows"}}
 
-  lint:
-    deps:
-      - task:  lint::cmake
-      - task:  lint::clang-format
+          OpenCppCoverage.exe --export_type html:./build/coverage --export_type cobertura:./build/coverage.xml --cover_children --sources "core\*" --modules "build\*" -- task test.all
+
+          powershell -c "if (!\$env:CI) { echo '[info] Opening ./build/coverage/index.html...'; start ./build/coverage/index.html }"
+        {{else}}
+          mkdir -p ./build/coverage/
+
+          gcovr -j {{.nproc | default 1}} --delete \
+          --filter "core/" \
+          --filter "my_lib/" \
+          --filter "my_header_lib/" \
+          -e '/.*/build/' \
+          -e "project" \
+          -e ".*/test/.*" \
+           --root ./ --print-summary \
+           --html-details ./build/coverage/index.html \
+           --xml-pretty --xml ./build/coverage.xml ./build
+
+          echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
+        {{end}}
+    env:
+      CMAKE_BUILD_TYPE: "{{.CMAKE_BUILD_TYPE}}"
+
+  lint:vcpkg:
     cmds:
       - ~/vcpkg/vcpkg format-manifest ./vcpkg.json
-
-  clean:
+  lint.all:
+    desc: cpp, cmake, and vcpkg linting
+    deps:
+      - task: lint:cmake
+      - task: lint:clang-format
+    cmds:
+      - task: lint:vcpkg
+  clean:vcpkg:
+    desc: clean vcpkg
+    cmds:
+      - rm -rf ./vcpkg
+  clean:conan:
+    desc: clean conan
+    cmds:
+      - rm -rf ./conan2
+  clean:build:
+    desc: clean all build artifacts
     cmds:
       - cmd: powershell -c 'function rmrf($path) { if (test-path $path) { rm -r -force $path }}; rmrf ./build; rmrf ./install'
         platforms: [windows]
-      - cmd: rm -rf ./install ./build
+      - cmd: rm -rf ./build && rm -fr CMakeUserPresets.json && rm -fr task_vars.env
         platforms: [linux, darwin]
-
+  clean.all:
+    desc: clean all build artifacts and packages
+    deps:
+      - task: clean:vcpkg
+      - task: clean:conan
+      - task: clean:build
+  test.all:
+    desc: all the test tasks from modules
+    cmds:
+      - ctest --preset $CONFIG
   config:
-    - cmake --preset=developer
+    desc: list all cmake presets, then generate the developer preset
+    cmds:
+      - cmake --list-presets all
+      - cmake --preset $CONFIG
+  build.all:
+    desc: build all the targets by presets
+    cmds:
+      - cmake --build --preset $CONFIG
+  default:
+    desc: list all tasks
+    cmds:
+      - task -a

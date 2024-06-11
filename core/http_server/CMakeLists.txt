@@ -1,18 +1,21 @@
-set(PROJECT_NAME http_server)
+set(TARGET_NAME http_server)
+set(TARGET_NAME_LIB ${TARGET_NAME}_lib)
 # ----------------------------------------------------------------------------------------------------------------------
-
-# ##############################################################################
-# Define Target Information
-# ##############################################################################
-
-file(GLOB TARGET_SOURCES src/*.cpp src/http/*.cpp)
-file(GLOB TARGET_HEADERS include/helper/*.hpp include/http/*.hpp)
 
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
+
+file(GLOB TARGET_SOURCES src/*.cpp src/http/*.cpp src/config/*.cpp)
+file(GLOB TARGET_HEADERS include/http/*.hpp include/config/*.hpp)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
+  FILES ${TARGET_HEADERS}
+)
 # ----------------------------------------------------------------------------------------------------------------------
 # Find dependencies:
 #set(OS_WINDOWS TRUE)
@@ -20,50 +23,71 @@ if(ENABLE_OPENSSL)
   find_package(OpenSSL REQUIRED)
 endif()
 
-find_package(httplib)
-find_package(RapidJSON REQUIRED)
-find_package(cpp_yyjson REQUIRED)
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
-find_package(ryml REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
 find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
 
 # ----------------------------------------------------------------------------------------------------------------------
-# executable part
-add_executable(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})
-# Link dependencies:
-target_link_libraries(
-  ${PROJECT_NAME}
-  PRIVATE httplib::httplib
-          spdlog::spdlog_header_only
-          Threads::Threads
-          rapidjson
-          cpp_yyjson::cpp_yyjson
-          ryml::ryml
-          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
-          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
+# Libary part
+add_library(${TARGET_NAME_LIB})
+target_sources(${TARGET_NAME_LIB} PRIVATE ${TARGET_HEADERS} ${TARGET_SOURCES})
+target_include_interface_directories(
+  ${TARGET_NAME_LIB} ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/core/shared/utils ${CMAKE_SOURCE_DIR}/core/shared/http
 )
-
+# Link dependencies:
+target_find_dependencies(
+  ${TARGET_NAME_LIB}
+  PUBLIC_CONFIG
+  httplib
+  spdlog
+  yyjson
+  yaml-cpp
+  CLI11
+  fmt
+)
+target_link_system_libraries(
+  ${TARGET_NAME_LIB}
+  PUBLIC
+  httplib::httplib
+  spdlog::spdlog
+  Threads::Threads
+  yyjson::yyjson
+  yaml-cpp::yaml-cpp
+  hash_lib
+  CLI11::CLI11
+  fmt::fmt
+  $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
+  $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
+)
 target_compile_definitions(
-  ${PROJECT_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
+  ${TARGET_NAME_LIB}
+  INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
-target_link_libraries(${PROJECT_NAME} PRIVATE my_project_options my_project_warnings)
+target_link_libraries(
+  ${TARGET_NAME_LIB} PRIVATE starter_project_options starter_project_warnings
+)
 
 # include all the necessary directories
 target_include_directories(
-  ${PROJECT_NAME}
+  ${TARGET_NAME_LIB}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
           # Any other extra include required
           ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS}
 )
+
+# Executable part
+add_executable(${TARGET_NAME})
+target_sources(${TARGET_NAME} PRIVATE src/main.cpp)
+target_link_libraries(
+  ${TARGET_NAME} PRIVATE ${TARGET_NAME_LIB} starter_project_options
+                         starter_project_warnings
+)
 # ----------------------------------------------------------------------------------------------------------------------
 # install
 add_custom_command(
-  TARGET ${PROJECT_NAME}
+  TARGET ${TARGET_NAME}
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/generate_keys.sh
           ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}
@@ -72,5 +96,5 @@ add_custom_command(
 # ----------------------------------------------------------------------------------------------------------------------
 # tests
 if(FEATURE_TESTS)
-  add_subdirectory("./test")
+  add_subdirectory(test)
 endif()
