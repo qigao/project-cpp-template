@@ -1,13 +1,14 @@
 # Build directories and binary files
 build/
 install/
+bin/
 out/
 cmake-build-*/
 conan-cache/
 coverage.xml
 
 # User specific settings
-CMakeUserPresets.json
+
 
 # IDE files
 .vs/

@@ -1,4 +1,4 @@
-#include "http/HttpServer.hpp"
+#include "http/http_server.hpp"
 #include "helper/task_queue.hpp"
 #include "spdlog/spdlog.h"
 #include <functional>
@@ -6,7 +6,9 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+
 using namespace std::placeholders;
+
 HttpServer::HttpServer(int port, unsigned int numThreads,
                        const std::string& certFile, const std::string& keyFile,
                        const std::string& rootCaFile)

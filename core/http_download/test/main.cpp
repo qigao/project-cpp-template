@@ -1,15 +1,10 @@
 #include <cstdint>
 #include <cstdlib>
+#include <httplib.h>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
-
-#ifndef CPPHTTPLIB_OPENSSL_SUPPORT
-#define CPPHTTPLIB_OPENSSL_SUPPORT
-#endif
-#include "Base.h"
-#include "Server.h"
-#include <httplib.h>
 
 namespace http
 {

@@ -1,7 +1,8 @@
+#include "helper/fs.hpp"
 #include "helper/human_readable.hpp"
-#include "http/HttpServer.hpp"
-#include "http/http_file.hpp"
-#include "http/http_handler.hpp"
+#include "http/http_file_handle.hpp"
+#include "http/http_json_handle.hpp"
+#include "http/http_server.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <cpp_yyjson.hpp>
 #include <cstdio>
@@ -188,9 +189,9 @@ TEST_CASE("HttpServer upload file by multipart", "[server]")
     svr.setSharedFolder("/tmp");
     // Register handler
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
-    svr.Get("/", std::bind(&HttpFileHandle::uploadForm, handler, _1, _2));
-    svr.Post("/multipart",
-             std::bind(&HttpFileHandle::uploadByMultiForm, handler, _1, _2));
+    svr.Get("/", std::bind(&HttpFileHandle::list_upload_form, handler, _1, _2));
+    svr.Post("/multipart", std::bind(&HttpFileHandle::upload_file_by_multiform,
+                                     handler, _1, _2));
     svr.start();
     httplib::MultipartFormDataItems items = {
         {"text_file", "h\ne\n\nl\nl\no\n", "hello.txt", "text/plain"},
@@ -213,7 +214,7 @@ TEST_CASE("HttpServer upload file by stream with reader", "[server]")
     svr.PostWithContentHandler(
         R"(/upload)", [&](const httplib::Request& req, httplib::Response& res,
                           const httplib::ContentReader& content_reader)
-        { handler->handle_file_request(req, res, content_reader); });
+        { handler->handle_file_upload(req, res, content_reader); });
     svr.start();
     std::string filename = "/tmp/test.txt";
     std::ofstream ofs(filename, std::ofstream::binary);
@@ -250,15 +251,13 @@ TEST_CASE("HttpServer upload file by stream with reader", "[server]")
 
 TEST_CASE("HttpServer upload file by multipart with reader", "[server]")
 {
-
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
-    // Register handler
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
     svr.PostWithContentHandler(
         R"(/upload)", [&](const httplib::Request& req, httplib::Response& res,
                           const httplib::ContentReader& content_reader)
-        { handler->handle_file_request(req, res, content_reader); });
+        { handler->handle_file_upload(req, res, content_reader); });
     svr.start();
     httplib::MultipartFormDataItems items = {
         {"text_file", "h\ne\n\nl\nl\no\n", "hello.txt", "text/plain"},
@@ -269,4 +268,51 @@ TEST_CASE("HttpServer upload file by multipart with reader", "[server]")
 
     REQUIRE(resp != nullptr);
     REQUIRE(resp->status == 200);
+}
+
+TEST_CASE("HttpServer list all files", "[server]")
+{
+    HttpServer svr(PORT);
+    svr.setSharedFolder("/tmp");
+    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    svr.Get("/",
+            std::bind(&HttpFileHandle::handle_file_lists, handler, _1, _2));
+    svr.start();
+    httplib::Client cli(HOST, PORT);
+    auto resp = cli.Get("/");
+
+    REQUIRE(resp != nullptr);
+    REQUIRE(resp->status == 200);
+}
+
+TEST_CASE("HttpServer download file", "[server]")
+{
+    HttpServer svr(PORT);
+    svr.setSharedFolder("/tmp");
+    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    svr.Get("/download/(.*)",
+            std::bind(&HttpFileHandle::handle_file_download, handler, _1, _2));
+    svr.start();
+    httplib::Client cli(HOST, PORT);
+    auto unix_file = "hello.txt";
+    auto remote_url = fmt::format("/download/{}", unix_file);
+    auto local_file = fmt::format("./{}", unix_file);
+    std::ofstream ofs(local_file, std::ofstream::binary);
+    auto resp = cli.Get(
+        remote_url,
+        [&](const httplib::Response& response)
+        {
+            std::cerr << "Client read:" << response.status << std::endl;
+            return true;
+        },
+        [&](const char* data, size_t data_length)
+        {
+            ofs.write(data, data_length);
+            std::cerr << "Client write:" << data_length << std::endl;
+            return true;
+        });
+    ofs.close();
+    REQUIRE(resp != nullptr);
+    REQUIRE(resp->status == 200);
+    std::remove(local_file.c_str());
 }

@@ -2,14 +2,10 @@
 #define __HELPERS_H__
 
 #include "constants.hpp"
-#include "rapidjson/document.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
 #include <cmath>
 #include <fmt/core.h>
 #include <httplib.h>
 #include <iostream>
-using namespace rapidjson;
 inline int some_fun()
 {
     fmt::print("Hello {} !", "helpers");
@@ -100,13 +96,6 @@ inline std::string log(const httplib::Request& req,
     s += "\n";
 
     return s;
-}
-inline std::string stringify(const rapidjson::Value& o)
-{
-    StringBuffer sb;
-    Writer<StringBuffer> writer(sb);
-    o.Accept(writer);
-    return sb.GetString();
 }
 
 #endif // __HELPERS_H__
