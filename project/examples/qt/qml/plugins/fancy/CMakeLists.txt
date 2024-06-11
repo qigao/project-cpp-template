@@ -12,6 +12,7 @@ qt_add_qml_module(
   thing.cpp
   thing.hpp
   QML_FILES
-  FancyComponent.qml)
+  FancyComponent.qml
+)
 
 target_link_libraries(${TARGET_NAME} PRIVATE Qt6::Qml Qt6::Quick)

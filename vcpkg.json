@@ -3,6 +3,14 @@
   "version-string": "0.1.0",
   "builtin-baseline": "10e052511428d6b0c7fcc63a139e8024bb146032",
   "dependencies": [
+    {
+      "name": "bshoshany-thread-pool",
+      "version>=": "4.0.1"
+    },
+    {
+      "name": "c-ares",
+      "version>=": "1.25.0"
+    },
     "cppzmq",
     {
       "name": "eigen3",
@@ -13,7 +21,15 @@
       "version>=": "10.1.1"
     },
     "gtest",
+    {
+      "name": "openssl",
+      "version>=": "3.1.0"
+    },
     "range-v3",
+    {
+      "name": "spdlog",
+      "version>=": "1.13.0"
+    },
     "tinyfiledialogs"
   ],
   "features": {

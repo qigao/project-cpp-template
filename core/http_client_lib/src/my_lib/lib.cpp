@@ -2,11 +2,11 @@
 #include <fmt/core.h>
 #include <httplib.h>
 
+#include "my_lib/lib.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "my_lib/lib.hpp"
 #ifdef OS_WINDOWS
 #include <Windows.h>
 #include <wincrypt.h>

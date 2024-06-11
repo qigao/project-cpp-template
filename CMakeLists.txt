@@ -4,13 +4,14 @@ cmake_minimum_required(VERSION 3.21...3.28)
 # If commented, the latest supported standard for your compiler is automatically set.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(fetch_project_options)
 
 # Define the features of the project
-include("./Features.cmake")
+include(Features.cmake)
 
 # enable cross-compiling: - should be called before run_vcpkg()
 if(ENABLE_CROSS_COMPILING)
@@ -22,32 +23,15 @@ run_vcpkg()
 run_conan()
 
 # Set additional project information
-file(READ "version.txt" ver)
-
-string(
-  REGEX MATCH
-        "VERSION_MAJOR ([0-9]*)"
-        _
-        ${ver})
-set(CMAKE_PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
-
-string(
-  REGEX MATCH
-        "VERSION_MINOR ([0-9]*)"
-        _
-        ${ver})
-set(CMAKE_PROJECT_VERSION_MINOR ${CMAKE_MATCH_1})
-
-string(
-  REGEX MATCH
-        "VERSION_PATCH ([0-9]*)"
-        _
-        ${ver})
-set(CMAKE_PROJECT_VERSION_PATCH ${CMAKE_MATCH_1})
+set(CMAKE_PROJECT_VERSION_MAJOR 1)
+set(CMAKE_PROJECT_VERSION_MINOR 1)
+set(CMAKE_PROJECT_VERSION_PATCH 3)
 
 set(PROJECT_VERSION
-    ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH})
+    ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
+)
 set(PROJECT_NAME "DemoApp Research")
+set(PROJECT_DESCRIPTION "multi-module project template for modern C++")
 set(PROJECT_WEBSITE "https://github.com/qigao/cmake-template")
 set(APPLICATION_LICENSE "MIT License")
 
@@ -55,9 +39,10 @@ set(APPLICATION_LICENSE "MIT License")
 project(
   cpp_core_project
   VERSION ${PROJECT_VERSION}
-  DESCRIPTION "multi-module project template for modern C++"
-  HOMEPAGE_URL "https://github.com/qigao/project-cpp-template"
-  LANGUAGES CXX C)
+  DESCRIPTION ${PROJECT_DESCRIPTION}
+  HOMEPAGE_URL ${PROJECT_WEBSITE}
+  LANGUAGES CXX C
+)
 
 if(FEATURE_TESTS)
   # enable sanitizers and analyzers if running the tests
@@ -68,11 +53,9 @@ if(FEATURE_TESTS)
   set(ENABLE_VS_ANALYSIS "ENABLE_VS_ANALYSIS")
 
   check_sanitizers_support(
-    ENABLE_SANITIZER_ADDRESS
-    ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
-    ENABLE_SANITIZER_LEAK
-    ENABLE_SANITIZER_THREAD
-    ENABLE_SANITIZER_MEMORY)
+    ENABLE_SANITIZER_ADDRESS ENABLE_SANITIZER_UNDEFINED_BEHAVIOR ENABLE_SANITIZER_LEAK
+    ENABLE_SANITIZER_THREAD ENABLE_SANITIZER_MEMORY
+  )
 
   # generate a main function for the test executable
   enable_testing()
@@ -124,12 +107,11 @@ project_options(
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 include(gitVersion)
-
+include(cotire)
 add_subdirectory(core)
-add_subdirectory(project)
-
-# if(NOT CMAKE_SKIP_INSTALL_RULES)
-#   include(install)
-# endif()
-
-message("build info: ${PROJECT_NAME} ${PROJECT_VERSION}")
+if(ENABLE_SAMPLE_PROJECT_COMPILING)
+  add_subdirectory(project)
+endif()
+if(CMAKE_SKIP_INSTALL_RULES)
+  include(install)
+endif()

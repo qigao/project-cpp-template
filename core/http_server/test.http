@@ -1,0 +1,22 @@
+GET http://localhost:5060 HTTP/1.1
+
+
+#### Upload File
+POST http://localhost:5060/multipart HTTP/1.1
+Connection: keep-alive
+Content-Length: 196
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Origin: null
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary06f6g54NVbSieT6y
+Accept-Encoding: gzip, deflate
+Accept-Language: en,en-US;q=0.8,tr;q=0.6
+Cookie: JSESSIONID=27D0A0637A0449CF65B3CB20F40048AF
+
+------WebKitFormBoundary06f6g54NVbSieT6y
+Content-Disposition: form-data; name="text_file"; filename="a.dat"
+Content-Type: application/octet-stream
+
+this is a test file
+------WebKitFormBoundary06f6g54NVbSieT6y--

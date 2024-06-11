@@ -1,18 +1,11 @@
 find_program(RAGEL 6.10)
 ragel_target(
-  HTTP_MACHINE
-  ../http_parser.rl
-  ${CMAKE_CURRENT_BINARY_DIR}/http_parser.cpp
-  COMPILE_FLAGS
-  "-C -G2")
+  HTTP_MACHINE ../http_parser.rl ${CMAKE_CURRENT_BINARY_DIR}/http_parser.cpp COMPILE_FLAGS "-C -G2"
+)
 file(GLOB TARGET_SOURCES *.cpp)
 file(GLOB TARGET_HEADERS ../gtest_helper/*.h)
 foreach(TARGET ${TARGET_SOURCES})
-  cmake_path(
-    GET
-    TARGET
-    STEM
-    MYFILE_WITHOUT_EXT)
+  cmake_path(GET TARGET STEM MYFILE_WITHOUT_EXT)
   list(APPEND TEST_CASES ${MYFILE_WITHOUT_EXT})
 endforeach()
 
@@ -30,9 +23,7 @@ foreach(TEST_CASE ${TEST_CASES})
   endif()
 
   target_include_directories(
-    ${TEST_CASE}
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
-    PRIVATE ../gtest_helper ../
+    ${TEST_CASE} PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports> PRIVATE ../gtest_helper ../
     # Any other extra include required
   )
   include(GoogleTest)
