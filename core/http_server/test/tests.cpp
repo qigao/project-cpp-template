@@ -296,7 +296,7 @@ TEST_CASE("HttpServer download file", "[server]")
     httplib::Client cli(HOST, PORT);
     auto unix_file = "ubuntu-14.04.6-server-amd64.template";
     auto remote_url = fmt::format("/download/{}", unix_file);
-    auto local_file = fmt::format("/home/qigao/{}", unix_file);
+    auto local_file = fmt::format("./{}", unix_file);
     std::ofstream ofs(local_file, std::ofstream::binary);
     auto resp = cli.Get(
         remote_url,
@@ -311,4 +311,8 @@ TEST_CASE("HttpServer download file", "[server]")
             std::cerr << "Client write:" << data_length << std::endl;
             return true;
         });
+    ofs.close();
+    REQUIRE(resp != nullptr);
+    REQUIRE(resp->status == 200);
+    std::remove(local_file.c_str());
 }

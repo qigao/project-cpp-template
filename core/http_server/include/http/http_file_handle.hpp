@@ -45,10 +45,8 @@ public:
      *
      * @throws None
      */
-    void
-    handle_file_upload(const httplib::Request& req,
-                               httplib::Response& res,
-                               const httplib::ContentReader& content_reader);
+    void handle_file_upload(const httplib::Request& req, httplib::Response& res,
+                            const httplib::ContentReader& content_reader);
 
 private:
     HttpFileHandle(HttpFileHandle const&) = delete;

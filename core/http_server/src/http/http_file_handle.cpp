@@ -150,15 +150,15 @@ bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
  * @param res
  */
 void HttpFileHandle::download_file_by_order(const httplib::Request& req,
-                                    httplib::Response& res)
+                                            httplib::Response& res)
 {
-     res.set_content_provider(
+    res.set_content_provider(
         OCTET_STREAM, // Content type
         [&](size_t offset, httplib::DataSink& sink)
         {
             bf::path file_path(req.path);
-        auto file_name =
-            fmt::format("{}/{}", shared_folder_, file_path.filename().string());
+            auto file_name = fmt::format("{}/{}", shared_folder_,
+                                         file_path.filename().string());
             // open file
             std::ifstream file_reader(file_name, std::ios::in);
             // can't open file, cancel process
@@ -263,7 +263,7 @@ void HttpFileHandle::handle_stream_file(
     const std::string& file_name, const httplib::ContentReader& content_reader)
 {
     auto file_path_str = fmt::format("{}/{}", shared_folder_, file_name);
-
+    spdlog::info("upload file by stream: {}", file_path_str);
     std::string body;
     content_reader(
         [&](const char* data, size_t data_length)
@@ -307,11 +307,13 @@ void HttpFileHandle::handle_file_upload(
 {
     if (req.is_multipart_form_data())
     {
+        spdlog::info("upload file by multipart");
         handle_multipart_file(content_reader);
         res.set_content(R"({"message":"upload result"})", APP_JSON);
     }
     else
     {
+        spdlog::info("upload file by stream");
         if (req.has_header(CONTENT_DISPOSITION))
         {
             std::string content_disposition =
@@ -336,6 +338,7 @@ void HttpFileHandle::handle_file_upload(
         }
         else
         {
+            spdlog::error("Content-Disposition header not found");
             res.status = 400;
             res.set_content(
                 R"({"message":"Missing Content-Disposition header"})",
