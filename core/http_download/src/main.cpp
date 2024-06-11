@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 try
 {
     init_multi_sink_logger();
-    std::string path = "https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/"
+    std::string path = "http://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/"
                        "14.04/ubuntu-14.04.6-server-amd64.template";
     std::string filename = "";
     if (argc > 1)

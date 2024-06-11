@@ -13,9 +13,10 @@ public:
      * @param req
      * @param res
      */
-    void uploadForm(const httplib::Request& req, httplib::Response& res);
+    void list_upload_form(const httplib::Request& req, httplib::Response& res);
 
-    void uploadByMultiForm(const httplib::Request& req, httplib::Response& res);
+    void upload_file_by_multiform(const httplib::Request& req,
+                                  httplib::Response& res);
     /**
      * Handles request for downloading a file.
      *   1. If there is no range header, return the whole file.
@@ -26,7 +27,7 @@ public:
      *
      * @throws None.
      */
-    void handle_range_request(const httplib::Request& req,
+    void handle_file_download(const httplib::Request& req,
                               httplib::Response& res);
     /**
      * Get the list of files in the shared folder
@@ -35,7 +36,7 @@ public:
      *
      * @throws None.
      * */
-    void GetFileList(const httplib::Request& req, httplib::Response& res);
+    void handle_file_lists(const httplib::Request& req, httplib::Response& res);
     /**
      * upload a file either by multipart form or stream
      *
@@ -44,20 +45,21 @@ public:
      *
      * @throws None
      */
-    void handle_file_request(const httplib::Request& req,
-                             httplib::Response& res,
-                             const httplib::ContentReader& content_reader);
+    void
+    handle_file_upload(const httplib::Request& req,
+                               httplib::Response& res,
+                               const httplib::ContentReader& content_reader);
 
 private:
     HttpFileHandle(HttpFileHandle const&) = delete;
     HttpFileHandle& operator=(HttpFileHandle const&) = delete;
-    bool RangeParse(std::string& range, int64_t& start, int64_t& len);
-    void getFileByOrder(const httplib::Request& req, httplib::Response& res);
+    bool parse_range(std::string& range, int64_t& start, int64_t& len);
+    void download_file_by_order(const httplib::Request& req,
+                                httplib::Response& res);
 
-    std::string shared_folder_;
-    void
-    handle_multipart_file(const httplib::ContentReader& content_reader) const;
+    void handle_multipart_file(const httplib::ContentReader& content_reader);
     void handle_stream_file(const std::string& file_name,
-                            const httplib::ContentReader& content_reader) const;
+                            const httplib::ContentReader& content_reader);
+    std::string shared_folder_;
 };
 #endif // __HTTP_FILE_H__

@@ -22,7 +22,7 @@ HttpFileHandle::HttpFileHandle(const std::string& shared_folder)
  *
  * @throws None
  */
-void HttpFileHandle::uploadForm(const httplib::Request& /* req */,
+void HttpFileHandle::list_upload_form(const httplib::Request& /* req */,
                                 httplib::Response& res)
 {
     auto html = R"(
@@ -48,7 +48,7 @@ void HttpFileHandle::uploadForm(const httplib::Request& /* req */,
     res.set_content(html, "text/html");
 }
 
-void HttpFileHandle::handle_range_request(const httplib::Request& req,
+void HttpFileHandle::handle_file_download(const httplib::Request& req,
                                           httplib::Response& res)
 {
 
@@ -74,11 +74,11 @@ void HttpFileHandle::handle_range_request(const httplib::Request& req,
     if (range_header.empty())
     {
         spdlog::error("Range header not found");
-        getFileByOrder(req, res);
+        download_file_by_order(req, res);
         return;
     }
     int64_t start, len;
-    auto range = RangeParse(range_header, start, len);
+    auto range = parse_range(range_header, start, len);
     if (!range)
     {
         spdlog::error("Range parse error");
@@ -118,7 +118,7 @@ void HttpFileHandle::handle_range_request(const httplib::Request& req,
     res.set_header(CONTENT_LENGTH, std::to_string(len));
 }
 
-bool HttpFileHandle::RangeParse(std::string& range, int64_t& start,
+bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
                                 int64_t& len)
 {
     // 检查格式
@@ -147,7 +147,7 @@ bool HttpFileHandle::RangeParse(std::string& range, int64_t& start,
  * @param req
  * @param res
  */
-void HttpFileHandle::getFileByOrder(const httplib::Request& req,
+void HttpFileHandle::download_file_by_order(const httplib::Request& req,
                                     httplib::Response& res)
 {
     bf::path file_path(req.path);
@@ -217,7 +217,7 @@ void HttpFileHandle::getFileByOrder(const httplib::Request& req,
                          // process.
         });
 }
-void HttpFileHandle::uploadByMultiForm(const httplib::Request& req,
+void HttpFileHandle::upload_file_by_multiform(const httplib::Request& req,
                                        httplib::Response& res)
 {
     for (const auto& data : req.files)
@@ -242,7 +242,7 @@ void HttpFileHandle::uploadByMultiForm(const httplib::Request& req,
     res.set_content("done", TEXT_PLAIN);
 }
 
-void HttpFileHandle::GetFileList(const httplib::Request& /* req */,
+void HttpFileHandle::handle_file_lists(const httplib::Request& /* req */,
                                  httplib::Response& res)
 {
     auto kv_list = std::vector<std::map<std::string, std::string>>();
@@ -314,7 +314,7 @@ void HttpFileHandle::handle_multipart_file(
         });
 }
 
-void HttpFileHandle::handle_file_request(
+void HttpFileHandle::handle_file_upload(
     const httplib::Request& req, httplib::Response& res,
     const httplib::ContentReader& content_reader)
 {
