@@ -1,12 +1,11 @@
 #include <cstdlib>
 
-#include "helper/constants.hpp"
-#include "helper/helpers.hpp"
-#include "http/HttpServer.hpp"
+#include "http/http_file_handle.hpp"
+#include "http/http_server.hpp"
 #include <fmt/core.h>
 #include <functional>
 #include <httplib.h>
-#include <string>
+
 using namespace httplib;
 using namespace std::placeholders;
 

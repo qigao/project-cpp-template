@@ -1,13 +1,11 @@
-
 #include "helper/constants.hpp"
+#include "http/http_file_handle.hpp"
 #include <cstdio>
 #include <filesystem>
-#include <future>
 #include <httplib.h>
-namespace bf = std::filesystem;
-#include "http/http_file.hpp"
 #include "spdlog/spdlog.h"
 #include <fmt/core.h>
+namespace bf = std::filesystem;
 
 HttpFileHandle::HttpFileHandle(const std::string& shared_folder)
     : shared_folder_(shared_folder)

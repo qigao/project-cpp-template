@@ -1,7 +1,7 @@
 #include "helper/human_readable.hpp"
-#include "http/HttpServer.hpp"
-#include "http/http_file.hpp"
-#include "http/http_handler.hpp"
+#include "http/http_file_handle.hpp"
+#include "http/http_json_handle.hpp"
+#include "http/http_server.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <cpp_yyjson.hpp>
 #include <cstdio>
