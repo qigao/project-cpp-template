@@ -1,6 +1,6 @@
 #ifndef CPP_CORE_PROJECT_HTTPSERVER_HPP
 #define CPP_CORE_PROJECT_HTTPSERVER_HPP
- 
+
 #include <httplib.h>
 #include <memory>
 #include <string>

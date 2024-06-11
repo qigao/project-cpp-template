@@ -55,10 +55,9 @@ private:
     void getFileByOrder(const httplib::Request& req, httplib::Response& res);
 
     std::string shared_folder_;
-    static constexpr const size_t CHUNK_SIZE = 32 * 1024;
     void
     handle_multipart_file(const httplib::ContentReader& content_reader) const;
-    void handle_stream_file(const std::string& file_path,
+    void handle_stream_file(const std::string& file_name,
                             const httplib::ContentReader& content_reader) const;
 };
 #endif // __HTTP_FILE_H__

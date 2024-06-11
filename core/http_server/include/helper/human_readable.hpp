@@ -5,11 +5,11 @@
 #include <cstdint>
 #include <fmt/core.h>
 #include <iostream>
-template <class Target, class Source>
-Target NarrowCast(Source v)
+template <class T, class V>
+T NarrowCast(V v)
 {
-    auto r = static_cast<Target>(v);
-    if (static_cast<Source>(r) != v)
+    auto r = static_cast<T>(v);
+    if (static_cast<V>(r) != v)
     {
         throw std::runtime_error("Narrow cast failed.");
     }

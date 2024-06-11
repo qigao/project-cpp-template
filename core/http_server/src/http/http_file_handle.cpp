@@ -1,10 +1,13 @@
-#include "helper/constants.hpp"
 #include "http/http_file_handle.hpp"
+#include "cpp_yyjson.hpp"
+#include "helper/constants.hpp"
+#include "helper/fs.hpp"
+#include "spdlog/spdlog.h"
 #include <cstdio>
 #include <filesystem>
-#include <httplib.h>
-#include "spdlog/spdlog.h"
 #include <fmt/core.h>
+#include <httplib.h>
+
 namespace bf = std::filesystem;
 
 HttpFileHandle::HttpFileHandle(const std::string& shared_folder)
@@ -107,12 +110,12 @@ void HttpFileHandle::handle_range_request(const httplib::Request& req,
 
     res.status = 206;
 
-    res.set_header("Cache-Control", "no-cache");
-    res.set_header("Content-Type", "application/octet-stream");
-    res.set_header("Content-Range", std::to_string(start) + "-" +
-                                        std::to_string(start + len) + "/" +
-                                        std::to_string(file_size));
-    res.set_header("Content-Length", std::to_string(len));
+    res.set_header(CACHE_CONTROL, "no-cache");
+    res.set_header(CONTENT_TYPE, OCTET_STREAM);
+    res.set_header(CONTENT_RANGE, std::to_string(start) + "-" +
+                                      std::to_string(start + len) + "/" +
+                                      std::to_string(file_size));
+    res.set_header(CONTENT_LENGTH, std::to_string(len));
 }
 
 bool HttpFileHandle::RangeParse(std::string& range, int64_t& start,
@@ -223,7 +226,7 @@ void HttpFileHandle::uploadByMultiForm(const httplib::Request& req,
         spdlog::info("upload file: {},type:{},name: {},length: {}", file.name,
                      file.content_type, file.filename, file.content.length());
         auto file_path = fmt::format("{}/{}", shared_folder_, file.filename);
-        if (file.content_type == "text/plain")
+        if (file.content_type == TEXT_PLAIN)
         {
             std::ofstream ofs(file_path);
 
@@ -236,12 +239,13 @@ void HttpFileHandle::uploadByMultiForm(const httplib::Request& req,
             ofs << file.content;
         }
     }
-    res.set_content("done", "text/plain");
+    res.set_content("done", TEXT_PLAIN);
 }
 
 void HttpFileHandle::GetFileList(const httplib::Request& /* req */,
                                  httplib::Response& res)
 {
+    auto kv_list = std::vector<std::map<std::string, std::string>>();
     bf::directory_iterator item_begin(shared_folder_);
     bf::directory_iterator item_end;
     for (; item_begin != item_end; ++item_begin)
@@ -255,10 +259,15 @@ void HttpFileHandle::GetFileList(const httplib::Request& /* req */,
         // 文件则放入body中,用\n分割标记
         auto pathname = item_begin->path();
         auto path = pathname.filename().string();
-        res.body += path + '\n';
+        auto result = std::map<std::string, std::string>();
+        result.emplace("path", path);
+        auto str_size = fmt::format("{}", fs::get_file_size(pathname));
+        result.emplace("size", str_size);
+        kv_list.push_back(result);
     }
     // 设置body格式--文本文件 和状态码
-    res.set_header(CONTENT_TYPE, "text/html");
+    auto body = yyjson::array(kv_list).write();
+    res.set_content(body.data(), APP_JSON);
     res.status = 200;
 }
 
@@ -267,18 +276,16 @@ void HttpFileHandle::handle_stream_file(
     const httplib::ContentReader& content_reader) const
 {
     auto file_path_str = fmt::format("{}/{}", shared_folder_, file_name);
-    std::ofstream ofs(file_path_str, std::ios::binary);
 
     std::string body;
     content_reader(
         [&](const char* data, size_t data_length)
         {
             body.append(data, data_length);
-            ofs.write(data, data_length);
+            fs::write(file_path_str, data, data_length);
             return true;
         });
     spdlog::info("upload file by stream: {}", body);
-    ofs.close();
 }
 
 void HttpFileHandle::handle_multipart_file(
@@ -300,9 +307,7 @@ void HttpFileHandle::handle_multipart_file(
                 fmt::format("{}/{}", shared_folder_, last_file.filename);
 
             auto contentType = last_file.content_type;
-            std::ofstream ofs(file_path, std::ios::binary);
-            ofs.write(data, data_length);
-            ofs.close();
+            fs::write(file_path, data, data_length);
             spdlog::info("upload file: {},type:{},size: {}", last_file.filename,
                          contentType, last_file.content.size());
             return true;
@@ -313,18 +318,17 @@ void HttpFileHandle::handle_file_request(
     const httplib::Request& req, httplib::Response& res,
     const httplib::ContentReader& content_reader)
 {
-
     if (req.is_multipart_form_data())
     {
         handle_multipart_file(content_reader);
-        res.set_content(R"({"message":"upload result"})", "application/json");
+        res.set_content(R"({"message":"upload result"})", APP_JSON);
     }
     else
     {
-        if (req.has_header("Content-Disposition"))
+        if (req.has_header(CONTENT_DISPOSITION))
         {
             std::string content_disposition =
-                req.get_header_value("Content-Disposition");
+                req.get_header_value(CONTENT_DISPOSITION);
 
             // Extract the filename from the Content-Disposition header
             std::string filename;
@@ -341,15 +345,14 @@ void HttpFileHandle::handle_file_request(
                 spdlog::info("filename: {}", filename);
             }
             handle_stream_file(filename, content_reader);
-            res.set_content(R"({"message":"upload result"})",
-                            "application/json");
+            res.set_content(R"({"message":"upload result"})", APP_JSON);
         }
         else
         {
             res.status = 400;
             res.set_content(
                 R"({"message":"Missing Content-Disposition header"})",
-                "application/json");
+                APP_JSON);
         }
     }
 }

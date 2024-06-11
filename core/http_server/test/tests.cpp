@@ -250,10 +250,8 @@ TEST_CASE("HttpServer upload file by stream with reader", "[server]")
 
 TEST_CASE("HttpServer upload file by multipart with reader", "[server]")
 {
-
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
-    // Register handler
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
     svr.PostWithContentHandler(
         R"(/upload)", [&](const httplib::Request& req, httplib::Response& res,
@@ -266,6 +264,20 @@ TEST_CASE("HttpServer upload file by multipart with reader", "[server]")
          "application/octet-stream"}};
     httplib::Client cli(HOST, PORT);
     auto resp = cli.Post("/upload", items);
+
+    REQUIRE(resp != nullptr);
+    REQUIRE(resp->status == 200);
+}
+
+TEST_CASE("HttpServer list all files", "[server]")
+{
+    HttpServer svr(PORT);
+    svr.setSharedFolder("/tmp");
+    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    svr.Get("/", std::bind(&HttpFileHandle::GetFileList, handler, _1, _2));
+    svr.start();
+    httplib::Client cli(HOST, PORT);
+    auto resp = cli.Get("/");
 
     REQUIRE(resp != nullptr);
     REQUIRE(resp->status == 200);

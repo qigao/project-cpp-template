@@ -5,7 +5,6 @@
 #include <httplib.h>
 #include <rapidjson/document.h>
 
-
 class HttpHandler
 {
 public:
@@ -13,8 +12,6 @@ public:
     void postMsg(const httplib::Request& req, httplib::Response& res);
     void patchMsg(const httplib::Request& req, httplib::Response& res);
     void deleteMsg(const httplib::Request& req, httplib::Response& res);
-
-
 };
 
 #endif // CPP_CORE_PROJECT_HTTP_HANDLER_HPP
