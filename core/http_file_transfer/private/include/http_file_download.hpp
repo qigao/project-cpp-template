@@ -1,19 +1,18 @@
-
-#ifndef CPP_CORE_PROJECT_DOWNLOAD_HPP
-#define CPP_CORE_PROJECT_DOWNLOAD_HPP
+#ifndef CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
+#define CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
 #include "fs.hpp"
-#include "helpers.hpp"
 #include "spdlog/spdlog.h"
+#include "stream_cast.hpp"
 #include <cstdint>
 #include <httplib.h>
 #include <iostream>
 #include <stdexcept>
 #include <string>
-class Downloader
+class HttpFileDownload
 {
 public:
-    explicit Downloader(std::string const& partial_suffix = ".part",
-                        int max_trials = 10)
+    explicit HttpFileDownload(std::string const& partial_suffix = ".part",
+                              int max_trials = 10)
         : max_trials_(max_trials), partial_suffix_(partial_suffix)
     {
     }
@@ -244,4 +243,4 @@ private:
     std::string partial_suffix_;
 };
 
-#endif // CPP_CORE_PROJECT_DOWNLOAD_HPP
+#endif // CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP

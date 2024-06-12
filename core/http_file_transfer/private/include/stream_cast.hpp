@@ -4,11 +4,6 @@
 #include <fmt/core.h>
 #include <sstream>
 #include <string>
-inline int some_fun()
-{
-    fmt::print("Hello {} !", "helpers");
-    return 0;
-}
 
 template <typename U, typename V>
 struct sstream_cast_impl

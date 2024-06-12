@@ -11,7 +11,7 @@ set(PROJECT_NAME http_file_transfer)
 
 file(GLOB TARGET_SOURCES private/src/*.cpp)
 file(GLOB TARGET_HEADERS private/include/*.hpp)
-
+file(GLOB TARGET_PUBLIC_HEADERS public/*.h)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
@@ -31,7 +31,7 @@ find_package(Threads REQUIRED)
 find_package(spdlog)
 # ----------------------------------------------------------------------------------------------------------------------
 # executable part
-add_library(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})
+add_library(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES} ${TARGET_PUBLIC_HEADERS})
 # Link dependencies:
 target_link_libraries(
   ${PROJECT_NAME}
