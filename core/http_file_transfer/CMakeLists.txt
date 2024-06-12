@@ -5,7 +5,6 @@
 # Project Name
 set(PROJECT_NAME http_file_transfer)
 
-
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
@@ -43,19 +42,21 @@ target_link_libraries(
          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
+set_target_properties(
+  ${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON
+)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_EXPORTS)
 target_compile_definitions(
   ${PROJECT_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
-target_compile_options(${PROJECT_NAME} PRIVATE  my_project_options my_project_warnings)
+target_compile_options(${PROJECT_NAME} PRIVATE my_project_options my_project_warnings)
 # include all the necessary directories
 target_include_directories(
-  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/public
-                          # Any other extra include required
+  ${PROJECT_NAME}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include ${CMAKE_CURRENT_SOURCE_DIR}/public
+          # Any other extra include required
 )
 # =================================================================================
 # INSTALL
