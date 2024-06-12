@@ -18,7 +18,9 @@ inline int64_t get_file_size(std::string const& filename)
                          std::ios_base::in | std::ios_base::binary);
     if (!infile)
     {
-        throw std::runtime_error("failed to open " + filename + " for read!");
+        // throw std::runtime_error("failed to open " + filename + " for
+        // read!");
+        return 0;
     }
     auto pos0 = infile.tellg();
     infile.seekg(0, std::ios_base::end);
@@ -37,7 +39,7 @@ inline void rename(std::string const& oname, std::string const& nname)
     }
 }
 
-void append(std::string const& filename, char const* data, size_t size)
+inline void append(std::string const& filename, char const* data, size_t size)
 {
     std::ofstream outfile(filename.c_str(),
                           std::ios_base::out | std::ios_base::app);
@@ -49,7 +51,7 @@ void append(std::string const& filename, char const* data, size_t size)
     std::cout << "fs::append(" << filename << ", "
               << static_cast<void const*>(data) << ", " << size << ")"
               << std::endl;
-    outfile.write(data, size);
+    outfile.write(data, static_cast<long>(size));
 }
 
 inline void write(std::string const& filename, char const* data, size_t size)
@@ -60,7 +62,7 @@ inline void write(std::string const& filename, char const* data, size_t size)
     {
         throw std::runtime_error("failed to open " + filename + " for write");
     }
-    outfile.write(data, size);
+    outfile.write(data, static_cast<long>(size));
 }
 
 } // namespace fs

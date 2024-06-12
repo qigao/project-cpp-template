@@ -3,74 +3,61 @@
 # =================================================================================
 
 # Project Name
-set(PROJECT_NAME "mylib")
+set(PROJECT_NAME my_lib)
 
-# =================================================================================
-# CONFIG
-# =================================================================================
+# ##############################################################################
+# Define Target Information
+# ##############################################################################
 
-# =================================================================================
-# HEADERS
-# =================================================================================
+file(GLOB TARGET_SOURCES private/*.cpp)
+file(GLOB TARGET_HEADERS private/*.h)
 
-set(MY_LIB_HEADERS #
-    "public/mylib.h"
-)
+# ##############################################################################
+# Support IDE Visualization
+# ##############################################################################
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
 
-# Headers used to access library.
-set(PUBLIC_HEADERS "public/mylib.h")
-
-# =================================================================================
-# SOURCES
-# =================================================================================
-
-set(MY_LIB_SOURCES #
-    "private/mylib.cpp"
-)
-
-# =================================================================================
-# BUILD
-# =================================================================================
-
-# Create SHARED Library Object
-add_library(mylib SHARED ${MY_LIB_SOURCES})
-# link project_options/warnings
-target_link_libraries(mylib PRIVATE my_project_options my_project_warnings)
-
-# Configure SHARED Library Object
-set_target_properties(
-  mylib PROPERTIES PUBLIC_HEADER ${PUBLIC_HEADERS} RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR}
-                   VERSION ${PROJECT_VERSION}
-)
-set_target_properties(mylib PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
-target_compile_definitions(mylib PRIVATE MYLIB_EXPORTS)
 # Find dependencies:
 find_package(fmt)
 
+# executable part
+add_library(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})
+
 # Link dependencies:
-target_link_system_libraries(mylib PRIVATE fmt::fmt)
-# Includes
-target_include_interface_directories(mylib public)
+target_link_system_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+
+# Include all necessary directories
+target_include_directories(
+  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/public
+  # Any other extra include required
+)
+
+set_target_properties(
+  ${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON
+)
+# link project_options/warnings
+target_link_libraries(${PROJECT_NAME} PRIVATE my_project_options my_project_warnings)
+
+# Add the compile definitions
+target_compile_definitions(${PROJECT_NAME} PRIVATE MYLIB_EXPORTS)
+
 # =================================================================================
 # INSTALL
 # =================================================================================
 
-# Import GNU Install Rules
-include(GNUInstallDirs)
-
 # Files to Install
 install(
-  TARGETS mylib
-  EXPORT mylibTargets
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mylib
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
 )
-
 install(
-  EXPORT mylibTargets
-  FILE mylibTargets.cmake
-  NAMESPACE mylib::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mylib
+  EXPORT ${PROJECT_NAME}Targets
+  FILE ${PROJECT_NAME}Targets.cmake
+  NAMESPACE ${PROJECT_NAME}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )

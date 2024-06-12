@@ -22,6 +22,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif /// extern C
+#endif //__cplusplus
 
 #endif // __MYLIB_H__
