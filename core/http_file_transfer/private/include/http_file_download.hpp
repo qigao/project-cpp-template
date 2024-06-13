@@ -54,7 +54,7 @@ public:
         // probe ranges request capability
         if (!res)
         {
-            std::cout << "No response" << std::endl;
+            spdlog::info("No response");
             return false;
         }
         if (res->status == 200)
@@ -100,7 +100,9 @@ public:
             }
         }
         if (resource_not_found)
+        {
             return false;
+        }
         bool completed = false;
         spdlog::info("before trails");
         for (int trials = 0; trials < max_trials_ && !completed; ++trials)
@@ -222,7 +224,7 @@ protected:
             return false;
         }
         off = pos + scheme_notation.length();
-        pos = url.find("/", off);
+        pos = url.find('/', off);
         if (pos == std::string::npos)
         {
             pos = url.length();

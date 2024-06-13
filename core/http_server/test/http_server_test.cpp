@@ -3,68 +3,23 @@
 #include "http/http_file_handle.hpp"
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
-#include "human_readable.hpp"
-#include <catch2/catch_test_macros.hpp>
+
 #include <cpp_yyjson.hpp>
 #include <cstdio>
 #include <functional>
-
+#include <gtest/gtest.h>
 #include <httplib.h>
 #include <memory>
 
-static char const* const HOST = "127.0.0.1";
+static char const* HOST = "127.0.0.1";
 static int const PORT = 5060;
 using namespace std::placeholders;
-constexpr size_t IntegerRepresentableBoundary()
-{
-    static_assert(std::numeric_limits<double>::radix == 2,
-                  "Method only valid for binary floating point format.");
-    return size_t{2} << (std::numeric_limits<double>::digits - 1);
-}
-TEST_CASE("some_fun") { REQUIRE(some_fun() == 0); }
-TEST_CASE("HumanReadable output stream operator test")
-{
-    HumanReadable hr;
-    hr.size = 1024;
 
-    std::ostringstream oss;
-    oss << hr;
-
-    REQUIRE(oss.str() == "1KB (1024)");
-}
-TEST_CASE("Human Readable cast tests")
-{
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() - 2})) ==
-            size_t{IntegerRepresentableBoundary() - 2});
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() - 1})) ==
-            size_t{IntegerRepresentableBoundary() - 1});
-    REQUIRE(static_cast<size_t>(
-                NarrowCast<double>(size_t{IntegerRepresentableBoundary()})) ==
-            size_t{IntegerRepresentableBoundary()});
-    REQUIRE_THROWS_AS(
-        NarrowCast<double>(size_t{IntegerRepresentableBoundary() + 1}),
-        std::exception);
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() + 2})) ==
-            size_t{IntegerRepresentableBoundary() + 2});
-    REQUIRE_THROWS_AS(
-        NarrowCast<double>(size_t{IntegerRepresentableBoundary() + 3}),
-        std::exception);
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() + 4})) ==
-            size_t{IntegerRepresentableBoundary() + 4});
-    REQUIRE_THROWS_AS(
-        NarrowCast<double>(size_t{IntegerRepresentableBoundary() + 5}),
-        std::exception);
-}
-
-TEST_CASE("HttpServer set shared folder", "[server]")
+TEST(HttpServerTest, checkSharedFolder)
 {
     HttpServer svr(PORT);
     svr.setSharedFolder("test");
-    REQUIRE(svr.getSharedFolder() == "test");
+    EXPECT_EQ(svr.getSharedFolder(), "test");
 }
 // Handler function to test
 void handle_get(httplib::Request const& req, httplib::Response& res)
@@ -72,7 +27,7 @@ void handle_get(httplib::Request const& req, httplib::Response& res)
     res.set_content("Hello World!", "text/plain");
 }
 
-TEST_CASE("Server GET handler works")
+TEST(HttpServerTest, getHello)
 {
     httplib::Server svr;
     // Register handler
@@ -84,46 +39,46 @@ TEST_CASE("Server GET handler works")
         {
             svr.stop();
             listen_thread.join();
-            REQUIRE_FALSE(svr.is_running());
+            EXPECT_FALSE(svr.is_running());
         });
 
     svr.wait_until_ready();
     // Send request and check response
     httplib::Client cli(HOST, PORT);
     auto res = cli.Get("/hello");
-    REQUIRE(res != nullptr);
-    REQUIRE(res->status == 200);
-    REQUIRE(res->body == "Hello World!");
+    EXPECT_NE(res, nullptr);
+    EXPECT_EQ(res->status, 200);
+    EXPECT_EQ(res->body, "Hello World!");
 }
 
-TEST_CASE("Server Get Msg handler works", "[server]")
+TEST(HttpServerTest, getHelloJson)
 {
 
     HttpServer svr(PORT);
     // Register handler
-    auto handler = std::make_shared<HttpHandler>();
+    auto handler = std::make_shared<HttpJsonHandler>();
     svr.Get(R"(/hello/(\d+))",
-            std::bind(&HttpHandler::getMsg, handler, _1, _2));
+            std::bind(&HttpJsonHandler::getMsg, handler, _1, _2));
     svr.start();
     auto se = httplib::detail::scope_exit([&] { svr.stop(); });
 
     // Send request and check response
     httplib::Client cli(HOST, PORT);
     auto res = cli.Get("/hello/100");
-    REQUIRE(res != nullptr);
-    REQUIRE(res->status == 200);
+    EXPECT_NE(res, nullptr);
+    EXPECT_EQ(res->status, 200);
     auto val = yyjson::read(res->body.c_str());
     auto obj = *val.as_object();
     auto id = *obj["id"].as_int();
-    REQUIRE(id == 100);
+    EXPECT_EQ(id, 100);
     auto msg = *obj["msg"].as_string();
-    REQUIRE(msg == "hello");
+    EXPECT_EQ(msg, "hello");
 }
-TEST_CASE("Server post example", "[server]")
+TEST(HttpServerTest, postJson)
 {
     httplib::Server svr;
     // Register handler
-    auto handler = std::make_shared<HttpHandler>();
+    auto handler = std::make_shared<HttpJsonHandler>();
     svr.Post(R"(/hello/(\d+))",
              [&](httplib::Request const& req, httplib::Response& res)
              { handler->postMsg(req, res); });
@@ -134,7 +89,7 @@ TEST_CASE("Server post example", "[server]")
         {
             svr.stop();
             listen_thread.join();
-            REQUIRE_FALSE(svr.is_running());
+            EXPECT_FALSE(svr.is_running());
         });
 
     svr.wait_until_ready();
@@ -146,20 +101,20 @@ TEST_CASE("Server post example", "[server]")
     req.emplace("msg", "demo");
     auto body = req.write();
     auto resp = cli.Post("/hello/100", headers, body.data(), APP_JSON);
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
     auto val = yyjson::read(resp->body);
     auto obj = *val.as_object();
     auto id = *obj["id"].as_int();
-    REQUIRE(id == 4001);
+    EXPECT_EQ(id, 4001);
     auto msg = *obj["msg"].as_string();
-    REQUIRE(msg == "demo");
+    EXPECT_EQ(msg, "demo");
 }
-TEST_CASE("HttpServer post example", "[server]")
+TEST(HttpServerTest, postJsonReturn4001)
 {
     HttpServer svr(PORT);
     // Register handler
-    auto handler = std::make_shared<HttpHandler>();
+    auto handler = std::make_shared<HttpJsonHandler>();
     svr.Post(R"(/hello/(\d+))",
              [&](httplib::Request const& req, httplib::Response& res)
              { handler->postMsg(req, res); });
@@ -172,17 +127,16 @@ TEST_CASE("HttpServer post example", "[server]")
     req.emplace("msg", "demo");
     auto body = req.write();
     auto resp = cli.Post("/hello/100", body.data(), APP_JSON);
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
     auto val = yyjson::read(resp->body);
     auto obj = *val.as_object();
     auto id = *obj["id"].as_int();
-    REQUIRE(id == 4001);
+    EXPECT_EQ(id, 4001);
     auto msg = *obj["msg"].as_string();
-    REQUIRE(msg == "demo");
-    svr.stop();
+    EXPECT_EQ(msg, "demo");
 }
-TEST_CASE("HttpServer upload file by multipart", "[server]")
+TEST(HttpServerTest, multipartForm)
 {
 
     HttpServer svr(PORT);
@@ -200,11 +154,11 @@ TEST_CASE("HttpServer upload file by multipart", "[server]")
     httplib::Client cli(HOST, PORT);
     auto resp = cli.Post("/multipart", items);
 
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
 }
 
-TEST_CASE("HttpServer upload file by stream with reader", "[server]")
+TEST(HttpServerTest, streamUpload)
 {
 
     HttpServer svr(PORT);
@@ -242,14 +196,14 @@ TEST_CASE("HttpServer upload file by stream with reader", "[server]")
         },
         "application/octet-stream");
 
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
 
     file.close();
     std::remove(filename.c_str());
 }
 
-TEST_CASE("HttpServer upload file by multipart with reader", "[server]")
+TEST(HttpServerTest, multipartUpload)
 {
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
@@ -266,11 +220,11 @@ TEST_CASE("HttpServer upload file by multipart with reader", "[server]")
     httplib::Client cli(HOST, PORT);
     auto resp = cli.Post("/upload", items);
 
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
 }
 
-TEST_CASE("HttpServer list all files", "[server]")
+TEST(HttpServerTest, getFileLists)
 {
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
@@ -281,11 +235,11 @@ TEST_CASE("HttpServer list all files", "[server]")
     httplib::Client cli(HOST, PORT);
     auto resp = cli.Get("/");
 
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
 }
 
-TEST_CASE("HttpServer download file", "[server]")
+TEST(HttpServerTest, downloadFile)
 {
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
@@ -312,7 +266,7 @@ TEST_CASE("HttpServer download file", "[server]")
             return true;
         });
     ofs.close();
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
     std::remove(local_file.c_str());
 }

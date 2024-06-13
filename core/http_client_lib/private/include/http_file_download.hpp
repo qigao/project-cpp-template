@@ -1,5 +1,6 @@
 #ifndef CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
 #define CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
+#include "constants.hpp"
 #include "fs.hpp"
 #include "spdlog/spdlog.h"
 #include "stream_cast.hpp"
@@ -24,33 +25,21 @@ public:
     int getMaxTrials() const { return max_trials_; }
 
     void setMaxTrials(int value) { max_trials_ = value; }
-
-    bool doDownload(std::string const& resource_url,
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+    bool doDownload(std::shared_ptr<httplib::SSLClient> mClient,
+                    std::string const& resource_path,
                     std::string const& filename)
+#else
+    bool doDownload(std::shared_ptr<httplib::Client> mClient,
+                    std::string const& resource_path,
+                    std::string const& filename)
+#endif
     {
         std::string temporary_filename = filename + partial_suffix_;
-        std::string scheme_and_host;
-        std::string resource_path;
-        if (!breakup_url(resource_url, scheme_and_host, resource_path))
-        {
-            spdlog::info("breakup_url failed");
-            return false;
-        }
-
-        spdlog::info("schema_and_host={}", scheme_and_host);
-        spdlog::info("resource_path = {}", resource_path);
-        httplib::Client client(scheme_and_host);
-        client.set_logger(
-            [](httplib::Request const& req, httplib::Response const& res)
-            {
-                dump_http_request(req);
-                dump_http_response(res);
-            });
-        auto res = client.Head(resource_path);
+        auto res = mClient->Head(resource_path);
         bool support_ranges_request = false;
         bool maybe_support_ranges_request = false;
         int64_t content_length = 0;
-        bool resource_not_found = false;
         // probe ranges request capability
         if (!res)
         {
@@ -59,25 +48,25 @@ public:
         }
         if (res->status == 200)
         {
-            if (res->has_header("Accept-Ranges"))
+            if (res->has_header(ACCEPT_RANGES))
             {
-                if (res->get_header_value("Accept-Ranges") == "bytes")
+                if (res->get_header_value(ACCEPT_RANGES) == "bytes")
                 {
                     support_ranges_request = true;
-                    if (res->has_header("Content-Length"))
+                    if (res->has_header(CONTENT_LENGTH))
                     {
                         content_length = sstream_cast<int64_t>(
-                            res->get_header_value("Content-Length"));
+                            res->get_header_value(CONTENT_LENGTH));
                     }
                 }
                 else
                 {
                     // typically Accept-Ranges: none
                     support_ranges_request = false;
-                    if (res->has_header("Content-Length"))
+                    if (res->has_header(CONTENT_LENGTH))
                     {
                         content_length = sstream_cast<int64_t>(
-                            res->get_header_value("Content-Length"));
+                            res->get_header_value(CONTENT_LENGTH));
                     }
                 }
             }
@@ -91,7 +80,7 @@ public:
             if (res->status == 404)
             {
                 spdlog::error("resource not found!");
-                resource_not_found = true;
+                return false;
             }
             else
             {
@@ -99,17 +88,15 @@ public:
                 maybe_support_ranges_request = true;
             }
         }
-        if (resource_not_found)
-            return false;
         bool completed = false;
         spdlog::info("before trails");
         for (int trials = 0; trials < max_trials_ && !completed; ++trials)
         {
-            std::cout << "trials #" << trials << std::endl;
+            spdlog::info("trials # {}", trials);
             int64_t already_downloaded_size = 0;
             try
             {
-                already_downloaded_size = fs::get_file_size(temporary_filename);
+                already_downloaded_size = get_file_size(temporary_filename);
             }
             catch (std::runtime_error const&)
             {
@@ -118,7 +105,7 @@ public:
             if (content_length > 0 && already_downloaded_size == content_length)
             {
                 // finished
-                fs::rename(temporary_filename, filename);
+                rename(temporary_filename, filename);
                 return true;
             }
             httplib::Headers headers;
@@ -129,22 +116,22 @@ public:
                 headers.insert(httplib::make_range_header(ranges));
             }
             httplib::Request req;
-            httplib::Response res;
+            httplib::Response resp;
             httplib::Error err;
             httplib::ContentReceiver receiver =
-                [temporary_filename, &res](char const* data, size_t size)
+                [temporary_filename, &resp](char const* data, size_t size)
             {
                 try
                 {
-                    if (res.status == 206)
+                    if (resp.status == 206)
                     {
                         // 206 Partial Content
-                        fs::append(temporary_filename, data, size);
+                        append(temporary_filename, data, size);
                     }
-                    else if (res.status == 200)
+                    else if (resp.status == 200)
                     {
                         // 202 OK
-                        fs::write(temporary_filename, data, size);
+                        write(temporary_filename, data, size);
                     }
                     return true;
                 }
@@ -165,77 +152,28 @@ public:
                                                uint64_t offset, uint64_t length)
             { return receiver(data, size); };
             req.headers = headers;
-            if (!client.send(req, res, err))
+            if (!mClient->send(req, resp, err))
             {
                 spdlog::error("err = {}", httplib::to_string(err));
-                if (res.status == 206 || res.status == 200 || res.status == -1)
+                if (resp.status == 206 || resp.status == 200 ||
+                    resp.status == -1)
                 {
-                    // res.status == -1 => no response received
+                    // resp.status == -1 => no response received
                     std::this_thread::sleep_for(std::chrono::seconds(1));
                     continue;
                 }
                 else
                 {
                     // FIXME?
-                    spdlog::error("res.status == {}", res.status);
+                    spdlog::error("resp.status == {}", resp.status);
                     return false;
                 }
             }
-            fs::rename(temporary_filename, filename);
+            rename(temporary_filename, filename);
             // TODO How to determine
             completed = true;
         }
         return false;
-    }
-
-protected:
-    static void dump_http_request(httplib::Request const& r)
-    {
-        std::ostream& os = std::cout;
-        spdlog::info("REQ.METHOD = {}", r.method);
-        for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
-        {
-            spdlog::info("REQ.HEADER[{}] = {} ", it->first, it->second);
-        }
-    }
-
-    static void dump_http_response(httplib::Response const& r)
-    {
-        std::ostream& os = std::cout;
-        os << "RES.STATUS = " << r.status << std::endl;
-        for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
-        {
-            spdlog::info("RES.HEADER[{}] = {} ", it->first, it->second);
-        }
-        if (r.status != 200 && r.status != 206)
-        {
-            spdlog::info("RES.BODY = {}", r.body);
-        }
-    }
-
-    static bool breakup_url(std::string const& url,
-                            std::string& scheme_and_host, std::string& path)
-    {
-        std::string::size_type off = 0;
-        std::string scheme_notation = "://";
-        std::string::size_type pos = url.find(scheme_notation, off);
-        if (pos == std::string::npos)
-        {
-            return false;
-        }
-        off = pos + scheme_notation.length();
-        pos = url.find("/", off);
-        if (pos == std::string::npos)
-        {
-            pos = url.length();
-        }
-        scheme_and_host = url.substr(0, pos);
-        path = url.substr(pos);
-        if (path.empty())
-        {
-            path = "/";
-        }
-        return true;
     }
 
 private:

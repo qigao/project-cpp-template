@@ -12,7 +12,23 @@ option(FEATURE_FUZZ_TESTS "Enable the fuzz tests" OFF)
 
 option(ENABLE_CROSS_COMPILING "Detect cross compiler and setup toolchain" OFF)
 option(ENABLE_SAMPLE_PROJECT_COMPILING "Enable sample projects" OFF)
-# TODO(CK): if the project is used as subproject installation should be optional!
-# if(NOT PROJECT_IS_TOP_LEVEL)
-#   option(CMAKE_SKIP_INSTALL_RULES "Whether to disable generation of installation rules" YES)
-# endif()
+
+if(FEATURE_TESTS)
+  # enable sanitizers and analyzers if running the tests
+  # IMHO(CK) either:
+  set(ENABLE_CLANG_TIDY "ENABLE_CLANG_TIDY")
+  # XXX or: set(ENABLE_CPPCHECK "ENABLE_CPPCHECK")
+  set(ENABLE_COVERAGE "ENABLE_COVERAGE")
+  set(ENABLE_VS_ANALYSIS "ENABLE_VS_ANALYSIS")
+
+  check_sanitizers_support(
+    ENABLE_SANITIZER_ADDRESS ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
+    ENABLE_SANITIZER_LEAK ENABLE_SANITIZER_THREAD ENABLE_SANITIZER_MEMORY
+  )
+  include(GoogleTest)
+  enable_testing()
+endif()
+
+if(FEATURE_DOCS)
+  set(ENABLE_DOXYGEN "ENABLE_DOXYGEN")
+endif()

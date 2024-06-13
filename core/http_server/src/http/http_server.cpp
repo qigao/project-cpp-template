@@ -1,4 +1,5 @@
 #include "http/http_server.hpp"
+#include "helpers.hpp"
 #include "spdlog/spdlog.h"
 #include "task_queue.hpp"
 #include <functional>
@@ -6,7 +7,6 @@
 #include <iostream>
 #include <memory>
 #include <thread>
-
 using namespace std::placeholders;
 
 HttpServer::HttpServer(int port, unsigned int numThreads,
@@ -155,55 +155,7 @@ void HttpServer::error_handler(httplib::Request const& /* req */,
 void HttpServer::log_handler(httplib::Request const& req,
                              httplib::Response const& res)
 {
-    std::string s;
-    char buf[BUFSIZ];
-    s += buf;
-    s += "-----------------------------------------------------\n";
-    s += "Request Method\n";
-    s += "-----------------------------------------------------\n";
-    s += "\n";
-    snprintf(buf, sizeof(buf), "%s %s %s", req.method.c_str(),
-             req.version.c_str(), req.path.c_str());
-    s += buf;
-    s += "\n\n";
-    s += "Request Header:\n";
-    s += dump_headers(req.headers);
-    std::string query;
-    for (auto it = req.params.begin(); it != req.params.end(); ++it)
-    {
-        auto const& x = *it;
-        snprintf(buf, sizeof(buf), "%c%s=%s",
-                 (it == req.params.begin()) ? '?' : '&', x.first.c_str(),
-                 x.second.c_str());
-        query += buf;
-    }
-    snprintf(buf, sizeof(buf), "%s\n", query.c_str());
-    s += buf;
-    s += "Request Body:\n";
-    if (!req.body.empty())
-    {
-        s += req.body;
-    }
-    s += buf;
-    s += "\n";
-    s += "-----------------------------------------------------\n";
-    s += "Response:\n";
-    s += "-----------------------------------------------------\n";
-    s += "\n";
-    s += "Response Header:\n";
-    snprintf(buf, sizeof(buf), "%d %s\n", res.status, res.version.c_str());
-    s += "\n";
-    s += buf;
-    s += dump_headers(res.headers);
-    s += "\n";
-    s += "Response Body:\n";
-    s += "\n";
-    if (!res.body.empty())
-    {
-        s += res.body;
-    }
-    s += "\n";
-    spdlog::info("\n{}", s);
+    dump_request_response(req, res);
 }
 
 std::string HttpServer::dump_headers(httplib::Headers const& headers)

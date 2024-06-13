@@ -3,8 +3,8 @@
 # =================================================================================
 
 # Project Name
-set(PROJECT_NAME "myExe")
-
+set(TARGET_NAME_LIB myExe_lib)
+set(TARGET_NAME myExe)
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ##############################################################################
@@ -32,60 +32,71 @@ if(ENABLE_OPENSSL)
   find_package(OpenSSL REQUIRED)
 endif()
 
-find_package(httplib)
-find_package(cpp_yyjson REQUIRED)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
-find_package(ryml REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
+find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
 
 # ----------------------------------------------------------------------------------------------------------------------
-# executable part
-add_executable(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})
-# Link dependencies:
-target_link_libraries(
-  ${PROJECT_NAME}
-  PRIVATE httplib::httplib
-          spdlog::spdlog_header_only
-          Threads::Threads
-          cpp_yyjson::cpp_yyjson
-          ryml::ryml
-          my_lib
-          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
-          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
+# Libary part
+add_library(${TARGET_NAME_LIB})
+target_sources(${TARGET_NAME_LIB} PRIVATE ${TARGET_HEADERS} ${TARGET_SOURCES})
+target_include_interface_directories(
+  ${TARGET_NAME_LIB} ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/core/shared/utils ${CMAKE_SOURCE_DIR}/core/shared/http
 )
-
+# Link dependencies:
+target_find_dependencies(
+  ${TARGET_NAME_LIB} PUBLIC_CONFIG httplib spdlog cpp_yyjson
+)
+target_link_system_libraries(
+  ${TARGET_NAME_LIB}
+  PUBLIC
+  httplib::httplib
+  spdlog::spdlog_header_only
+  Threads::Threads
+  cpp_yyjson::cpp_yyjson
+  $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
+  $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
+)
 target_compile_definitions(
-  ${PROJECT_NAME}
+  ${TARGET_NAME_LIB}
   INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE starter_project_options starter_project_warnings
+  ${TARGET_NAME_LIB} PRIVATE starter_project_options starter_project_warnings
 )
 
 # include all the necessary directories
 target_include_directories(
-  ${PROJECT_NAME}
+  ${TARGET_NAME_LIB}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
           # Any other extra include required
-          ${PROJECT_SOURCE_DIR}/core/my_lib/public
+          ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS}
+)
+
+# Executable part
+add_executable(${TARGET_NAME})
+target_sources(${TARGET_NAME} PRIVATE main.cpp)
+target_link_libraries(
+  ${TARGET_NAME} PRIVATE ${TARGET_NAME_LIB} starter_project_options
+                         starter_project_warnings
 )
 # ----------------------------------------------------------------------------------------------------------------------
 # install
 # Files to Install
 install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT ${PROJECT_NAME}Targets
+  TARGETS ${TARGET_NAME}
+  EXPORT ${TARGET_NAME}Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 install(
-  EXPORT ${PROJECT_NAME}Targets
-  FILE ${PROJECT_NAME}Targets.cmake
-  NAMESPACE ${PROJECT_NAME}::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+  EXPORT ${TARGET_NAME}Targets
+  FILE ${TARGET_NAME}Targets.cmake
+  NAMESPACE ${TARGET_NAME}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME}
 )

@@ -1,12 +1,7 @@
 version: 3
 
 includes:
-  core_project:
-    taskfile: ./core/Taskfile.yml
-    optional: true
-    dir: ./core
-    vars:
-
+  core_project:  core/Taskfile.yml
 
 vars:
   CMAKE_GENERATOR: "Ninja Multi-Config"
@@ -14,10 +9,6 @@ vars:
     sh: git rev-parse --show-toplevel
 
 tasks:
-  test:
-    - task: myproj:test.all
-    - task: myproj:test.release
-    - task: install
 
   lint::clang-format:
     cmds:
@@ -34,13 +25,15 @@ tasks:
         platforms: [linux, darwin]
     vars:
       CMAKE_LINT_FLAGS: --disabled-codes C0103 C0301 R0912 R0915 R0913 --suppress-decorations
-
+  lint::vcpkg:
+    cmds:
+        -  ~/vcpkg/vcpkg format-manifest ./vcpkg.json
   lint:
     deps:
       - task:  lint::cmake
       - task:  lint::clang-format
     cmds:
-      - ~/vcpkg/vcpkg format-manifest ./vcpkg.json
+      - task: lint::vcpkg
 
   clean:
     cmds:
@@ -50,4 +43,7 @@ tasks:
         platforms: [linux, darwin]
 
   config:
-    - cmake --preset=developer
+    cmds:
+     - cmd: cmake --workflow --list-presets
+     - cmd: cmake --workflow --preset developer
+

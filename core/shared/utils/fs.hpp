@@ -9,9 +9,6 @@
 #include <stdexcept>
 #include <string>
 
-namespace fs
-{
-
 inline int64_t get_file_size(std::string const& filename)
 {
     std::ifstream infile(filename.c_str(),
@@ -65,6 +62,29 @@ inline void write(std::string const& filename, char const* data, size_t size)
     outfile.write(data, static_cast<long>(size));
 }
 
-} // namespace fs
+inline bool breakup_url(std::string const& url, std::string& scheme_and_host,
+                        std::string& path)
+{
+    std::string::size_type off = 0;
+    std::string scheme_notation = "://";
+    std::string::size_type pos = url.find(scheme_notation, off);
+    if (pos == std::string::npos)
+    {
+        return false;
+    }
+    off = pos + scheme_notation.length();
+    pos = url.find('/', off);
+    if (pos == std::string::npos)
+    {
+        pos = url.length();
+    }
+    scheme_and_host = url.substr(0, pos);
+    path = url.substr(pos);
+    if (path.empty())
+    {
+        path = "/";
+    }
+    return true;
+}
 
 #endif // CPP_CORE_PROJECT_FS_HPP
