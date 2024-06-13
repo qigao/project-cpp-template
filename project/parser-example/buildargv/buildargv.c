@@ -39,69 +39,69 @@ either expressed or implied, of the "buildargv" project.
 #include <stdlib.h>
 #include <string.h>
 
-static const char _buildargv_actions[] = {
+static char const _buildargv_actions[] = {
     0, 1, 0, 1,  1, 1, 2,  1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1,  8, 1, 11, 2,  2,
     9, 2, 2, 10, 2, 2, 11, 2, 3, 2, 3, 3, 2, 9, 3, 3, 2, 10, 3, 3, 2,  11, 0};
 
-static const char _buildargv_trans_keys[] = {
+static char const _buildargv_trans_keys[] = {
     1, 0, 1, 0, 2, 4, 2, 4, 3, 4, 3, 4, 0, 4, 0, 4, 0, 4, 1, 0, 1, 0, 1, 0, 0};
 
-static const char _buildargv_char_class[] = {
+static char const _buildargv_char_class[] = {
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 0, 1, 2, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0};
 
-static const char _buildargv_index_offsets[] = {0,  0,  0,  3,  6,  8, 10,
+static char const _buildargv_index_offsets[] = {0,  0,  0,  3,  6,  8, 10,
                                                 15, 20, 25, 25, 25, 0};
 
-static const char _buildargv_indicies[] = {2,  1,  3,  4,  1,  3,  2,  6,  7,
+static char const _buildargv_indicies[] = {2,  1,  3,  4,  1,  3,  2,  6,  7,
                                            6,  9,  8,  10, 11, 12, 14, 13, 15,
                                            16, 17, 14, 18, 15, 16, 19, 0};
 
-static const char _buildargv_index_defaults[] = {0,  0,  1, 1, 5, 5, 8,
+static char const _buildargv_index_defaults[] = {0,  0,  1, 1, 5, 5, 8,
                                                  13, 18, 2, 2, 2, 0};
 
-static const char _buildargv_trans_cond_spaces[] = {-1, -1, -1, -1, -1, -1, -1,
+static char const _buildargv_trans_cond_spaces[] = {-1, -1, -1, -1, -1, -1, -1,
                                                     -1, -1, -1, -1, -1, -1, -1,
                                                     -1, -1, -1, -1, -1, -1, 0};
 
-static const char _buildargv_cond_targs[] = {9, 3, 0, 3, 10, 5, 5, 11, 7, 6, 8,
+static char const _buildargv_cond_targs[] = {9, 3, 0, 3, 10, 5, 5, 11, 7, 6, 8,
                                              8, 7, 7, 6, 8,  8, 7, 7,  7, 0};
 
-static const char _buildargv_cond_actions[] = {
+static char const _buildargv_cond_actions[] = {
     9, 0, 0, 11, 13, 0, 15, 17, 5, 0, 24, 21, 27, 0, 7, 37, 33, 19, 30, 41, 0};
 
-static const char _buildargv_eof_actions[] = {0, 0, 0, 1, 0, 3, 0,
+static char const _buildargv_eof_actions[] = {0, 0, 0, 1, 0, 3, 0,
                                               7, 7, 0, 0, 0, 0};
 
-static const char _buildargv_nfa_targs[] = {0, 0};
+static char const _buildargv_nfa_targs[] = {0, 0};
 
-static const char _buildargv_nfa_offsets[] = {0, 0, 0, 0, 0, 0, 0,
+static char const _buildargv_nfa_offsets[] = {0, 0, 0, 0, 0, 0, 0,
                                               0, 0, 0, 0, 0, 0};
 
-static const char _buildargv_nfa_push_actions[] = {0, 0};
+static char const _buildargv_nfa_push_actions[] = {0, 0};
 
-static const char _buildargv_nfa_pop_trans[] = {0, 0};
+static char const _buildargv_nfa_pop_trans[] = {0, 0};
 
-static const int buildargv_start = 6;
-static const int buildargv_first_final = 6;
-static const int buildargv_error = 0;
+static int const buildargv_start = 6;
+static int const buildargv_first_final = 6;
+static int const buildargv_error = 0;
 
-static const int buildargv_en_skip = 1;
-static const int buildargv_en_dquote = 2;
-static const int buildargv_en_squote = 4;
-static const int buildargv_en_main = 6;
+static int const buildargv_en_skip = 1;
+static int const buildargv_en_dquote = 2;
+static int const buildargv_en_squote = 4;
+static int const buildargv_en_main = 6;
 
 int buildargv(char* input, char*** argv, int* argc)
 {
-    const char* p = input;
-    const char* pe = input + strlen(input);
-    const char* eof = pe;
-    const char *ts, *te;
+    char const* p = input;
+    char const* pe = input + strlen(input);
+    char const* eof = pe;
+    char const *ts, *te;
     int cs, act, top, stack[2], curline;
 
-    const char* argv_s;
+    char const* argv_s;
     argv_s = p;
 
     int ret = 0;
@@ -118,10 +118,10 @@ int buildargv(char* input, char*** argv, int* argc)
 
     {
         int _trans = 0;
-        const char* _acts;
+        char const* _acts;
         unsigned int _nacts;
-        const char* _keys;
-        const char* _inds;
+        char const* _keys;
+        char const* _inds;
         {
 
             if (p == pe)
@@ -294,7 +294,7 @@ int buildargv(char* input, char*** argv, int* argc)
             }
             if (p == eof)
             {
-                const char* __acts;
+                char const* __acts;
                 unsigned int __nacts;
                 __acts = (_buildargv_actions + (_buildargv_eof_actions[cs]));
                 __nacts = (unsigned int)(*(__acts));

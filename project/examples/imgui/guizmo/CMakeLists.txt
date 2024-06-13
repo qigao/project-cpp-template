@@ -13,7 +13,8 @@ if(WIN32)
   set(APPLICATION_VERSION "0.1")
   set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resource/icon/app.ico")
   configure_file(
-    ${CMAKE_SOURCE_DIR}/project/application.rc.in "${CMAKE_CURRENT_BINARY_DIR}/application.rc"
+    ${CMAKE_SOURCE_DIR}/project/application.rc.in
+    "${CMAKE_CURRENT_BINARY_DIR}/application.rc"
   )
   set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
 endif(WIN32)
@@ -21,8 +22,14 @@ endif(WIN32)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
+  FILES ${TARGET_HEADERS}
+)
 
 # ##############################################################################
 # Define Target according to options
@@ -44,7 +51,8 @@ add_executable(
 
 # add target properties such as debug postfix and MSVC runtime
 set_target_properties(
-  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY "${MSVC_RUNTIME_TYPE}"
+  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
+                                               "${MSVC_RUNTIME_TYPE}"
 )
 
 # set target compile options as defined in the cmake/compiler_options.cmake
@@ -64,7 +72,8 @@ if(WIN32)
     ${TARGET_NAME}
     PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
                LINK_FLAGS_RELEASE "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-               LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
+               LINK_FLAGS_RELWITHDEBINFO
+               "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
                LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
   )
 endif()

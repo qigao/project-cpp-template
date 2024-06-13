@@ -70,7 +70,7 @@ IncludeCategories:
   - Regex: ".*"
     Priority: 1
     SortPriority: 0
-    
+
 IncludeIsMainRegex: "(Test)?$"
 IndentCaseLabels: true # false
 IndentPPDirectives: None
@@ -94,6 +94,18 @@ PenaltyBreakString: 1000
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Left # Right
+QualifierAlignment: Custom
+QualifierOrder:
+  [
+    "friend",
+    "inline",
+    "static",
+    "constexpr",
+    "type",
+    "restrict",
+    "const",
+    "volatile",
+  ]
 ReflowComments: true
 SortIncludes: CaseSensitive
 SortUsingDeclarations: true

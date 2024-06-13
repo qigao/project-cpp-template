@@ -17,13 +17,13 @@ namespace ini
 #line 48 "ini.rl"
 
 #line 22 "ini.cc"
-static const char _parser_actions[] = {0, 1, 0, 1, 1, 1, 2, 1,
+static char const _parser_actions[] = {0, 1, 0, 1, 1, 1, 2, 1,
                                        3, 2, 0, 3, 2, 2, 3};
 
-static const char _parser_key_offsets[] = {0,  0,  2,  14, 18, 23, 25, 39,
+static char const _parser_key_offsets[] = {0,  0,  2,  14, 18, 23, 25, 39,
                                            45, 53, 62, 63, 73, 84, 96, 110};
 
-static const char _parser_trans_keys[] = {
+static char const _parser_trans_keys[] = {
     10, 39, 32, 45,  61,  95, 9,   13, 48,  57, 65, 90, 97, 122, 32, 61,
     9,  13, 10, 32,  39,  9,  13,  10, 39,  10, 32, 39, 45, 61,  95, 9,
     13, 48, 57, 65,  90,  97, 122, 10, 32,  39, 61, 9,  13, 45,  95, 48,
@@ -33,16 +33,16 @@ static const char _parser_trans_keys[] = {
     10, 32, 39, 45,  91,  95, 9,   13, 48,  57, 65, 90, 97, 122, 10, 32,
     35, 45, 59, 61,  91,  95, 9,   13, 48,  57, 65, 90, 97, 122, 0};
 
-static const char _parser_single_lengths[] = {0, 2, 4, 2, 3, 2, 6, 4,
+static char const _parser_single_lengths[] = {0, 2, 4, 2, 3, 2, 6, 4,
                                               2, 3, 1, 4, 5, 6, 6, 8};
 
-static const char _parser_range_lengths[] = {0, 0, 4, 1, 1, 0, 4, 1,
+static char const _parser_range_lengths[] = {0, 0, 4, 1, 1, 0, 4, 1,
                                              3, 3, 0, 3, 3, 3, 4, 4};
 
-static const char _parser_index_offsets[] = {0,  0,  3,  12, 16, 21, 24, 35,
+static char const _parser_index_offsets[] = {0,  0,  3,  12, 16, 21, 24, 35,
                                              41, 47, 54, 56, 64, 73, 83, 94};
 
-static const char _parser_indicies[] = {
+static char const _parser_indicies[] = {
     1,  2,  0,  3,  4,  5,  4,  3,  4,  4,  4,  2,  6,  7,  6,  2,  10, 9,
     2,  9,  8,  12, 2,  11, 14, 13, 2,  15, 5,  15, 13, 15, 15, 15, 11, 17,
     16, 2,  7,  16, 11, 18, 18, 18, 18, 18, 2,  19, 20, 19, 19, 19, 19, 2,
@@ -50,19 +50,19 @@ static const char _parser_indicies[] = {
     11, 1,  0,  24, 0,  25, 24, 24, 24, 24, 2,  10, 9,  2,  26, 27, 26, 9,
     26, 26, 26, 8,  28, 6,  0,  24, 0,  7,  25, 24, 6,  24, 24, 24, 2,  0};
 
-static const char _parser_trans_targs[] = {1,  13, 0,  3, 2,  4, 3, 4,  5, 4,
+static char const _parser_trans_targs[] = {1,  13, 0,  3, 2,  4, 3, 4,  5, 4,
                                            14, 5,  13, 7, 15, 6, 7, 15, 9, 9,
                                            10, 12, 12, 5, 2,  8, 6, 11, 15};
 
-static const char _parser_trans_actions[] = {0, 0, 0, 5, 0,  5, 0, 0, 1, 1,
+static char const _parser_trans_actions[] = {0, 0, 0, 5, 0,  5, 0, 0, 1, 1,
                                              9, 0, 7, 5, 12, 0, 0, 7, 1, 0,
                                              3, 1, 0, 3, 1,  0, 1, 1, 0};
 
-static const int parser_start = 13;
-static const int parser_first_final = 13;
-static const int parser_error = 0;
+static int const parser_start = 13;
+static int const parser_first_final = 13;
+static int const parser_error = 0;
 
-static const int parser_en_main = 13;
+static int const parser_en_main = 13;
 
 #line 51 "ini.rl"
 
@@ -86,13 +86,13 @@ public:
 #line 63 "ini.rl"
 } // namespace ini
 
-size_t feed(const char* data, size_t len, size_t off)
+size_t feed(char const* data, size_t len, size_t off)
 {
     assert(off <= len && "offset past end of buffer");
 
     string key;
-    const char* p = data + off;
-    const char* pe = data + len;
+    char const* p = data + off;
+    char const* pe = data + len;
 
     assert(pe - p == len - off && "pointers aren't same distance");
 
@@ -100,9 +100,9 @@ size_t feed(const char* data, size_t len, size_t off)
     {
         int _klen;
         unsigned int _trans;
-        const char* _acts;
+        char const* _acts;
         unsigned int _nacts;
-        const char* _keys;
+        char const* _keys;
 
         if (p == pe)
             goto _test_eof;
@@ -115,9 +115,9 @@ size_t feed(const char* data, size_t len, size_t off)
         _klen = _parser_single_lengths[cs];
         if (_klen > 0)
         {
-            const char* _lower = _keys;
-            const char* _mid;
-            const char* _upper = _keys + _klen - 1;
+            char const* _lower = _keys;
+            char const* _mid;
+            char const* _upper = _keys + _klen - 1;
             while (1)
             {
                 if (_upper < _lower)
@@ -141,9 +141,9 @@ size_t feed(const char* data, size_t len, size_t off)
         _klen = _parser_range_lengths[cs];
         if (_klen > 0)
         {
-            const char* _lower = _keys;
-            const char* _mid;
-            const char* _upper = _keys + (_klen << 1) - 2;
+            char const* _lower = _keys;
+            char const* _mid;
+            char const* _upper = _keys + (_klen << 1) - 2;
             while (1)
             {
                 if (_upper < _lower)
@@ -244,7 +244,7 @@ bool finished() const { return cs >= parser_error; }
 }
 
 /* should be able to read multiple files at once */
-ini::settings ini::read_conf(const string& filename)
+ini::settings ini::read_conf(string const& filename)
 {
     ini::parser parser;
     memorymap map(filename);

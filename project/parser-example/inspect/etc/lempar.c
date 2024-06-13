@@ -273,13 +273,13 @@ void ParseTrace(FILE* TraceFILE, char* zTracePrompt)
 #if defined(YYCOVERAGE) || !defined(NDEBUG)
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
-static const char* const yyTokenName[] = { % % };
+static char const* const yyTokenName[] = { % % };
 #endif /* defined(YYCOVERAGE) || !defined(NDEBUG) */
 
 #ifndef NDEBUG
 /* For tracing reduce actions, the names of all rules are required.
  */
-static const char* const yyRuleName[] = { % % };
+static char const* const yyRuleName[] = { % % };
 #endif /* NDEBUG */
 
 #if YYSTACKDEPTH <= 0
@@ -673,7 +673,7 @@ static void yyStackOverflow(yyParser* yypParser)
 ** Print tracing information for a SHIFT action
 */
 #ifndef NDEBUG
-static void yyTraceShift(yyParser* yypParser, int yyNewState, const char* zTag)
+static void yyTraceShift(yyParser* yypParser, int yyNewState, char const* zTag)
 {
     if (yyTraceFILE)
     {
@@ -748,7 +748,7 @@ static const YYCODETYPE yyRuleInfoLhs[] = { % % };
 
 /* For rule J, yyRuleInfoNRhs[J] contains the negative of the number
 ** of symbols on the right-hand side of that rule. */
-static const signed char yyRuleInfoNRhs[] = { % % };
+static signed char const yyRuleInfoNRhs[] = { % % };
 
 static void yy_accept(yyParser*); /* Forward Declaration */
 

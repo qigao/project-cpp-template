@@ -12,7 +12,7 @@ public:
     {
         m_handle->on<uvw::ErrorEvent>([](auto&&...) {});
         m_handle->on<uvw::AsyncEvent>(
-            [&](const auto&, auto& hndl)
+            [&](auto const&, auto& hndl)
             {
                 std::cout << "async data event ..." << std::endl;
                 // auto data  = handle.data<char[]>();
@@ -24,7 +24,7 @@ public:
     }
     void close() { m_handle->close(); }
 
-    void send_event(const std::string& data)
+    void send_event(std::string const& data)
     {
         std::unique_ptr<char[]> bytes(
             std::make_unique<char[]>(data.size() + 1));

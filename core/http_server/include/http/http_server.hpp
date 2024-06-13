@@ -8,9 +8,9 @@ class HttpServer
 {
 public:
     HttpServer(int port = 0, unsigned int numThreads = 4,
-               const std::string& certFile = "",
-               const std::string& keyFile = "",
-               const std::string& rootCaFile = "");
+               std::string const& certFile = "",
+               std::string const& keyFile = "",
+               std::string const& rootCaFile = "");
     virtual ~HttpServer();
 
     void start();
@@ -25,7 +25,7 @@ public:
     inline int getPort() const { return mPort; }
 
     inline void setPort(int value) { mPort = value; }
-    inline void Get(const std::string& path, httplib::Server::Handler handler)
+    inline void Get(std::string const& path, httplib::Server::Handler handler)
     {
         mServer->Get(path, handler);
     }
@@ -38,7 +38,7 @@ public:
      * a const httplib::Request& and httplib::Response& as arguments and return
      * void.
      */
-    inline void Post(const std::string& path, httplib::Server::Handler handler)
+    inline void Post(std::string const& path, httplib::Server::Handler handler)
     {
         mServer->Post(path, handler);
     }
@@ -53,13 +53,13 @@ public:
      * httplib::ContentReader& as arguments and return void.
      */
     inline void
-    PostWithContentHandler(const std::string& path,
+    PostWithContentHandler(std::string const& path,
                            httplib::Server::HandlerWithContentReader handler)
     {
         mServer->Post(path, handler);
     }
 
-    inline void setSharedFolder(const std::string& folder)
+    inline void setSharedFolder(std::string const& folder)
     {
         mSharedFolder = folder;
     }
@@ -67,11 +67,11 @@ public:
     inline std::string getSharedFolder() { return mSharedFolder; }
 
 private:
-    void error_handler(const httplib::Request& req, httplib::Response& res);
-    void log_handler(const httplib::Request& req, const httplib::Response& res);
-    std::string dump_headers(const httplib::Headers& headers);
+    void error_handler(httplib::Request const& req, httplib::Response& res);
+    void log_handler(httplib::Request const& req, httplib::Response const& res);
+    std::string dump_headers(httplib::Headers const& headers);
 
-    void post_route_handler(const httplib::Request& req,
+    void post_route_handler(httplib::Request const& req,
                             httplib::Response& res);
     // private vars
     int mPort = 0;

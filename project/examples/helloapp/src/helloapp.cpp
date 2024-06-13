@@ -5,7 +5,7 @@
 #include "baselib.h"
 #include "hellolib.h"
 
-static constexpr const int fixed_option_width = 100;
+static constexpr int const fixed_option_width = 100;
 int main(int argc, char** argv)
 {
     cxxopts::Options options("test", "A brief description");
@@ -21,7 +21,7 @@ int main(int argc, char** argv)
       ("h,help", "Print usage");
     // clang-format on
     auto result = options.parse(argc, argv);
-    const auto& unmatched = result.unmatched(); // get the unmatched arguments
+    auto const& unmatched = result.unmatched(); // get the unmatched arguments
     if (!unmatched.empty())
     {
         std::cout << "unmatched: " << unmatched.size() << '\n';

@@ -49,8 +49,8 @@ typedef struct
 } HTTPParser;
 #define BUFF_LEN 4096
 
-static void http_field(void* data, const char* field, size_t flen,
-                       const char* value, size_t vlen)
+static void http_field(void* data, char const* field, size_t flen,
+                       char const* value, size_t vlen)
 {
     int i = 0;
     char buff[BUFF_LEN] = {0};
@@ -76,7 +76,7 @@ static void http_field(void* data, const char* field, size_t flen,
     PyDict_SetItemString(req, field_buff, val);
 }
 
-static void request_method(void* data, const char* at, size_t length)
+static void request_method(void* data, char const* at, size_t length)
 {
     char buff[BUFF_LEN] = {0};
     strncpy(buff, at, length);
@@ -88,7 +88,7 @@ static void request_method(void* data, const char* at, size_t length)
     PyDict_SetItemString(req, global_request_method, val);
 }
 
-static void request_uri(void* data, const char* at, size_t length)
+static void request_uri(void* data, char const* at, size_t length)
 {
     char buff[BUFF_LEN] = {0};
     strncpy(buff, at, length);
@@ -99,7 +99,7 @@ static void request_uri(void* data, const char* at, size_t length)
     PyDict_SetItemString(req, global_request_uri, val);
 }
 
-static void fragment(void* data, const char* at, size_t length)
+static void fragment(void* data, char const* at, size_t length)
 {
     char buff[BUFF_LEN] = {0};
     strncpy(buff, at, length);
@@ -110,7 +110,7 @@ static void fragment(void* data, const char* at, size_t length)
     PyDict_SetItemString(req, global_fragment, val);
 }
 
-static void request_path(void* data, const char* at, size_t length)
+static void request_path(void* data, char const* at, size_t length)
 {
     char buff[BUFF_LEN] = {0};
 
@@ -124,7 +124,7 @@ static void request_path(void* data, const char* at, size_t length)
     PyDict_SetItemString(req, global_path_info, val);
 }
 
-static void query_string(void* data, const char* at, size_t length)
+static void query_string(void* data, char const* at, size_t length)
 {
     char buff[BUFF_LEN] = {0};
     strncpy(buff, at, length);
@@ -135,7 +135,7 @@ static void query_string(void* data, const char* at, size_t length)
     PyDict_SetItemString(req, global_query_string, val);
 }
 
-static void http_version(void* data, const char* at, size_t length)
+static void http_version(void* data, char const* at, size_t length)
 {
     char buff[BUFF_LEN] = {0};
     strncpy(buff, at, length);
@@ -146,7 +146,7 @@ static void http_version(void* data, const char* at, size_t length)
     PyDict_SetItemString(req, global_http_version, val);
 }
 
-static void header_done(void* data, const char* at, size_t length)
+static void header_done(void* data, char const* at, size_t length)
 {
     PyObject* req = (PyObject*)data;
 

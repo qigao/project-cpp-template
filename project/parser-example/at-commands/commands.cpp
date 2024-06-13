@@ -4,24 +4,24 @@
 
 #include "commands.hpp"
 
-const int NUM_FREQ_TEXT = 4;
-const char* FREQ_TEXT[] = {"433.2", "433.3", "433.4", "433.5"};
+int const NUM_FREQ_TEXT = 4;
+char const* FREQ_TEXT[] = {"433.2", "433.3", "433.4", "433.5"};
 
-const int NUM_RSSI_THRESHOLD_TEXT = 6;
-const char* RSSI_THRESHOLD_TEXT[] = {"-103", "-97", "-91", "-85", "-79", "-73"};
+int const NUM_RSSI_THRESHOLD_TEXT = 6;
+char const* RSSI_THRESHOLD_TEXT[] = {"-103", "-97", "-91", "-85", "-79", "-73"};
 
-const int NUM_LNA_GAIN_TEXT = 4;
-const char* LNA_GAIN_TEXT[] = {"0", "-14", "-6", "-20"};
+int const NUM_LNA_GAIN_TEXT = 4;
+char const* LNA_GAIN_TEXT[] = {"0", "-14", "-6", "-20"};
 
-const int NUM_BASEBAND_BANDWIDTH_TEXT = 6;
-const int ERROR_OFFSET = 128;
-const char* BASEBAND_BANDWIDTH_TEXT[] = {"400", "340", "270",
+int const NUM_BASEBAND_BANDWIDTH_TEXT = 6;
+int const ERROR_OFFSET = 128;
+char const* BASEBAND_BANDWIDTH_TEXT[] = {"400", "340", "270",
                                          "200", "134", "67"};
 
 bool quiet = false;
 bool verbose_is_text = true;
 
-const char* response_messages[RESPONSE_ERROR_END] = {
+char const* response_messages[RESPONSE_ERROR_END] = {
     /* RESPONSE_OK */ "OK",
     /* RESPONSE_ERROR_BAD_COMMAND */ "Bad command",
     /* RESPONSE_ERROR_INDEX_OUT_OF_BOUNDS */ "Index out of bounds.",

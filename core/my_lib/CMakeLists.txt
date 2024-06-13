@@ -15,8 +15,14 @@ file(GLOB TARGET_HEADERS private/*.h)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
+  FILES ${TARGET_HEADERS}
+)
 
 # Find dependencies:
 find_package(fmt)
@@ -29,15 +35,19 @@ target_link_system_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 
 # Include all necessary directories
 target_include_directories(
-  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/public
+  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private
+                          ${CMAKE_CURRENT_SOURCE_DIR}/public
   # Any other extra include required
 )
 
 set_target_properties(
-  ${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON
+  ${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden
+                             VISIBILITY_INLINES_HIDDEN ON
 )
 # link project_options/warnings
-target_link_libraries(${PROJECT_NAME} PRIVATE my_project_options my_project_warnings)
+target_link_libraries(
+  ${PROJECT_NAME} PRIVATE starter_project_options starter_project_warnings
+)
 
 # Add the compile definitions
 target_compile_definitions(${PROJECT_NAME} PRIVATE MYLIB_EXPORTS)

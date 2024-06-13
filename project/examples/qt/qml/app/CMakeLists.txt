@@ -4,7 +4,8 @@
 set(TARGET_NAME qml-app)
 if(WIN32)
   configure_file(
-    ${CMAKE_SOURCE_DIR}/project/application.rc.in "${CMAKE_CURRENT_BINARY_DIR}/application.rc"
+    ${CMAKE_SOURCE_DIR}/project/application.rc.in
+    "${CMAKE_CURRENT_BINARY_DIR}/application.rc"
   )
   set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
 endif(WIN32)
@@ -15,14 +16,21 @@ qt_add_resources(QT_RESOURCES qml.qrc)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
+  FILES ${TARGET_HEADERS}
+)
 
 # ##############################################################################
 # Define Target according to options
 # ##############################################################################
 qt_add_executable(
-  ${TARGET_NAME} ${TARGET_HEADERS} ${APPLICATION_RESOURCE} ${TARGET_SOURCES} ${QT_RESOURCES}
+  ${TARGET_NAME} ${TARGET_HEADERS} ${APPLICATION_RESOURCE} ${TARGET_SOURCES}
+  ${QT_RESOURCES}
 )
 
 # ##############################################################################
@@ -31,9 +39,12 @@ qt_add_executable(
 
 # add target properties such as debug postfix and MSVC runtime
 set_target_properties(
-  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY "${MSVC_RUNTIME_TYPE}"
+  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
+                                               "${MSVC_RUNTIME_TYPE}"
 )
-set_target_properties(${TARGET_NAME} PROPERTIES QT_QML_MODULE_VERSION 1.0 QT_QML_MODULE_URI Qt6App)
+set_target_properties(
+  ${TARGET_NAME} PROPERTIES QT_QML_MODULE_VERSION 1.0 QT_QML_MODULE_URI Qt6App
+)
 # set target compile options as defined in the cmake/compiler_options.cmake
 # Module
 target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
@@ -52,7 +63,9 @@ endif()
 target_include_directories(${TARGET_NAME} PRIVATE ../plugins/fancy)
 
 # link the libraries
-target_link_libraries(${TARGET_NAME} PRIVATE Qt6::Qml Qt6::Quick fancy-plugin fancy)
+target_link_libraries(
+  ${TARGET_NAME} PRIVATE Qt6::Qml Qt6::Quick fancy-plugin fancy
+)
 
 # ##############################################################################
 # Define Install Targets

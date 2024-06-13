@@ -23,7 +23,7 @@ struct Path
     Path() {}
 
     template <typename ValueT>
-    Path(const ValueT& value_) : value(value_)
+    Path(ValueT const& value_) : value(value_)
     {
     }
 
@@ -52,7 +52,7 @@ struct Path
     // Drop "." and remove ".." by dropping preceeding path elements.
     Path simplify() const;
 
-    Path operator+(const Path& other) const;
+    Path operator+(Path const& other) const;
 
     // Given a path of the form "/.../x" return "x".
     Path base_name() const;
@@ -63,13 +63,13 @@ struct Path
     // Given a path of the form "/.../x.y" return "y".
     std::string extension() const;
 
-    bool operator==(const Path& other) const { return value == other.value; }
-    bool operator!=(const Path& other) const { return value != other.value; }
-    bool operator<(const Path& other) const { return value < other.value; }
-    bool operator<=(const Path& other) const { return value <= other.value; }
-    bool operator>(const Path& other) const { return value > other.value; }
-    bool operator>=(const Path& other) const { return value >= other.value; }
+    bool operator==(Path const& other) const { return value == other.value; }
+    bool operator!=(Path const& other) const { return value != other.value; }
+    bool operator<(Path const& other) const { return value < other.value; }
+    bool operator<=(Path const& other) const { return value <= other.value; }
+    bool operator>(Path const& other) const { return value > other.value; }
+    bool operator>=(Path const& other) const { return value >= other.value; }
 };
 
-std::ostream& operator<<(std::ostream& output, const Path& path);
+std::ostream& operator<<(std::ostream& output, Path const& path);
 } // namespace URI

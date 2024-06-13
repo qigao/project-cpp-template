@@ -4,8 +4,8 @@
 add_executable(my_header_lib_tests "./tests.cpp")
 
 target_link_libraries(
-  my_header_lib_tests PRIVATE my_header_lib my_project_warnings my_project_options
-                              catch2_test_common
+  my_header_lib_tests PRIVATE my_header_lib starter_project_warnings
+                              starter_project_options catch2_test_common
 )
 
 # use xml reporter if coverage is enabled
@@ -15,6 +15,3 @@ endif()
 
 # automatically discover tests that are defined in catch based test files you can modify the tests
 catch_discover_tests(my_header_lib_tests ${COVERAGE_ARGS})
-
-# constexpr tests
-add_subdirectory("./constexpr")

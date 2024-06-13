@@ -15,7 +15,7 @@ namespace URI
 {
 namespace Encoding
 {
-constexpr const unsigned char SEPARATOR = '/';
+constexpr unsigned char const SEPARATOR = '/';
 
 // Characters which can appear anywhere in an URI without any encoding.
 bool is_unreserved(unsigned char);
@@ -35,9 +35,9 @@ bool is_path_unreserved(unsigned char);
 
 // According to https://tools.ietf.org/html/rfc3986#section-3.3, we escape
 // non-pchar using % encoding.
-std::string encode(const std::string& string,
+std::string encode(std::string const& string,
                    bool (*is_safe)(unsigned char) = is_unreserved);
-std::string decode(const std::string& string);
+std::string decode(std::string const& string);
 
 template <typename IteratorT>
 std::string encode_query(IteratorT begin, IteratorT end,
@@ -89,12 +89,12 @@ std::string encode_path(IteratorT begin, IteratorT end,
 
 // Given a native path using the specified separator, encode it into a URI path,
 // escaping non-safe characters as required.
-std::string encode_path(const std::string& native_path, char separator,
+std::string encode_path(std::string const& native_path, char separator,
                         bool directory,
                         bool (*is_safe)(unsigned char) = is_path_unreserved);
 
 // Given a URI path, decode it to a native path. If the path contains encoded
 // separators, an exception will be thrown.
-std::string decode_path(const std::string& path, char separator);
+std::string decode_path(std::string const& path, char separator);
 }; // namespace Encoding
 } // namespace URI

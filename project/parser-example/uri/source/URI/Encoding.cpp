@@ -53,7 +53,7 @@ bool is_path_unreserved(unsigned char c)
 
 static char to_hex(unsigned value)
 {
-    const char hex[] = "0123456789ABCDEF";
+    char const hex[] = "0123456789ABCDEF";
 
     if (value >= 16)
         throw std::out_of_range("value cannot be converted to hex");
@@ -73,7 +73,7 @@ static unsigned from_hex(char character)
     throw std::invalid_argument("not a hex character");
 }
 
-std::string encode(const std::string& input, bool (*is_safe)(unsigned char))
+std::string encode(std::string const& input, bool (*is_safe)(unsigned char))
 {
     std::string output;
     output.reserve(input.size());
@@ -97,7 +97,7 @@ std::string encode(const std::string& input, bool (*is_safe)(unsigned char))
     return output;
 }
 
-std::string decode(const std::string& input)
+std::string decode(std::string const& input)
 {
     std::string buffer;
     buffer.reserve(input.size());
@@ -128,7 +128,7 @@ std::string decode(const std::string& input)
     return buffer;
 }
 
-std::string encode_path(const std::string& native_path, char separator,
+std::string encode_path(std::string const& native_path, char separator,
                         bool directory, bool (*is_safe)(unsigned char))
 {
     std::string buffer;
@@ -171,7 +171,7 @@ std::string encode_path(const std::string& native_path, char separator,
     return buffer;
 }
 
-std::string decode_path(const std::string& path, char separator)
+std::string decode_path(std::string const& path, char separator)
 {
     std::string buffer;
     buffer.reserve(path.size());

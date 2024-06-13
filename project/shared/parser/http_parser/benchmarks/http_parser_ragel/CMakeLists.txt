@@ -1,7 +1,7 @@
 find_program(RAGEL 6.10)
 ragel_target(
-  HTTP_MACHINE ../../http_parser.rl ${CMAKE_CURRENT_BINARY_DIR}/http_parser.cpp COMPILE_FLAGS
-  "-C -G2"
+  HTTP_MACHINE ../../http_parser.rl ${CMAKE_CURRENT_BINARY_DIR}/http_parser.cpp
+  COMPILE_FLAGS "-C -G2"
 )
 file(GLOB TARGET_HEADERS ../../*.h)
 
@@ -9,7 +9,9 @@ file(GLOB TARGET_HEADERS ../../*.h)
 # Define Target Information
 # ##############################################################################
 set(TARGET_NAME ragel_http_parser_benchmark)
-add_executable(${TARGET_NAME} ${RAGEL_HTTP_MACHINE_OUTPUTS} ragel_performance.cc)
+add_executable(
+  ${TARGET_NAME} ${RAGEL_HTTP_MACHINE_OUTPUTS} ragel_performance.cc
+)
 target_link_libraries(${TARGET_NAME} benchmark::benchmark)
 
 # add target properties such as debug postfix, MSVC Runtime and library version

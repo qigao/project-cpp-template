@@ -17,7 +17,7 @@ struct Address
      *
      * @param   address  Address in string format
      */
-    Address(const std::string& address);
+    Address(std::string const& address);
 
     /// Column offset (beginning at 0)
     unsigned int column;
@@ -26,6 +26,6 @@ struct Address
     unsigned int row;
 };
 
-bool operator<(const Address& lhs, const Address& rhs);
+bool operator<(Address const& lhs, Address const& rhs);
 
-bool operator==(const Address& lhs, const Address& rhs);
+bool operator==(Address const& lhs, Address const& rhs);

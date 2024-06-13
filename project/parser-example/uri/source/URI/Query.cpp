@@ -14,7 +14,7 @@
 
 namespace URI
 {
-Query Query::operator+(const Query& other)
+Query Query::operator+(Query const& other)
 {
     // Ensure neither side is empty:
     if (empty())
@@ -32,8 +32,8 @@ std::multimap<std::string, std::string> Query::to_map() const
 
     NamedValues named_values;
 
-    auto result = parse((const Byte*)value.data(),
-                        (const Byte*)value.data() + value.size(), named_values);
+    auto result = parse((Byte const*)value.data(),
+                        (Byte const*)value.data() + value.size(), named_values);
 
     if (result != value.size())
         throw std::invalid_argument("could not parse entire query string");
@@ -41,7 +41,7 @@ std::multimap<std::string, std::string> Query::to_map() const
     return named_values;
 }
 
-std::ostream& operator<<(std::ostream& output, const Query& query)
+std::ostream& operator<<(std::ostream& output, Query const& query)
 {
     if (query.empty())
         return output;

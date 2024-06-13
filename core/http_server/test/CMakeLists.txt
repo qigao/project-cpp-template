@@ -11,8 +11,14 @@ file(GLOB TARGET_HEADERS ../include/helper/*.hpp ../include/http/*.hpp)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/.. PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/.. PREFIX "Header Files" FILES ${TARGET_HEADERS})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR}/.. PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR}/.. PREFIX "Header Files"
+  FILES ${TARGET_HEADERS}
+)
 # ----------------------------------------------------------------------------------------------------------------------
 # Find dependencies:
 #set(OS_WINDOWS TRUE)
@@ -45,12 +51,14 @@ target_link_libraries(
 )
 
 target_compile_definitions(
-  ${PROJECT_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
+  ${PROJECT_NAME}
+  INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE my_project_options my_project_warnings catch2_test_common
+  ${PROJECT_NAME} PRIVATE starter_project_options starter_project_warnings
+                          catch2_test_common
 )
 
 # include all the necessary directories
@@ -60,4 +68,6 @@ target_include_directories(
           # Any other extra include required
           ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS}
 )
-add_test(NAME MyTest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${UNIT_TEST_BIN_OUTPUT_DIR})
+add_test(NAME MyTest COMMAND ${PROJECT_NAME}
+         WORKING_DIRECTORY ${UNIT_TEST_BIN_OUTPUT_DIR}
+)

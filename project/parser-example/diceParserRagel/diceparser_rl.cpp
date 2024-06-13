@@ -8,40 +8,40 @@ namespace DP
 #line 121 "/home/qigao/projects/project-cpp-template/parser-example/diceParserRagel/diceparser.rl"
 
 #line 11 "/home/qigao/projects/project-cpp-template/parser-example/diceParserRagel/diceparser_rl.cpp"
-static const char _RollFormula_actions[] = {
+static char const _RollFormula_actions[] = {
     0, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9, 1, 10, 2,
     4, 1, 2, 4, 2, 2, 4, 5, 2, 4, 6, 2, 4, 7, 2, 4, 8, 2, 4, 9, 2, 4, 10};
 
-static const char _RollFormula_key_offsets[] = {0, 0, 16, 32, 32};
+static char const _RollFormula_key_offsets[] = {0, 0, 16, 32, 32};
 
-static const char _RollFormula_trans_keys[] = {
+static char const _RollFormula_trans_keys[] = {
     0,  10, 32, 33, 37, 40, 41, 42, 43, 45, 47, 77,  100, 109, 49, 57, 0,
     10, 32, 33, 37, 40, 41, 42, 43, 45, 47, 77, 100, 109, 48,  57, 0};
 
-static const char _RollFormula_single_lengths[] = {0, 14, 14, 0, 0};
+static char const _RollFormula_single_lengths[] = {0, 14, 14, 0, 0};
 
-static const char _RollFormula_range_lengths[] = {0, 1, 1, 0, 0};
+static char const _RollFormula_range_lengths[] = {0, 1, 1, 0, 0};
 
-static const char _RollFormula_index_offsets[] = {0, 0, 16, 32, 33};
+static char const _RollFormula_index_offsets[] = {0, 0, 16, 32, 33};
 
-static const char _RollFormula_trans_targs[] = {
+static char const _RollFormula_trans_targs[] = {
     3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 3, 3,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0};
 
-static const char _RollFormula_trans_actions[] = {
+static char const _RollFormula_trans_actions[] = {
     21, 21, 0,  19, 11, 3,  5,  11, 13, 13, 11, 17, 15, 17, 7, 1, 44, 44,
     9,  41, 29, 23, 26, 29, 32, 32, 29, 38, 35, 38, 7,  1,  0, 0, 0};
 
-static const char _RollFormula_to_state_actions[] = {0, 0, 0, 0, 1};
+static char const _RollFormula_to_state_actions[] = {0, 0, 0, 0, 1};
 
-static const char _RollFormula_eof_actions[] = {0, 1, 1, 0, 0};
+static char const _RollFormula_eof_actions[] = {0, 1, 1, 0, 0};
 
-static const int RollFormula_start = 1;
-static const int RollFormula_first_final = 3;
-static const int RollFormula_error = 0;
+static int const RollFormula_start = 1;
+static int const RollFormula_first_final = 3;
+static int const RollFormula_error = 0;
 
-static const int RollFormula_en_errors = 4;
-static const int RollFormula_en_main = 1;
+static int const RollFormula_en_errors = 4;
+static int const RollFormula_en_main = 1;
 
 #line 123 "/home/qigao/projects/project-cpp-template/parser-example/diceParserRagel/diceparser.rl"
 
@@ -67,18 +67,18 @@ std::istream& operator>>(std::istream& in, RollFormula& rf)
     {
         std::string str;
         std::getline(in, str);
-        const char* p = str.c_str();
-        const char* pe = p + str.length() + 1;
-        const char* eof = pe;
-        const char* ts = nullptr;
+        char const* p = str.c_str();
+        char const* pe = p + str.length() + 1;
+        char const* eof = pe;
+        char const* ts = nullptr;
 
 #line 106 "/home/qigao/projects/project-cpp-template/parser-example/diceParserRagel/diceparser_rl.cpp"
         {
             int _klen;
             unsigned int _trans;
-            const char* _acts;
+            char const* _acts;
             unsigned int _nacts;
-            const char* _keys;
+            char const* _keys;
 
             if (p == pe)
                 goto _test_eof;
@@ -91,9 +91,9 @@ std::istream& operator>>(std::istream& in, RollFormula& rf)
             _klen = _RollFormula_single_lengths[cs];
             if (_klen > 0)
             {
-                const char* _lower = _keys;
-                const char* _mid;
-                const char* _upper = _keys + _klen - 1;
+                char const* _lower = _keys;
+                char const* _mid;
+                char const* _upper = _keys + _klen - 1;
                 while (1)
                 {
                     if (_upper < _lower)
@@ -117,9 +117,9 @@ std::istream& operator>>(std::istream& in, RollFormula& rf)
             _klen = _RollFormula_range_lengths[cs];
             if (_klen > 0)
             {
-                const char* _lower = _keys;
-                const char* _mid;
-                const char* _upper = _keys + (_klen << 1) - 2;
+                char const* _lower = _keys;
+                char const* _mid;
+                char const* _upper = _keys + (_klen << 1) - 2;
                 while (1)
                 {
                     if (_upper < _lower)
@@ -377,7 +377,7 @@ std::istream& operator>>(std::istream& in, RollFormula& rf)
         }
             if (p == eof)
             {
-                const char* __acts =
+                char const* __acts =
                     _RollFormula_actions + _RollFormula_eof_actions[cs];
                 unsigned int __nacts = (unsigned int)*__acts++;
                 while (__nacts-- > 0)

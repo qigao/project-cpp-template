@@ -56,7 +56,7 @@ TEST_F(SheetTest, setFormula_and_getFormula_basic)
     for (Formulas::const_iterator itr = formulas.begin(); itr != formulas.end();
          itr++)
     {
-        const string& expectedFormula = itr->first;
+        string const& expectedFormula = itr->first;
         EXPECT_TRUE(sheet.setFormula(address, expectedFormula));
 
         string retrievedFormula = sheet.getFormula(address);
@@ -64,7 +64,7 @@ TEST_F(SheetTest, setFormula_and_getFormula_basic)
 
         sheet.recalculate();
 
-        const string& expectedValue = itr->second;
+        string const& expectedValue = itr->second;
         string retrievedValue = sheet.getValue(address);
         EXPECT_EQ(expectedValue, retrievedValue);
     }
@@ -83,16 +83,16 @@ TEST_F(SheetTest, setFormula_and_getFormula_with_addresses)
     EXPECT_EQ(2, address2.row);
 
     // Set formula for A1 with no references
-    const string formula1 = "=1+12.5";
+    string const formula1 = "=1+12.5";
     EXPECT_TRUE(sheet.setFormula(address1, formula1));
 
     // Set formula for B2 so that it references A1
-    const string formula2 = "=A1+12";
+    string const formula2 = "=A1+12";
     EXPECT_TRUE(sheet.setFormula(address2, formula2));
 
     sheet.recalculate();
 
-    const string& expectedValue = "25.5";
+    string const& expectedValue = "25.5";
     string retrievedValue = sheet.getValue(address2);
     EXPECT_EQ(expectedValue, retrievedValue);
 }

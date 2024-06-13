@@ -4,7 +4,7 @@
 
 struct Cell
 {
-    Cell(const std::string& formula)
+    Cell(std::string const& formula)
         : formula(formula), value(), phase(0), processed(false)
     {
         // No further initialisation

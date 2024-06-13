@@ -20,7 +20,7 @@
 void loadLib()
 {
     std::cout << "Library loaded." << std::endl;
-    const int sumResult = Sum(2, 2);
+    int const sumResult = Sum(2, 2);
     std::cout << "result = " << std::to_string(sumResult) << std::endl;
 }
 

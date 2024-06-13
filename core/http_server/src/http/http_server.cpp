@@ -1,6 +1,6 @@
 #include "http/http_server.hpp"
-#include "helper/task_queue.hpp"
 #include "spdlog/spdlog.h"
+#include "task_queue.hpp"
 #include <functional>
 #include <httplib.h>
 #include <iostream>
@@ -10,8 +10,8 @@
 using namespace std::placeholders;
 
 HttpServer::HttpServer(int port, unsigned int numThreads,
-                       const std::string& certFile, const std::string& keyFile,
-                       const std::string& rootCaFile)
+                       std::string const& certFile, std::string const& keyFile,
+                       std::string const& rootCaFile)
     : mPort(port), mBoundPort(0), mStopSignal(false)
 
 {
@@ -144,7 +144,7 @@ void HttpServer::stop()
     spdlog::info("server stopped.");
 }
 
-void HttpServer::error_handler(const httplib::Request& /* req */,
+void HttpServer::error_handler(httplib::Request const& /* req */,
                                httplib::Response& res)
 {
     char buf[BUFSIZ];
@@ -152,8 +152,8 @@ void HttpServer::error_handler(const httplib::Request& /* req */,
     snprintf(buf, sizeof(buf), formatter, res.status);
     res.set_content(buf, "text/html");
 }
-void HttpServer::log_handler(const httplib::Request& req,
-                             const httplib::Response& res)
+void HttpServer::log_handler(httplib::Request const& req,
+                             httplib::Response const& res)
 {
     std::string s;
     char buf[BUFSIZ];
@@ -171,7 +171,7 @@ void HttpServer::log_handler(const httplib::Request& req,
     std::string query;
     for (auto it = req.params.begin(); it != req.params.end(); ++it)
     {
-        const auto& x = *it;
+        auto const& x = *it;
         snprintf(buf, sizeof(buf), "%c%s=%s",
                  (it == req.params.begin()) ? '?' : '&', x.first.c_str(),
                  x.second.c_str());
@@ -206,14 +206,14 @@ void HttpServer::log_handler(const httplib::Request& req,
     spdlog::info("\n{}", s);
 }
 
-std::string HttpServer::dump_headers(const httplib::Headers& headers)
+std::string HttpServer::dump_headers(httplib::Headers const& headers)
 {
     std::string s;
     char buf[BUFSIZ];
 
     for (auto it = headers.begin(); it != headers.end(); ++it)
     {
-        const auto& x = *it;
+        auto const& x = *it;
         snprintf(buf, sizeof(buf), "%s: %s\n", x.first.c_str(),
                  x.second.c_str());
         s += buf;
@@ -221,7 +221,7 @@ std::string HttpServer::dump_headers(const httplib::Headers& headers)
 
     return s;
 }
-void HttpServer::post_route_handler(const httplib::Request& req,
+void HttpServer::post_route_handler(httplib::Request const& req,
                                     httplib::Response& res)
 {
     res.set_header("User-Agent", "MicroView http file server");

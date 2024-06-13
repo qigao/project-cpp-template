@@ -16,6 +16,6 @@ namespace GenericParser
 {
 using Byte = unsigned char;
 
-std::size_t parse(const Byte* begin, const Byte* end, Generic& generic);
+std::size_t parse(Byte const* begin, Byte const* end, Generic& generic);
 } // namespace GenericParser
 } // namespace URI

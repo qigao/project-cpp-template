@@ -22,7 +22,8 @@ set(APPLICATION_VERSION "0.1")
 set(APPLICATION_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resource/icon/app.ico")
 if(WIN32)
   configure_file(
-    ${CMAKE_SOURCE_DIR}/project/application.rc.in "${CMAKE_CURRENT_BINARY_DIR}/application.rc"
+    ${CMAKE_SOURCE_DIR}/project/application.rc.in
+    "${CMAKE_CURRENT_BINARY_DIR}/application.rc"
   )
   set(APPLICATION_RESOURCE ${CMAKE_CURRENT_BINARY_DIR}/application.rc)
 endif(WIN32)
@@ -30,8 +31,14 @@ endif(WIN32)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
+  FILES ${TARGET_HEADERS}
+)
 
 # ##############################################################################
 # Define Target according to options
@@ -53,7 +60,8 @@ qt_add_executable(
 
 # add target properties such as debug postfix and MSVC runtime
 set_target_properties(
-  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY "${MSVC_RUNTIME_TYPE}"
+  ${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "-d" MSVC_RUNTIME_LIBRARY
+                                               "${MSVC_RUNTIME_TYPE}"
 )
 
 # set target compile options as defined in the cmake/compiler_options.cmake
@@ -62,7 +70,8 @@ target_compile_options(${TARGET_NAME} PRIVATE ${compiler_options})
 
 # add compiler definition WITH_OPENSSL, if found
 target_compile_definitions(
-  ${TARGET_NAME} PRIVATE ${compiler_definitions} $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>
+  ${TARGET_NAME} PRIVATE ${compiler_definitions}
+                         $<$<BOOL:${OPENSSL_FOUND}>:WITH_OPENSSL>
 )
 
 # set target link options as defined in the cmake/compiler_options.cmake Module
@@ -83,7 +92,9 @@ target_include_directories(
 )
 
 # link
-target_link_libraries(${TARGET_NAME} PUBLIC QtDemoLib Qt6::Core Qt6::Gui Qt6::Widgets)
+target_link_libraries(
+  ${TARGET_NAME} PUBLIC QtDemoLib Qt6::Core Qt6::Gui Qt6::Widgets
+)
 # ##############################################################################
 # Define Install Targets
 # ##############################################################################

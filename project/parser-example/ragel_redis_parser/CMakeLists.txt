@@ -15,8 +15,8 @@ function(generate_ragel)
     OUTPUT ${args_OUT_FILE}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${out_dir}
     COMMAND ${ragel_RAGEL_EXECUTABLE} -G2 -o ${args_OUT_FILE} ${args_IN_FILE}
-    COMMAND sed -i -e "'1h;2,$$H;$$!d;g'" -re "'s/static const char _nfa[^;]*;//g'"
-            ${args_OUT_FILE}
+    COMMAND sed -i -e "'1h;2,$$H;$$!d;g'" -re
+            "'s/static const char _nfa[^;]*;//g'" ${args_OUT_FILE}
   )
 
   add_custom_target(${args_TARGET} DEPENDS ${args_OUT_FILE})
@@ -38,5 +38,6 @@ generate_ragel(
 add_executable(redis_parser_test ${redis_parser_file} redis_parser_test.cc)
 
 target_include_directories(
-  redis_parser_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+  redis_parser_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
 )

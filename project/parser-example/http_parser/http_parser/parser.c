@@ -22,11 +22,11 @@
 /** Data **/
 
 #line 27 "parser.c"
-static const int http_parser_start = 1;
-static const int http_parser_first_final = 58;
-static const int http_parser_error = 0;
+static int const http_parser_start = 1;
+static int const http_parser_first_final = 58;
+static int const http_parser_error = 0;
 
-static const int http_parser_en_main = 1;
+static int const http_parser_en_main = 1;
 
 #line 85 "parser.rl"
 
@@ -52,10 +52,10 @@ int http_parser_init(http_parser* parser)
 }
 
 /** exec **/
-size_t http_parser_execute(http_parser* parser, const char* buffer, size_t len,
+size_t http_parser_execute(http_parser* parser, char const* buffer, size_t len,
                            size_t off)
 {
-    const char *p, *pe;
+    char const *p, *pe;
     int cs = parser->cs;
 
     assert(off <= len && "offset past end of buffer");

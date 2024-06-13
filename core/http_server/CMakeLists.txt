@@ -6,13 +6,19 @@ set(PROJECT_NAME http_server)
 # ##############################################################################
 
 file(GLOB TARGET_SOURCES src/*.cpp src/http/*.cpp)
-file(GLOB TARGET_HEADERS include/helper/*.hpp include/http/*.hpp)
+file(GLOB TARGET_HEADERS include/http/*.hpp)
 
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
+  FILES ${TARGET_HEADERS}
+)
 # ----------------------------------------------------------------------------------------------------------------------
 # Find dependencies:
 #set(OS_WINDOWS TRUE)
@@ -45,11 +51,14 @@ target_link_libraries(
 )
 
 target_compile_definitions(
-  ${PROJECT_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
+  ${PROJECT_NAME}
+  INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
-target_link_libraries(${PROJECT_NAME} PRIVATE my_project_options my_project_warnings)
+target_link_libraries(
+  ${PROJECT_NAME} PRIVATE starter_project_options starter_project_warnings
+)
 
 # include all the necessary directories
 target_include_directories(
@@ -57,6 +66,8 @@ target_include_directories(
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
           # Any other extra include required
           ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS}
+          ${CMAKE_SOURCE_DIR}/core/shared/utils
+          ${CMAKE_SOURCE_DIR}/core/shared/http
 )
 # ----------------------------------------------------------------------------------------------------------------------
 # install

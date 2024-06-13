@@ -7,8 +7,8 @@
 #include "MainWindow.h"
 #include "QtDemoClass.h"
 
-static const int width = 640;
-static const int height = 480;
+static int const width = 640;
+static int const height = 480;
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);

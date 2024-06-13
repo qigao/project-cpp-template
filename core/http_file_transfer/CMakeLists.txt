@@ -15,9 +15,18 @@ file(GLOB TARGET_PUBLIC_HEADERS public/*.h)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files" FILES ${TARGET_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files" FILES ${TARGET_HEADERS})
-
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
+  FILES ${TARGET_SOURCES}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header(Private) Files"
+  FILES ${TARGET_HEADERS}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header(Public) Files"
+  FILES ${TARGET_PUBLIC_HEADERS}
+)
 # ----------------------------------------------------------------------------------------------------------------------
 # Find dependencies:
 #set(OS_WINDOWS TRUE)
@@ -31,7 +40,9 @@ find_package(Threads REQUIRED)
 find_package(spdlog)
 # ----------------------------------------------------------------------------------------------------------------------
 # executable part
-add_library(${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES} ${TARGET_PUBLIC_HEADERS})
+add_library(
+  ${PROJECT_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES} ${TARGET_PUBLIC_HEADERS}
+)
 # Link dependencies:
 target_link_libraries(
   ${PROJECT_NAME}
@@ -43,20 +54,27 @@ target_link_libraries(
          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )
 set_target_properties(
-  ${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON
+  ${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden
+                             VISIBILITY_INLINES_HIDDEN ON
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_EXPORTS)
 target_compile_definitions(
-  ${PROJECT_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
+  ${PROJECT_NAME}
+  INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
-target_compile_options(${PROJECT_NAME} PRIVATE my_project_options my_project_warnings)
+target_link_libraries(
+  ${PROJECT_NAME} PRIVATE starter_project_options starter_project_warnings
+)
 # include all the necessary directories
 target_include_directories(
   ${PROJECT_NAME}
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include ${CMAKE_CURRENT_SOURCE_DIR}/public
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include
+          ${CMAKE_CURRENT_SOURCE_DIR}/public
           # Any other extra include required
+          ${CMAKE_SOURCE_DIR}/core/shared/utils
+          ${CMAKE_SOURCE_DIR}/core/shared/http
 )
 # =================================================================================
 # INSTALL

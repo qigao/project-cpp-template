@@ -14,7 +14,7 @@
 
 namespace URI
 {
-Generic::Generic(const char* begin, const char* end)
+Generic::Generic(char const* begin, char const* end)
 {
     using namespace GenericParser;
 
@@ -25,7 +25,7 @@ Generic::Generic(const char* begin, const char* end)
         throw std::invalid_argument("could not parse entire uri string");
 }
 
-std::ostream& operator<<(std::ostream& output, const Generic& generic)
+std::ostream& operator<<(std::ostream& output, Generic const& generic)
 {
     if (!generic.scheme.empty())
     {
@@ -60,19 +60,19 @@ std::ostream& operator<<(std::ostream& output, const Generic& generic)
     return output;
 }
 
-bool Generic::operator==(const Generic& other) const noexcept
+bool Generic::operator==(Generic const& other) const noexcept
 {
     return scheme == other.scheme && userinfo == other.userinfo &&
            host == other.host && port == other.port && path == other.path &&
            query == other.query && fragment == other.fragment;
 }
 
-bool Generic::operator!=(const Generic& other) const noexcept
+bool Generic::operator!=(Generic const& other) const noexcept
 {
     return !(*this == other);
 }
 
-bool Generic::operator<(const Generic& other) const noexcept
+bool Generic::operator<(Generic const& other) const noexcept
 {
     if (scheme < other.scheme)
         return true;
@@ -98,7 +98,7 @@ bool Generic::operator<(const Generic& other) const noexcept
     return false;
 }
 
-Generic Generic::operator+(const Generic& other) const
+Generic Generic::operator+(Generic const& other) const
 {
     if (other.is_absolute())
     {

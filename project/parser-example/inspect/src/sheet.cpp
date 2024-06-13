@@ -17,7 +17,7 @@ struct SheetCallbackData
 
 void recalculateDepthFirst(int phase, Cells& cells, Cell& cell);
 
-std::string evalAddressCallback(const Address& address, void* pData)
+std::string evalAddressCallback(Address const& address, void* pData)
 {
     SheetCallbackData* pCbData = static_cast<SheetCallbackData*>(pData);
     Cells::iterator itr = pCbData->cells.find(address);
@@ -30,8 +30,8 @@ std::string evalAddressCallback(const Address& address, void* pData)
     return itr->second.value;
 }
 
-std::string evalFunctionCallback(const std::string& name,
-                                 const Formula::Arguments&, void* pData)
+std::string evalFunctionCallback(std::string const& name,
+                                 Formula::Arguments const&, void* pData)
 {
     SheetCallbackData* pCbData = static_cast<SheetCallbackData*>(pData);
     throw std::runtime_error("Function calls are not implemented.");
@@ -71,29 +71,29 @@ Sheet::Sheet() : m_pCells(new Cells()), m_phase(1) {}
 
 Sheet::~Sheet() {}
 
-bool Sheet::erase(const Address& address)
+bool Sheet::erase(Address const& address)
 {
     return m_pCells->erase(address) == 1;
 }
 
-std::string Sheet::getFormula(const Address& address) const
+std::string Sheet::getFormula(Address const& address) const
 {
     Cells::const_iterator itr = m_pCells->find(address);
     if (itr != m_pCells->end())
     {
-        const Cell& cell = itr->second;
+        Cell const& cell = itr->second;
         return cell.formula;
     }
 
     return "";
 }
 
-std::string Sheet::getValue(const Address& address) const
+std::string Sheet::getValue(Address const& address) const
 {
     Cells::const_iterator itr = m_pCells->find(address);
     if (itr != m_pCells->end())
     {
-        const Cell& cell = itr->second;
+        Cell const& cell = itr->second;
         return cell.value;
     }
 
@@ -121,7 +121,7 @@ void Sheet::recalculate()
     }
 }
 
-bool Sheet::setFormula(const Address& address, const std::string& formula)
+bool Sheet::setFormula(Address const& address, std::string const& formula)
 {
     Cells::iterator itr = m_pCells->find(address);
     if (itr == m_pCells->end())

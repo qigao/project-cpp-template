@@ -8,7 +8,7 @@
 namespace Parser
 {
 CSVParser::CSVParser() {}
-void CSVParser::parse(const char* csv_file_name,
+void CSVParser::parse(char const* csv_file_name,
                       std::vector<std::string> results)
 {
     auto file_stream = std::make_unique<std::ifstream>(
@@ -17,7 +17,7 @@ void CSVParser::parse(const char* csv_file_name,
         CSVStreamParser<>(std::make_unique<StreamReader>(*file_stream));
     reader.readLine(results);
 }
-void CSVParser::parse_by_line(const char* csv_data,
+void CSVParser::parse_by_line(char const* csv_data,
                               std::vector<std::string> results)
 {
     auto file_stream = std::make_unique<std::ifstream>(
