@@ -8,8 +8,8 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include(fetch_project_options)
-
+include(Index)
+include(DynamicProjectOptions)
 # Define the features of the project
 include(Config.cmake)
 
