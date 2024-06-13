@@ -40,7 +40,7 @@ int main()
 {
     auto settings = ini::read_conf("test.ini");
 
-    std::function<void(string)> apply_str = [](const string& str)
+    std::function<void(string)> apply_str = [](string const& str)
     { printf("STR: %s\n", str.c_str()); };
     std::function<void(double)> apply_dbl = [](double dbl)
     { printf("DBL: %f\n", dbl); };

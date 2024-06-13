@@ -80,8 +80,8 @@ std::int64_t RollFormula::evaluate() const
             "[ERROR w/ evaluate] trying to evaluate single operation");
     }
 }
-std::int64_t RollFormula::operator()(const RollFormula& l,
-                                     const RollFormula& r) const
+std::int64_t RollFormula::operator()(RollFormula const& l,
+                                     RollFormula const& r) const
 {
     if (l.formula.index() == 2 || r.formula.index() == 2)
         throw RollFormulaError(

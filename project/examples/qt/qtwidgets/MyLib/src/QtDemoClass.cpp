@@ -7,7 +7,7 @@ namespace app
 
 QtDemoClass::QtDemoClass(QString text) : _text{std::move(text)} {}
 
-QString QtDemoClass::appendIt(const QString& extra) const
+QString QtDemoClass::appendIt(QString const& extra) const
 {
     return _text + " " + extra;
 }

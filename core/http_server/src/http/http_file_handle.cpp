@@ -1,7 +1,7 @@
 #include "http/http_file_handle.hpp"
+#include "constants.hpp"
 #include "cpp_yyjson.hpp"
-#include "helper/constants.hpp"
-#include "helper/fs.hpp"
+#include "fs.hpp"
 #include "spdlog/spdlog.h"
 #include <cstdio>
 #include <filesystem>
@@ -10,7 +10,7 @@
 
 namespace bf = std::filesystem;
 
-HttpFileHandle::HttpFileHandle(const std::string& shared_folder)
+HttpFileHandle::HttpFileHandle(std::string const& shared_folder)
     : shared_folder_(shared_folder)
 {
 }
@@ -22,7 +22,7 @@ HttpFileHandle::HttpFileHandle(const std::string& shared_folder)
  *
  * @throws None
  */
-void HttpFileHandle::list_upload_form(const httplib::Request& /* req */,
+void HttpFileHandle::list_upload_form(httplib::Request const& /* req */,
                                       httplib::Response& res)
 {
     auto html = R"(
@@ -48,7 +48,7 @@ void HttpFileHandle::list_upload_form(const httplib::Request& /* req */,
     res.set_content(html, "text/html");
 }
 
-void HttpFileHandle::handle_file_download(const httplib::Request& req,
+void HttpFileHandle::handle_file_download(httplib::Request const& req,
                                           httplib::Response& res)
 {
 
@@ -149,7 +149,7 @@ bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
  * @param file_name
  * @param res
  */
-void HttpFileHandle::download_file_by_order(const httplib::Request& req,
+void HttpFileHandle::download_file_by_order(httplib::Request const& req,
                                             httplib::Response& res)
 {
     res.set_content_provider(
@@ -205,10 +205,10 @@ void HttpFileHandle::download_file_by_order(const httplib::Request& req,
                          // process.
         });
 }
-void HttpFileHandle::upload_file_by_multiform(const httplib::Request& req,
+void HttpFileHandle::upload_file_by_multiform(httplib::Request const& req,
                                               httplib::Response& res)
 {
-    for (const auto& data : req.files)
+    for (auto const& data : req.files)
     {
         auto file = data.second;
         spdlog::info("upload file: {},type:{},name: {},length: {}", file.name,
@@ -230,7 +230,7 @@ void HttpFileHandle::upload_file_by_multiform(const httplib::Request& req,
     res.set_content("done", TEXT_PLAIN);
 }
 
-void HttpFileHandle::handle_file_lists(const httplib::Request& /* req */,
+void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
                                        httplib::Response& res)
 {
     auto kv_list = std::vector<std::map<std::string, std::string>>();
@@ -260,13 +260,13 @@ void HttpFileHandle::handle_file_lists(const httplib::Request& /* req */,
 }
 
 void HttpFileHandle::handle_stream_file(
-    const std::string& file_name, const httplib::ContentReader& content_reader)
+    std::string const& file_name, httplib::ContentReader const& content_reader)
 {
     auto file_path_str = fmt::format("{}/{}", shared_folder_, file_name);
     spdlog::info("upload file by stream: {}", file_path_str);
     std::string body;
     content_reader(
-        [&](const char* data, size_t data_length)
+        [&](char const* data, size_t data_length)
         {
             body.append(data, data_length);
             fs::write(file_path_str, data, data_length);
@@ -276,18 +276,18 @@ void HttpFileHandle::handle_stream_file(
 }
 
 void HttpFileHandle::handle_multipart_file(
-    const httplib::ContentReader& content_reader)
+    httplib::ContentReader const& content_reader)
 {
     httplib::MultipartFormDataItems files;
     content_reader(
-        [&](const httplib::MultipartFormData& file)
+        [&](httplib::MultipartFormData const& file)
         {
             files.push_back(file);
             spdlog::info("upload file: {},type:{},name: {}", file.filename,
                          file.content_type, file.filename);
             return true;
         },
-        [&](const char* data, size_t data_length)
+        [&](char const* data, size_t data_length)
         {
             auto last_file = files.back();
             auto file_path =
@@ -302,8 +302,8 @@ void HttpFileHandle::handle_multipart_file(
 }
 
 void HttpFileHandle::handle_file_upload(
-    const httplib::Request& req, httplib::Response& res,
-    const httplib::ContentReader& content_reader)
+    httplib::Request const& req, httplib::Response& res,
+    httplib::ContentReader const& content_reader)
 {
     if (req.is_multipart_form_data())
     {

@@ -34,21 +34,26 @@ add_custom_command(
 
 # Copy parser.y to build directory
 add_custom_command(
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.y ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.y
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.y ${CMAKE_CURRENT_BINARY_DIR}/generated
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.y
+          ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.y
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.y
+          ${CMAKE_CURRENT_BINARY_DIR}/generated
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.y
 )
 
 # Copy parser.h to build directory
 add_custom_command(
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.h ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.h
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.h ${CMAKE_CURRENT_BINARY_DIR}/generated
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.h
+          ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.h
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.h
+          ${CMAKE_CURRENT_BINARY_DIR}/generated
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.h
 )
 
 # Copy lempar.c template into build directory
 add_custom_command(
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/etc/lempar.c ${CMAKE_CURRENT_BINARY_DIR}/generated/lempar.c
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/etc/lempar.c
+          ${CMAKE_CURRENT_BINARY_DIR}/generated/lempar.c
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/etc/lempar.c
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/lempar.c
 )
@@ -66,8 +71,8 @@ add_custom_command(
 add_library(
   inspect
   ${CMAKE_CURRENT_BINARY_DIR}/generated/address.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/generated/formula.cpp ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.c
-  src/ast.cpp src/sheet.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/generated/formula.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/generated/parser.c src/ast.cpp src/sheet.cpp
 )
 
 # Unit tests executable
@@ -75,6 +80,8 @@ add_executable(inspect_tests test/address_test.cpp test/sheet_test.cpp)
 
 target_link_libraries(inspect_tests gtest gtest_main inspect)
 
-add_executable(inspect_console ${CMAKE_CURRENT_BINARY_DIR}/generated/console.cpp)
+add_executable(
+  inspect_console ${CMAKE_CURRENT_BINARY_DIR}/generated/console.cpp
+)
 
 target_link_libraries(inspect_console inspect)

@@ -1,19 +1,19 @@
-#include "helper/fs.hpp"
-#include "helper/human_readable.hpp"
+#include "fs.hpp"
+#include "helpers.hpp"
 #include "http/http_file_handle.hpp"
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
+#include "human_readable.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <cpp_yyjson.hpp>
 #include <cstdio>
 #include <functional>
-#include <helper/helpers.hpp>
 
 #include <httplib.h>
 #include <memory>
 
-static const char* const HOST = "127.0.0.1";
-static const int PORT = 5060;
+static char const* const HOST = "127.0.0.1";
+static int const PORT = 5060;
 using namespace std::placeholders;
 constexpr size_t IntegerRepresentableBoundary()
 {
@@ -67,7 +67,7 @@ TEST_CASE("HttpServer set shared folder", "[server]")
     REQUIRE(svr.getSharedFolder() == "test");
 }
 // Handler function to test
-void handle_get(const httplib::Request& req, httplib::Response& res)
+void handle_get(httplib::Request const& req, httplib::Response& res)
 {
     res.set_content("Hello World!", "text/plain");
 }
@@ -125,7 +125,7 @@ TEST_CASE("Server post example", "[server]")
     // Register handler
     auto handler = std::make_shared<HttpHandler>();
     svr.Post(R"(/hello/(\d+))",
-             [&](const httplib::Request& req, httplib::Response& res)
+             [&](httplib::Request const& req, httplib::Response& res)
              { handler->postMsg(req, res); });
     svr.listen_after_bind();
     auto listen_thread = std::thread([&svr] { svr.listen(HOST, PORT); });
@@ -161,7 +161,7 @@ TEST_CASE("HttpServer post example", "[server]")
     // Register handler
     auto handler = std::make_shared<HttpHandler>();
     svr.Post(R"(/hello/(\d+))",
-             [&](const httplib::Request& req, httplib::Response& res)
+             [&](httplib::Request const& req, httplib::Response& res)
              { handler->postMsg(req, res); });
     svr.start();
     // Send request and check response
@@ -212,8 +212,8 @@ TEST_CASE("HttpServer upload file by stream with reader", "[server]")
     // Register handler
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
     svr.PostWithContentHandler(
-        R"(/upload)", [&](const httplib::Request& req, httplib::Response& res,
-                          const httplib::ContentReader& content_reader)
+        R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
+                          httplib::ContentReader const& content_reader)
         { handler->handle_file_upload(req, res, content_reader); });
     svr.start();
     std::string filename = "/tmp/test.txt";
@@ -255,8 +255,8 @@ TEST_CASE("HttpServer upload file by multipart with reader", "[server]")
     svr.setSharedFolder("/tmp");
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
     svr.PostWithContentHandler(
-        R"(/upload)", [&](const httplib::Request& req, httplib::Response& res,
-                          const httplib::ContentReader& content_reader)
+        R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
+                          httplib::ContentReader const& content_reader)
         { handler->handle_file_upload(req, res, content_reader); });
     svr.start();
     httplib::MultipartFormDataItems items = {
@@ -300,12 +300,12 @@ TEST_CASE("HttpServer download file", "[server]")
     std::ofstream ofs(local_file, std::ofstream::binary);
     auto resp = cli.Get(
         remote_url,
-        [&](const httplib::Response& response)
+        [&](httplib::Response const& response)
         {
             std::cerr << "Client read:" << response.status << std::endl;
             return true;
         },
-        [&](const char* data, size_t data_length)
+        [&](char const* data, size_t data_length)
         {
             ofs.write(data, data_length);
             std::cerr << "Client write:" << data_length << std::endl;

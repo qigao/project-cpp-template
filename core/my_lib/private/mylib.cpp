@@ -4,4 +4,4 @@
 // MyLib
 // ===========================================================
 
-int Sum(const int pLhs, const int pRhs) { return pLhs + pRhs; }
+int Sum(int const pLhs, int const pRhs) { return pLhs + pRhs; }

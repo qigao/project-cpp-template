@@ -13,11 +13,11 @@ class Formula
 public:
     typedef std::vector<std::string> Arguments;
 
-    typedef std::string (*EvalAddressCallback)(const Address&, void* pData);
-    typedef std::string (*EvalFunctionCallback)(const std::string& name,
-                                                const Arguments&, void* pData);
+    typedef std::string (*EvalAddressCallback)(Address const&, void* pData);
+    typedef std::string (*EvalFunctionCallback)(std::string const& name,
+                                                Arguments const&, void* pData);
 
-    Formula(const std::string&);
+    Formula(std::string const&);
 
     std::string evaluate(EvalAddressCallback, EvalFunctionCallback,
                          void* pData);

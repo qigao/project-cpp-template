@@ -11,14 +11,14 @@
 namespace URI
 {
 template <>
-Native<Platform::UNIX>::Native(const std::string& native_path, bool directory)
+Native<Platform::UNIX>::Native(std::string const& native_path, bool directory)
     : Generic("file", "", "", "",
               Encoding::encode_path(native_path, '/', directory), "", "")
 {
 }
 
 template <>
-Native<Platform::WINDOWS>::Native(const std::string& native_path,
+Native<Platform::WINDOWS>::Native(std::string const& native_path,
                                   bool directory)
     : Generic("file", "", "", "",
               Encoding::encode_path(native_path, '\\', directory), "", "")
@@ -26,18 +26,18 @@ Native<Platform::WINDOWS>::Native(const std::string& native_path,
 }
 
 template <>
-std::string native_path<Platform::UNIX>(const Path& path)
+std::string native_path<Platform::UNIX>(Path const& path)
 {
     return Encoding::decode_path(path.value, '/');
 }
 
 template <>
-std::string native_path<Platform::WINDOWS>(const Path& path)
+std::string native_path<Platform::WINDOWS>(Path const& path)
 {
     return Encoding::decode_path(path.value, '\\');
 }
 
-std::string native_path(const Generic& generic)
+std::string native_path(Generic const& generic)
 {
     if (generic.scheme != "file")
     {

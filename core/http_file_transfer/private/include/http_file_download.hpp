@@ -191,7 +191,6 @@ public:
 protected:
     static void dump_http_request(httplib::Request const& r)
     {
-        std::ostream& os = std::cout;
         spdlog::info("REQ.METHOD = {}", r.method);
         for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
         {
@@ -201,8 +200,7 @@ protected:
 
     static void dump_http_response(httplib::Response const& r)
     {
-        std::ostream& os = std::cout;
-        os << "RES.STATUS = " << r.status << std::endl;
+        spdlog::info("RES.STATUS = {}", r.status);
         for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
         {
             spdlog::info("RES.HEADER[{}] = {} ", it->first, it->second);

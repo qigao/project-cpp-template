@@ -1,13 +1,13 @@
 #include "http/http_json_handle.hpp"
+#include "constants.hpp"
 #include "cpp_yyjson.hpp"
-#include "helper/constants.hpp"
 #include "spdlog/spdlog.h"
 #include <fmt/core.h>
 #include <httplib.h>
 
 using namespace yyjson;
 
-void HttpHandler::getMsg(const httplib::Request& req, httplib::Response& res)
+void HttpHandler::getMsg(httplib::Request const& req, httplib::Response& res)
 {
     auto pathVar = req.matches[1];
     auto obj = yyjson::object();
@@ -17,7 +17,7 @@ void HttpHandler::getMsg(const httplib::Request& req, httplib::Response& res)
     res.set_content(result.data(), APP_JSON);
 }
 
-void HttpHandler::postMsg(const httplib::Request& req, httplib::Response& res)
+void HttpHandler::postMsg(httplib::Request const& req, httplib::Response& res)
 {
     auto pathVar = req.matches[1];
     spdlog::info("request info:{},path params: {}", req.body, pathVar.str());
@@ -35,7 +35,7 @@ void HttpHandler::postMsg(const httplib::Request& req, httplib::Response& res)
     res.set_content(body.data(), APP_JSON);
 }
 
-void HttpHandler::patchMsg(const httplib::Request& req, httplib::Response& res)
+void HttpHandler::patchMsg(httplib::Request const& req, httplib::Response& res)
 {
     auto n = req.matches[1];
     auto pathVar = req.matches[1];
@@ -53,7 +53,7 @@ void HttpHandler::patchMsg(const httplib::Request& req, httplib::Response& res)
     auto body = result.write();
     res.set_content(body.data(), APP_JSON);
 }
-void HttpHandler::deleteMsg(const httplib::Request& req, httplib::Response& res)
+void HttpHandler::deleteMsg(httplib::Request const& req, httplib::Response& res)
 {
 
     auto n = req.matches[1];

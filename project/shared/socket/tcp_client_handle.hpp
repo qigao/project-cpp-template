@@ -40,24 +40,24 @@ public:
     void setup()
     {
         m_tcp->on<uvw::ErrorEvent>(
-            [](const uvw::ErrorEvent& event, uvw::TCPHandle&)
+            [](uvw::ErrorEvent const& event, uvw::TCPHandle&)
             { std::cout << "client error: " << event.what() << std::endl; });
         m_tcp->once<uvw::ConnectEvent>(
-            [&](const auto&, auto&)
+            [&](auto const&, auto&)
             { std::cout << "connect event ..." << std::endl; });
         m_tcp->once<uvw::CloseEvent>(
-            [&](const auto&, auto&)
+            [&](auto const&, auto&)
             {
                 std::cout << "close event ..." << std::endl;
                 m_shouldExit = true;
             });
         m_tcp->once<uvw::WriteEvent>(
-            [&](const auto&, auto&)
+            [&](auto const&, auto&)
             { std::cout << "write event ..." << std::endl; });
         m_tcp->connect(m_ip, m_port);
         m_shouldExit = false;
     }
-    void queue_data(const std::string& data)
+    void queue_data(std::string const& data)
     {
         auto len = data.length();
         auto frame = std::make_shared<DataFrame>();
@@ -67,7 +67,7 @@ public:
         write_queue(frame);
     }
 
-    void queue_data(const char* data, size_t len)
+    void queue_data(char const* data, size_t len)
     {
         auto frame = std::make_shared<DataFrame>();
         frame->data = make_array<u8>(len);

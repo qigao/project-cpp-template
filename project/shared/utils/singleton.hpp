@@ -18,7 +18,7 @@ private:
     static Singleton<T>* pInstance_;
 
 protected:
-    Singleton(const std::string& value) : value_(std::move(value)) {}
+    Singleton(std::string const& value) : value_(std::move(value)) {}
     ~Singleton() {}
     std::string value_;
 
@@ -28,12 +28,12 @@ public:
      */
     Singleton() = delete;
 
-    Singleton(const Singleton&) = delete;
+    Singleton(Singleton const&) = delete;
     Singleton(Singleton& other) = delete;
     /**
      * Singletons should not be assignable.
      */
-    Singleton& operator=(const Singleton&) = delete;
+    Singleton& operator=(Singleton const&) = delete;
 
     /**
      * Singleton should not be movable.
@@ -48,7 +48,7 @@ public:
      * object stored in the static field.
      */
 
-    static Singleton<T>* GetInstance(const std::string& value);
+    static Singleton<T>* GetInstance(std::string const& value);
 
     std::string value() const { return value_; }
 };
@@ -65,7 +65,7 @@ Singleton<T>* Singleton<T>::pInstance_{nullptr};
  *      set the value. RU:
  */
 template <class T>
-Singleton<T>* Singleton<T>::GetInstance(const std::string& value)
+Singleton<T>* Singleton<T>::GetInstance(std::string const& value)
 {
     static std::once_flag flag;
     std::call_once(flag, [&]() { pInstance_ = new Singleton<T>(value); });

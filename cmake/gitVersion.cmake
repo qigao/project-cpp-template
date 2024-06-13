@@ -44,9 +44,3 @@ if(Git_FOUND)
 else()
   message(STATUS "Git could not be found.")
 endif()
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/cmake/gitversion.h.in ${CMAKE_BINARY_DIR}/gitversion/gitversion.h
-)
-
-include_directories(${CMAKE_BINARY_DIR}/gitversion)

@@ -9,8 +9,10 @@ endforeach()
 foreach(TEST_CASE ${TEST_CASES})
   add_executable(${TEST_CASE} ${TEST_CASE}.cpp ${TARGET_HEADERS})
   target_link_libraries(
-    ${TEST_CASE} PUBLIC Threads::Threads uvw::uvw GTest::gmock_main
-                        readerwriterqueue::readerwriterqueue concurrentqueue::concurrentqueue
+    ${TEST_CASE}
+    PUBLIC Threads::Threads uvw::uvw GTest::gmock_main
+           readerwriterqueue::readerwriterqueue
+           concurrentqueue::concurrentqueue
   )
 
   target_compile_options(${TEST_CASE} PRIVATE ${compiler_options})
@@ -23,8 +25,8 @@ foreach(TEST_CASE ${TEST_CASES})
   endif()
 
   target_include_directories(
-    ${TEST_CASE} PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports> PRIVATE ${SHARED_DIR}
-    # Any other extra include required
+    ${TEST_CASE} PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/exports>
+    PRIVATE ${SHARED_DIR} # Any other extra include required
   )
   include(GoogleTest)
   gtest_discover_tests(${TEST_CASE})

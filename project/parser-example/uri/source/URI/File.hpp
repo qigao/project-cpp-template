@@ -20,13 +20,13 @@ template <Platform PLATFORM = Platform::DEFAULT>
 struct Native : public Generic
 {
     // Creates a URI with the file scheme, and the given native path.
-    Native(const std::string& native_path, bool directory = false);
+    Native(std::string const& native_path, bool directory = false);
 };
 
 using File = Native<>;
 
-std::string native_path(const Generic& generic);
+std::string native_path(Generic const& generic);
 
 template <Platform PLATFORM = Platform::DEFAULT>
-std::string native_path(const Path& path);
+std::string native_path(Path const& path);
 } // namespace URI

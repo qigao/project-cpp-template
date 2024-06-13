@@ -4,7 +4,8 @@
 set(TARGET_NAME nodejs_http_parser_benchmark)
 
 add_executable(
-  ${TARGET_NAME} ${RAGEL_HTTP_MACHINE_OUTPUTS} node_performance.cc nodejs_http_parser.c
+  ${TARGET_NAME} ${RAGEL_HTTP_MACHINE_OUTPUTS} node_performance.cc
+                 nodejs_http_parser.c
 )
 target_link_libraries(${TARGET_NAME} benchmark::benchmark)
 

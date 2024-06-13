@@ -20,9 +20,9 @@ bool useWindow = true;
 int gizmoCount = 1;
 float camDistance = 8.f;
 
-static const float rad = 0.0174532925f;
-static const int width = 1280;
-static const int height = 720;
+static float const rad = 0.0174532925f;
+static int const width = 1280;
+static int const height = 720;
 
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
@@ -36,7 +36,7 @@ float objectMatrix[4][16] = { //
     {1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 2.f,
      1.f}};
 
-static const float identityMatrix[16] = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f,
+static float const identityMatrix[16] = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f,
                                          0.f, 0.f, 0.f, 0.f, 1.f, 0.f,
                                          0.f, 0.f, 0.f, 1.f};
 
@@ -75,19 +75,19 @@ void Perspective(float fovyInDegrees, float aspectRatio, float znear,
     Frustum(-xmax, xmax, -ymax, ymax, znear, zfar, m16);
 }
 
-void Cross(const float* a, const float* b, float* r)
+void Cross(float const* a, float const* b, float* r)
 {
     r[0] = a[1] * b[2] - a[2] * b[1];
     r[1] = a[2] * b[0] - a[0] * b[2];
     r[2] = a[0] * b[1] - a[1] * b[0];
 }
 
-float Dot(const float* a, const float* b)
+float Dot(float const* a, float const* b)
 {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-void Normalize(const float* a, float* r)
+void Normalize(float const* a, float* r)
 {
     float il = 1.f / (sqrtf(Dot(a, a)) + FLT_EPSILON);
 
@@ -96,7 +96,7 @@ void Normalize(const float* a, float* r)
     r[2] = a[2] * il;
 }
 
-void LookAt(const float* eye, const float* at, const float* up, float* m16)
+void LookAt(float const* eye, float const* at, float const* up, float* m16)
 {
     float X[3], Y[3], Z[3], tmp[3];
 
@@ -130,8 +130,8 @@ void LookAt(const float* eye, const float* at, const float* up, float* m16)
     m16[15] = 1.0F;
 }
 
-void OrthoGraphic(const float l, float r, float b, const float t, float zn,
-                  const float zf, float* m16)
+void OrthoGraphic(float const l, float r, float b, float const t, float zn,
+                  float const zf, float* m16)
 {
     m16[0] = 2 / (r - l);
     m16[1] = 0.0F;
@@ -151,7 +151,7 @@ void OrthoGraphic(const float l, float r, float b, const float t, float zn,
     m16[15] = 1.0F;
 }
 
-inline void rotationY(const float angle, float* m16)
+inline void rotationY(float const angle, float* m16)
 {
     float c = cosf(angle);
     float s = sinf(angle);
@@ -299,7 +299,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix,
 GLFWwindow* setupWindow()
 {
     // Setup window
-    glfwSetErrorCallback([](int error, const char* description)
+    glfwSetErrorCallback([](int error, char const* description)
                          { fprintf(stderr, "Error: %s\n", description); });
     if (!glfwInit())
         return nullptr;
@@ -307,20 +307,20 @@ GLFWwindow* setupWindow()
         // Decide GL+GLSL versions
 #if defined(IMGUI_IMPL_OPENGL_ES2)
     // GL ES 2.0 + GLSL 100
-    const char* glsl_version = "#version 100";
+    char const* glsl_version = "#version 100";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 #elif defined(__APPLE__)
     // GL 3.2 + GLSL 150
-    const char* glsl_version = "#version 150";
+    char const* glsl_version = "#version 150";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Required on Mac
 #else
     // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
+    char const* glsl_version = "#version 130";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+

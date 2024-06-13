@@ -213,13 +213,13 @@ static const YYCODETYPE yy_lookahead[] = {
 #define YY_SHIFT_COUNT (9)
 #define YY_SHIFT_MIN (0)
 #define YY_SHIFT_MAX (16)
-static const unsigned char yy_shift_ofst[] = {
+static unsigned char const yy_shift_ofst[] = {
     /*     0 */ 8, 8, 8, 8, 8, 8, 0, 7, 16, 16,
 };
 #define YY_REDUCE_COUNT (5)
 #define YY_REDUCE_MIN (-9)
 #define YY_REDUCE_MAX (12)
-static const signed char yy_reduce_ofst[] = {
+static signed char const yy_reduce_ofst[] = {
     /*     0 */ 9, -9, -4, 3, 5, 12,
 };
 static const YYACTIONTYPE yy_default[] = {
@@ -335,7 +335,7 @@ void ParseTrace(FILE* TraceFILE, char* zTracePrompt)
 #if defined(YYCOVERAGE) || !defined(NDEBUG)
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
-static const char* const yyTokenName[] = {
+static char const* const yyTokenName[] = {
     /*    0 */ "$",
     /*    1 */ "PLUS",
     /*    2 */ "MINUS",
@@ -352,7 +352,7 @@ static const char* const yyTokenName[] = {
 #ifndef NDEBUG
 /* For tracing reduce actions, the names of all rules are required.
  */
-static const char* const yyRuleName[] = {
+static char const* const yyRuleName[] = {
     /*   0 */ "program ::= expr",
     /*   1 */ "expr ::= OPENP expr CLOSEP",
     /*   2 */ "expr ::= expr PLUS expr",
@@ -752,7 +752,7 @@ static void yyStackOverflow(yyParser* yypParser)
 ** Print tracing information for a SHIFT action
 */
 #ifndef NDEBUG
-static void yyTraceShift(yyParser* yypParser, int yyNewState, const char* zTag)
+static void yyTraceShift(yyParser* yypParser, int yyNewState, char const* zTag)
 {
     if (yyTraceFILE)
     {
@@ -835,7 +835,7 @@ static const YYCODETYPE yyRuleInfoLhs[] = {
 
 /* For rule J, yyRuleInfoNRhs[J] contains the negative of the number
 ** of symbols on the right-hand side of that rule. */
-static const signed char yyRuleInfoNRhs[] = {
+static signed char const yyRuleInfoNRhs[] = {
     -1, /* (0) program ::= expr */
     -3, /* (1) expr ::= OPENP expr CLOSEP */
     -3, /* (2) expr ::= expr PLUS expr */

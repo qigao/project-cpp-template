@@ -23,7 +23,7 @@ struct Query
     Query() {}
 
     template <typename ValueT>
-    Query(const ValueT& value_) : value(value_)
+    Query(ValueT const& value_) : value(value_)
     {
     }
 
@@ -38,15 +38,15 @@ struct Query
 
     std::multimap<std::string, std::string> to_map() const;
 
-    Query operator+(const Query& other);
+    Query operator+(Query const& other);
 
-    bool operator==(const Query& other) const { return value == other.value; }
-    bool operator!=(const Query& other) const { return value != other.value; }
-    bool operator<(const Query& other) const { return value < other.value; }
-    bool operator<=(const Query& other) const { return value <= other.value; }
-    bool operator>(const Query& other) const { return value > other.value; }
-    bool operator>=(const Query& other) const { return value >= other.value; }
+    bool operator==(Query const& other) const { return value == other.value; }
+    bool operator!=(Query const& other) const { return value != other.value; }
+    bool operator<(Query const& other) const { return value < other.value; }
+    bool operator<=(Query const& other) const { return value <= other.value; }
+    bool operator>(Query const& other) const { return value > other.value; }
+    bool operator>=(Query const& other) const { return value >= other.value; }
 };
 
-std::ostream& operator<<(std::ostream& output, const Query& query);
+std::ostream& operator<<(std::ostream& output, Query const& query);
 } // namespace URI

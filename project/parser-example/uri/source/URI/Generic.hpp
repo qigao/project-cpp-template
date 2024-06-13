@@ -19,22 +19,22 @@ namespace URI
 struct Generic
 {
     Generic() = default;
-    Generic(const Generic&) = default;
+    Generic(Generic const&) = default;
     Generic(Generic&&) = default;
 
-    Generic& operator=(const Generic& other) = default;
+    Generic& operator=(Generic const& other) = default;
 
-    Generic(const char* begin, const char* end);
+    Generic(char const* begin, char const* end);
 
     // Parse the given string.
-    Generic(const std::string& value)
+    Generic(std::string const& value)
         : Generic(value.data(), value.data() + value.size())
     {
     }
 
     // We subtract 1 since it includes the null terminator.
     template <std::size_t SIZE>
-    Generic(const char (&value)[SIZE]) : Generic(value, value + SIZE - 1)
+    Generic(char const (&value)[SIZE]) : Generic(value, value + SIZE - 1)
     {
     }
 
@@ -51,12 +51,12 @@ struct Generic
     bool is_relative() const noexcept { return scheme.empty() && host.empty(); }
     bool is_absolute() const noexcept { return !is_relative(); }
 
-    bool operator==(const Generic& other) const noexcept;
-    bool operator!=(const Generic& other) const noexcept;
+    bool operator==(Generic const& other) const noexcept;
+    bool operator!=(Generic const& other) const noexcept;
 
-    bool operator<(const Generic& other) const noexcept;
+    bool operator<(Generic const& other) const noexcept;
 
-    Generic operator+(const Generic& other) const;
+    Generic operator+(Generic const& other) const;
 
     bool empty() const noexcept { return host.empty() && path.empty(); }
     explicit operator bool() const noexcept { return !empty(); }
@@ -66,15 +66,15 @@ struct Generic
     std::string hostname() const;
 
 protected:
-    Generic(const std::string& scheme_, const std::string& userinfo_,
-            const std::string& host_, const std::string& port_,
-            const Path& path_, const Query& query_,
-            const std::string& fragment_)
+    Generic(std::string const& scheme_, std::string const& userinfo_,
+            std::string const& host_, std::string const& port_,
+            Path const& path_, Query const& query_,
+            std::string const& fragment_)
         : scheme(scheme_), userinfo(userinfo_), host(host_), port(port_),
           path(path_), query(query_), fragment(fragment_)
     {
     }
 };
 
-std::ostream& operator<<(std::ostream&, const Generic&);
+std::ostream& operator<<(std::ostream&, Generic const&);
 } // namespace URI

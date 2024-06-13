@@ -7,10 +7,10 @@
 class HttpHandler
 {
 public:
-    void getMsg(const httplib::Request& req, httplib::Response& res);
-    void postMsg(const httplib::Request& req, httplib::Response& res);
-    void patchMsg(const httplib::Request& req, httplib::Response& res);
-    void deleteMsg(const httplib::Request& req, httplib::Response& res);
+    void getMsg(httplib::Request const& req, httplib::Response& res);
+    void postMsg(httplib::Request const& req, httplib::Response& res);
+    void patchMsg(httplib::Request const& req, httplib::Response& res);
+    void deleteMsg(httplib::Request const& req, httplib::Response& res);
 };
 
 #endif // CPP_CORE_PROJECT_HTTP_HANDLER_HPP

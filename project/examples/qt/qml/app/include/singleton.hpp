@@ -11,7 +11,7 @@ class Singleton : public QObject
     QML_ELEMENT
     Q_PROPERTY(Thing* thing READ getThing CONSTANT)
 
-    static inline Thing* getThing()
+    inline static Thing* getThing()
     {
         static Thing thing;
         return &thing;

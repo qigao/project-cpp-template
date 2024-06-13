@@ -2,7 +2,6 @@
     "recommendations": [
         "asciidoctor.asciidoctor-vscode",
         "ms-vscode.cpptools",
-        "amiralizadeh9480.cpp-helper",
         "tostc.vscl",
         "llvm-vs-code-extensions.vscode-clangd",
         "twxs.cmake",

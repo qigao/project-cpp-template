@@ -29,7 +29,7 @@ static void pop(std::string& path, char separator)
     }
 }
 
-static void push(std::string& result, const std::string& path,
+static void push(std::string& result, std::string const& path,
                  std::size_t current, std::size_t next)
 {
     if (next == std::string::npos)
@@ -44,7 +44,7 @@ static void push(std::string& result, const std::string& path,
     }
 }
 
-static std::string simplify(const std::string& path, char separator)
+static std::string simplify(std::string const& path, char separator)
 {
     std::size_t current = 0, next = 0, size = 0, depth = 0;
     std::string result;
@@ -156,7 +156,7 @@ Path Path::directory() const
 
 Path Path::simplify() const { return URI::simplify(value, SEPARATOR); }
 
-Path Path::operator+(const Path& other) const
+Path Path::operator+(Path const& other) const
 {
     if (other.is_absolute())
         return other;
@@ -246,7 +246,7 @@ std::string Path::extension() const
     return "";
 }
 
-std::ostream& operator<<(std::ostream& output, const Path& path)
+std::ostream& operator<<(std::ostream& output, Path const& path)
 {
     return output << path.value;
 }

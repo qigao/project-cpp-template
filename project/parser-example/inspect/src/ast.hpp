@@ -8,9 +8,9 @@
 
 typedef std::vector<std::string> Arguments;
 
-typedef std::string (*EvalAddressCallback)(const Address&, void* pData);
-typedef std::string (*EvalFunctionCallback)(const std::string& name,
-                                            const Arguments&, void* pData);
+typedef std::string (*EvalAddressCallback)(Address const&, void* pData);
+typedef std::string (*EvalFunctionCallback)(std::string const& name,
+                                            Arguments const&, void* pData);
 
 class Node
 {
@@ -36,7 +36,7 @@ private:
 class LitStringNode : public Node
 {
 public:
-    LitStringNode(const std::string& value);
+    LitStringNode(std::string const& value);
     virtual std::string evaluate(EvalAddressCallback, EvalFunctionCallback,
                                  void* pData) const;
     virtual operator std::string() const;
@@ -48,7 +48,7 @@ private:
 class BinaryOpNode : public Node
 {
 public:
-    BinaryOpNode(BinaryOp binaryOp, const Node* pLeft, const Node* pRight);
+    BinaryOpNode(BinaryOp binaryOp, Node const* pLeft, Node const* pRight);
     virtual ~BinaryOpNode();
     virtual std::string evaluate(EvalAddressCallback, EvalFunctionCallback,
                                  void* pData) const;
@@ -56,15 +56,15 @@ public:
 
 private:
     BinaryOp m_binaryOp;
-    const Node* m_pLeft;
-    const Node* m_pRight;
+    Node const* m_pLeft;
+    Node const* m_pRight;
 };
 
 class VarIdentifierNode : public Node
 {
 public:
-    VarIdentifierNode(const std::string& name);
-    const std::string& getName() const;
+    VarIdentifierNode(std::string const& name);
+    std::string const& getName() const;
     virtual std::string evaluate(EvalAddressCallback, EvalFunctionCallback,
                                  void* pData) const;
     virtual operator std::string() const;
@@ -76,8 +76,8 @@ private:
 class VarAddressNode : public Node
 {
 public:
-    VarAddressNode(const Address& address);
-    const Address& getAddress() const;
+    VarAddressNode(Address const& address);
+    Address const& getAddress() const;
     virtual std::string evaluate(EvalAddressCallback, EvalFunctionCallback,
                                  void* pData) const;
     virtual operator std::string() const;
@@ -90,14 +90,14 @@ class FnCallNode : public Node
 {
 public:
     virtual ~FnCallNode();
-    void setFnName(const std::string& fnName);
-    void pushParam(const Node* pNode);
+    void setFnName(std::string const& fnName);
+    void pushParam(Node const* pNode);
     virtual std::string evaluate(EvalAddressCallback, EvalFunctionCallback,
                                  void* pData) const;
     virtual operator std::string() const;
 
 private:
-    typedef std::vector<const Node*> Params;
+    typedef std::vector<Node const*> Params;
     Params m_params;
     std::string m_fnName;
 };

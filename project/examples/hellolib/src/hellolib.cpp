@@ -12,7 +12,7 @@
 
 using namespace hello;
 
-int32_t hellolib::saySomething(const std::string& something) const noexcept
+int32_t hellolib::saySomething(std::string const& something) const noexcept
 {
     if (something.empty())
     {
@@ -26,7 +26,7 @@ int32_t hellolib::saySomething(const std::string& something) const noexcept
 
 #ifdef WITH_OPENSSL
 int32_t
-hellolib::saySomethingHashed(const std::string& something) const noexcept
+hellolib::saySomethingHashed(std::string const& something) const noexcept
 {
     if (something.empty())
     {
@@ -46,7 +46,7 @@ hellolib::saySomethingHashed(const std::string& something) const noexcept
     // Transform byte-array to string
     std::stringstream shastr;
     shastr << std::hex << std::setfill('0');
-    for (const auto& byte : buffer)
+    for (auto const& byte : buffer)
     {
         shastr << std::setw(2) << (int)byte;
     }

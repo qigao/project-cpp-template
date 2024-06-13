@@ -20,7 +20,6 @@
       "name": "fmt",
       "version>=": "10.1.1"
     },
-    "gtest",
     {
       "name": "openssl",
       "version>=": "3.1.0"
@@ -36,10 +35,8 @@
     "tests": {
       "description": "Build the tests of the package's tests",
       "dependencies": [
-        {
-          "name": "catch2",
-          "version>=": "3.4.0"
-        }
+        "catch2",
+        "gtest"
       ]
     }
   }

@@ -11,9 +11,9 @@
 
 #include "radio.hpp"
 
-extern const int NUM_FREQ_TEXT;
+extern int const NUM_FREQ_TEXT;
 
-extern const char* FREQ_TEXT[];
+extern char const* FREQ_TEXT[];
 
 extern bool quiet;
 extern bool verbose;
@@ -28,7 +28,7 @@ enum Response
     RESPONSE_ERROR_BEGIN = RESPONSE_ERROR_INDEX_OUT_OF_BOUNDS
 };
 
-extern const char* response_messages[RESPONSE_ERROR_END];
+extern char const* response_messages[RESPONSE_ERROR_END];
 
 bool ok();
 bool response(int response_id);

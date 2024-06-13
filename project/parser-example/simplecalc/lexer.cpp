@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string>
 
-std::string getStr(const char* beg, const char* end)
+std::string getStr(char const* beg, char const* end)
 {
     return std::string(beg).substr(0, end - beg);
 }
@@ -16,38 +16,38 @@ std::string getStr(const char* beg, const char* end)
 #line 73 "lexer.rl"
 
 #line 23 "lexer.cpp"
-static const char _calc_actions[] = {0, 1, 0, 1, 1, 1, 2, 1, 3,  1, 4,  1, 5, 1,
+static char const _calc_actions[] = {0, 1, 0, 1, 1, 1, 2, 1, 3,  1, 4,  1, 5, 1,
                                      6, 1, 7, 1, 8, 1, 9, 1, 10, 1, 11, 1, 12};
 
-static const char _calc_key_offsets[] = {0, 0, 2, 14, 17};
+static char const _calc_key_offsets[] = {0, 0, 2, 14, 17};
 
-static const char _calc_trans_keys[] = {48, 57, 32, 40, 41, 42, 43, 45, 47, 59,
+static char const _calc_trans_keys[] = {48, 57, 32, 40, 41, 42, 43, 45, 47, 59,
                                         9,  13, 48, 57, 46, 48, 57, 48, 57, 0};
 
-static const char _calc_single_lengths[] = {0, 0, 8, 1, 0};
+static char const _calc_single_lengths[] = {0, 0, 8, 1, 0};
 
-static const char _calc_range_lengths[] = {0, 1, 2, 1, 1};
+static char const _calc_range_lengths[] = {0, 1, 2, 1, 1};
 
-static const char _calc_index_offsets[] = {0, 0, 2, 13, 16};
+static char const _calc_index_offsets[] = {0, 0, 2, 13, 16};
 
-static const char _calc_trans_targs[] = {4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+static char const _calc_trans_targs[] = {4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                                          3, 0, 1, 3, 2, 4, 2, 2, 2, 2, 0};
 
-static const char _calc_trans_actions[] = {0,  25, 21, 11, 13, 15, 7, 9,
+static char const _calc_trans_actions[] = {0,  25, 21, 11, 13, 15, 7, 9,
                                            17, 19, 21, 5,  0,  0,  5, 23,
                                            0,  23, 25, 23, 23, 0};
 
-static const char _calc_to_state_actions[] = {0, 0, 1, 0, 0};
+static char const _calc_to_state_actions[] = {0, 0, 1, 0, 0};
 
-static const char _calc_from_state_actions[] = {0, 0, 3, 0, 0};
+static char const _calc_from_state_actions[] = {0, 0, 3, 0, 0};
 
-static const char _calc_eof_trans[] = {0, 19, 0, 21, 21};
+static char const _calc_eof_trans[] = {0, 19, 0, 21, 21};
 
-static const int calc_start = 2;
-static const int calc_first_final = 2;
-static const int calc_error = 0;
+static int const calc_start = 2;
+static int const calc_first_final = 2;
+static int const calc_error = 0;
 
-static const int calc_en_main = 2;
+static int const calc_en_main = 2;
 
 #line 76 "lexer.rl"
 
@@ -56,13 +56,13 @@ class Scan
 public:
     ~Scan();
     void init();
-    void execute(const char* data, size_t len);
+    void execute(char const* data, size_t len);
 
 private:
     int cs;
     int act;
-    const char* ts;
-    const char* te;
+    char const* ts;
+    char const* te;
 
     void* lparser;
 };
@@ -84,19 +84,19 @@ void Scan::init()
 #line 105 "lexer.rl"
 }
 
-void Scan::execute(const char* data, size_t len)
+void Scan::execute(char const* data, size_t len)
 {
-    const char* p = data;
-    const char* pe = data + len;
-    const char* eof = pe;
+    char const* p = data;
+    char const* pe = data + len;
+    char const* eof = pe;
 
 #line 133 "lexer.cpp"
     {
         int _klen;
         unsigned int _trans;
-        const char* _acts;
+        char const* _acts;
         unsigned int _nacts;
-        const char* _keys;
+        char const* _keys;
 
         if (p == pe)
             goto _test_eof;
@@ -125,9 +125,9 @@ void Scan::execute(const char* data, size_t len)
         _klen = _calc_single_lengths[cs];
         if (_klen > 0)
         {
-            const char* _lower = _keys;
-            const char* _mid;
-            const char* _upper = _keys + _klen - 1;
+            char const* _lower = _keys;
+            char const* _mid;
+            char const* _upper = _keys + _klen - 1;
             while (1)
             {
                 if (_upper < _lower)
@@ -151,9 +151,9 @@ void Scan::execute(const char* data, size_t len)
         _klen = _calc_range_lengths[cs];
         if (_klen > 0)
         {
-            const char* _lower = _keys;
-            const char* _mid;
-            const char* _upper = _keys + (_klen << 1) - 2;
+            char const* _lower = _keys;
+            char const* _mid;
+            char const* _upper = _keys + (_klen << 1) - 2;
             while (1)
             {
                 if (_upper < _lower)

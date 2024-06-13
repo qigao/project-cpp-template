@@ -32,11 +32,11 @@ public:
     void listen()
     {
         m_handle->on<uvw::ErrorEvent>(
-            [](const uvw::ErrorEvent& event, uvw::TCPHandle&)
+            [](uvw::ErrorEvent const& event, uvw::TCPHandle&)
             { std::cout << "server error: " << event.what() << std::endl; });
 
         m_handle->on<uvw::ListenEvent>(
-            [&](const uvw::ListenEvent&, uvw::TCPHandle& tcp_handle)
+            [&](uvw::ListenEvent const&, uvw::TCPHandle& tcp_handle)
             {
                 std::cout << "listen" << std::endl;
 
@@ -68,7 +68,7 @@ public:
             });
 
         m_handle->once<uvw::CloseEvent>(
-            [&](const uvw::CloseEvent&, uvw::TCPHandle&)
+            [&](uvw::CloseEvent const&, uvw::TCPHandle&)
             { on_socket_close(); });
 
         m_handle->bind(m_ip, m_port);
@@ -83,7 +83,7 @@ private:
     TcpServerHandle(/* args */) = delete;
     static void on_socket_close() { std::cout << "socket closed" << std::endl; }
 
-    static void on_error(const uvw::ErrorEvent& event)
+    static void on_error(uvw::ErrorEvent const& event)
     {
         std::cout << "Server error " << event.what() << std::endl;
     }
@@ -95,7 +95,7 @@ private:
         std::cout << "still alive: " << count << " handles" << std::endl;
         handle.close();
     }
-    static void on_read(const uvw::DataEvent& event)
+    static void on_read(uvw::DataEvent const& event)
     {
         std::cout.write(event.data.get(), event.length) << std::endl;
         std::cout << "data length: " << event.length << std::endl;

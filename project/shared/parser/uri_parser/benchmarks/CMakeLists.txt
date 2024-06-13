@@ -28,5 +28,6 @@ target_link_options(${TARGET_NAME} PRIVATE ${linker_flags})
 # include all the necessary directories
 target_include_directories(
   ${TARGET_NAME} PRIVATE ${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../
-                         ${CMAKE_CURRENT_BINARY_DIR} PUBLIC ${DEFAULT_INCLUDE_DIRECTORIES}
+                         ${CMAKE_CURRENT_BINARY_DIR}
+  PUBLIC ${DEFAULT_INCLUDE_DIRECTORIES}
 )

@@ -10,8 +10,8 @@ class CSVPARSER_EXPORT CSVParser
 {
 public:
     CSVParser();
-    void parse(const char* csv_file_name, std::vector<std::string>);
-    void parse_by_line(const char* csv_line, std::vector<std::string>);
+    void parse(char const* csv_file_name, std::vector<std::string>);
+    void parse_by_line(char const* csv_line, std::vector<std::string>);
 };
 
 } // namespace Parser

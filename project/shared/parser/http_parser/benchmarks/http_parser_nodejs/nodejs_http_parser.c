@@ -130,7 +130,7 @@
 #define KEEP_ALIVE "keep-alive"
 #define CLOSE "close"
 
-static const char* method_strings[] = {
+static char const* method_strings[] = {
     "DELETE",   "GET",       "HEAD",   "POST",      "PUT",         "CONNECT",
     "OPTIONS",  "TRACE",     "COPY",   "LOCK",      "MKCOL",       "MOVE",
     "PROPFIND", "PROPPATCH", "UNLOCK", "REPORT",    "MKACTIVITY",  "CHECKOUT",
@@ -143,7 +143,7 @@ static const char* method_strings[] = {
  *                    | "/" | "[" | "]" | "?" | "="
  *                    | "{" | "}" | SP | HT
  */
-static const char tokens[256] = {
+static char const tokens[256] = {
     /*   0 nul    1 soh    2 stx    3 etx    4 eot    5 enq    6 ack    7 bel */
     0, 0, 0, 0, 0, 0, 0, 0,
     /*   8 bs     9 ht    10 nl    11 vt    12 np    13 cr    14 so    15 si */
@@ -177,7 +177,7 @@ static const char tokens[256] = {
     /* 120  x   121  y   122  z   123  {   124  |   125  }   126  ~   127 del */
     'x', 'y', 'z', 0, '|', 0, '~', 0};
 
-static const int8_t unhex[256] = {
+static int8_t const unhex[256] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0,  1,  2,  3,  4,  5,  6,  7,  8,
@@ -186,7 +186,7 @@ static const int8_t unhex[256] = {
     -1, -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
-static const uint8_t normal_url_char[256] = {
+static uint8_t const normal_url_char[256] = {
     /*   0 nul    1 soh    2 stx    3 etx    4 eot    5 enq    6 ack    7 bel */
     0,
     0,
@@ -499,8 +499,8 @@ enum header_states
 #define HTTP_STRERROR_GEN(n, s) {"HPE_" #n, s},
 static struct
 {
-    const char* name;
-    const char* description;
+    char const* name;
+    char const* description;
 } http_strerror_tab[] = {HTTP_ERRNO_MAP(HTTP_STRERROR_GEN)};
 #undef HTTP_STRERROR_GEN
 
@@ -517,7 +517,7 @@ int http_message_needs_eof(http_parser* parser);
  * assumed that the caller cares about (and can detect) the transition between
  * URL and non-URL states by looking for these.
  */
-static enum state parse_url_char(enum state s, const char ch)
+static enum state parse_url_char(enum state s, char const ch)
 {
     assert(!isspace(ch));
 
@@ -714,16 +714,16 @@ static enum state parse_url_char(enum state s, const char ch)
 }
 
 size_t http_parser_execute(http_parser* parser,
-                           const http_parser_settings* settings,
-                           const char* data, size_t len)
+                           http_parser_settings const* settings,
+                           char const* data, size_t len)
 {
     char c, ch;
     int8_t unhex_val;
-    const char* p = data;
-    const char* header_field_mark = 0;
-    const char* header_value_mark = 0;
-    const char* url_mark = 0;
-    const char* body_mark = 0;
+    char const* p = data;
+    char const* header_field_mark = 0;
+    char const* header_value_mark = 0;
+    char const* url_mark = 0;
+    char const* body_mark = 0;
 
     /* We're in an error state. Don't bother doing anything. */
     if (HTTP_PARSER_ERRNO(parser) != HPE_OK)
@@ -1116,7 +1116,7 @@ size_t http_parser_execute(http_parser* parser,
 
             case s_req_method:
             {
-                const char* matcher;
+                char const* matcher;
                 if (ch == '\0')
                 {
                     SET_ERRNO(HPE_INVALID_METHOD);
@@ -2245,7 +2245,7 @@ int http_should_keep_alive(http_parser* parser)
     return !http_message_needs_eof(parser);
 }
 
-const char* http_method_str(enum http_method m) { return method_strings[m]; }
+char const* http_method_str(enum http_method m) { return method_strings[m]; }
 
 void http_parser_init(http_parser* parser, enum http_parser_type t)
 {
@@ -2260,23 +2260,23 @@ void http_parser_init(http_parser* parser, enum http_parser_type t)
     parser->http_errno = HPE_OK;
 }
 
-const char* http_errno_name(enum http_errno err)
+char const* http_errno_name(enum http_errno err)
 {
     assert(err < (sizeof(http_strerror_tab) / sizeof(http_strerror_tab[0])));
     return http_strerror_tab[err].name;
 }
 
-const char* http_errno_description(enum http_errno err)
+char const* http_errno_description(enum http_errno err)
 {
     assert(err < (sizeof(http_strerror_tab) / sizeof(http_strerror_tab[0])));
     return http_strerror_tab[err].description;
 }
 
-int http_parser_parse_url(const char* buf, size_t buflen, int is_connect,
+int http_parser_parse_url(char const* buf, size_t buflen, int is_connect,
                           struct http_parser_url* u)
 {
     enum state s;
-    const char* p;
+    char const* p;
     enum http_parser_url_fields uf, old_uf;
 
     u->port = u->field_set = 0;

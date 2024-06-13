@@ -1,4 +1,6 @@
-find_package(Qt6 REQUIRED COMPONENTS Core Qml Quick QuickControls2 QmlImportScanner)
+find_package(
+  Qt6 REQUIRED COMPONENTS Core Qml Quick QuickControls2 QmlImportScanner
+)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -15,7 +17,9 @@ list(REMOVE_DUPLICATES QML_IMPORT_PATH)
 
 # The variable is cached in ${BUILD_DIR}/CMakeCache.txt. We need FORCE to change
 # it there immediately. Also, add a comment to the cache file.
-set(QML_IMPORT_PATH ${QML_IMPORT_PATH} CACHE STRING "additional qml import paths" FORCE)
+set(QML_IMPORT_PATH ${QML_IMPORT_PATH}
+    CACHE STRING "additional qml import paths" FORCE
+)
 
 # Set additional application information
 set(APPLICATION_NAME "QML Demo App")

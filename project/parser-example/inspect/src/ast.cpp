@@ -46,7 +46,7 @@ LitDoubleNode::operator std::string() const
 //
 // ----------------------------------------------------------------------------
 
-LitStringNode::LitStringNode(const std::string& value) : m_value(value)
+LitStringNode::LitStringNode(std::string const& value) : m_value(value)
 {
     // No further initialisation
 }
@@ -71,8 +71,8 @@ LitStringNode::operator std::string() const
 //
 // ----------------------------------------------------------------------------
 
-BinaryOpNode::BinaryOpNode(BinaryOp binaryOp, const Node* pLeft,
-                           const Node* pRight)
+BinaryOpNode::BinaryOpNode(BinaryOp binaryOp, Node const* pLeft,
+                           Node const* pRight)
     : m_binaryOp(binaryOp), m_pLeft(pLeft), m_pRight(pRight)
 {
     // No further initialisation
@@ -90,9 +90,9 @@ std::string BinaryOpNode::evaluate(EvalAddressCallback evalAddrCb,
                                    EvalFunctionCallback evalFuncCb,
                                    void* pData) const
 {
-    const std::string valueLeft =
+    std::string const valueLeft =
         m_pLeft->evaluate(evalAddrCb, evalFuncCb, pData);
-    const std::string valueRight =
+    std::string const valueRight =
         m_pRight->evaluate(evalAddrCb, evalFuncCb, pData);
 
     std::stringstream ss(valueLeft);
@@ -166,12 +166,12 @@ BinaryOpNode::operator std::string() const
 //
 // ----------------------------------------------------------------------------
 
-VarIdentifierNode::VarIdentifierNode(const std::string& name) : m_name(name)
+VarIdentifierNode::VarIdentifierNode(std::string const& name) : m_name(name)
 {
     // No further initialisation
 }
 
-const std::string& VarIdentifierNode::getName() const { return m_name; }
+std::string const& VarIdentifierNode::getName() const { return m_name; }
 
 std::string VarIdentifierNode::evaluate(EvalAddressCallback evalAddrCb,
                                         EvalFunctionCallback evalFuncCb,
@@ -193,9 +193,9 @@ VarIdentifierNode::operator std::string() const
 //
 // ----------------------------------------------------------------------------
 
-VarAddressNode::VarAddressNode(const Address& address) : m_address(address) {}
+VarAddressNode::VarAddressNode(Address const& address) : m_address(address) {}
 
-const Address& VarAddressNode::getAddress() const { return m_address; }
+Address const& VarAddressNode::getAddress() const { return m_address; }
 
 std::string VarAddressNode::evaluate(EvalAddressCallback evalAddrCb,
                                      EvalFunctionCallback evalFuncCb,
@@ -227,9 +227,9 @@ FnCallNode::~FnCallNode()
     m_params.clear();
 }
 
-void FnCallNode::setFnName(const std::string& name) { m_fnName = name; }
+void FnCallNode::setFnName(std::string const& name) { m_fnName = name; }
 
-void FnCallNode::pushParam(const Node* pNode) { m_params.push_back(pNode); }
+void FnCallNode::pushParam(Node const* pNode) { m_params.push_back(pNode); }
 
 std::string FnCallNode::evaluate(EvalAddressCallback evalAddrCb,
                                  EvalFunctionCallback evalFuncCb,

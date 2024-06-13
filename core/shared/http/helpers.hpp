@@ -12,7 +12,7 @@ inline int some_fun()
     return 0;
 }
 
-inline void login(const httplib::Request& req, httplib::Response& res)
+inline void login(httplib::Request const& req, httplib::Response& res)
 {
     std::string str;
     if (req.body == R"({"password": "secret"})")
@@ -26,7 +26,7 @@ inline void login(const httplib::Request& req, httplib::Response& res)
     res.set_content(R"({"result": ")" + str + "\"}", APP_JSON);
 }
 
-inline std::string load_assets(const std::string& path)
+inline std::string load_assets(std::string const& path)
 {
 
     std::ifstream file(path.c_str(), std::ios::in);
@@ -42,12 +42,12 @@ inline std::string load_assets(const std::string& path)
     return assets;
 }
 
-inline std::string dump_headers(const httplib::Headers& headers)
+inline std::string dump_headers(httplib::Headers const& headers)
 {
     std::string s;
     char buf[BUFSIZ];
 
-    for (const auto& x : headers)
+    for (auto const& x : headers)
     {
         fmt::print("%s: %s\n", x.first.c_str(), x.second.c_str());
         s += buf;
@@ -56,8 +56,8 @@ inline std::string dump_headers(const httplib::Headers& headers)
     return s;
 }
 
-inline std::string log(const httplib::Request& req,
-                       const httplib::Response& res)
+inline std::string log(httplib::Request const& req,
+                       httplib::Response const& res)
 {
     std::string s;
     char buf[BUFSIZ];
@@ -71,7 +71,7 @@ inline std::string log(const httplib::Request& req,
     std::string query;
     for (auto it = req.params.begin(); it != req.params.end(); ++it)
     {
-        const auto& x = *it;
+        auto const& x = *it;
         fmt::print("%c%s=%s", (it == req.params.begin()) ? '?' : '&',
                    x.first.c_str(), x.second.c_str());
         query += buf;
