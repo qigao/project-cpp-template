@@ -27,13 +27,22 @@ target_link_libraries(
 gtest_discover_tests(http_server_test)
 
 include(CodeCoverage)
-append_coverage_compiler_flags_to_target(yaml_convert_test)
+append_coverage_compiler_flags()
 
 setup_target_for_coverage_gcovr_html(
   NAME
   yaml_convert_coverage
   EXECUTABLE
   yaml_convert_test
+  BASE_DIRECTORY
+  ../
+)
+
+setup_target_for_coverage_gcovr_html(
+  NAME
+  http_server_coverage
+  EXECUTABLE
+  http_server_test
   BASE_DIRECTORY
   ../
 )

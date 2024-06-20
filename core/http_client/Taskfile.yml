@@ -1,0 +1,33 @@
+# Notes
+# - install task from: https://taskfile.dev/#/installation or use `setup-cpp --task true`
+# - If using Visual Studio, either run the following commands inside the Visual Studio command prompt (vcvarsall) or set CMAKE_GENERATOR to "Visual Studio 17 2022"
+
+version: 3
+
+tasks:
+    http_client:test:
+        cmds:
+            - cmake --build  {{ .CMAKE_BUILD_DIR }}   --target http_client_test
+
+    http_client:run:
+        cmds:
+            - bash -c {{ .CMAKE_BUILD_DIR }}/core/http_client/test/Debug/http_client_test
+
+    http_client:coverage:
+        deps:
+            - http_client:test
+        cmds:
+            - cmake --build   {{.CMAKE_BUILD_DIR}}  --target http_client_coverage
+    sum:test:
+        cmds:
+            - cmake --build  {{ .CMAKE_BUILD_DIR }}  --target sum_test
+
+    sum:run:
+        cmds:
+            - bash -c {{ .CMAKE_BUILD_DIR }}/core/http_client/test/Debug/sum_test
+
+    sum:coverage:
+        deps:
+            - sum:test
+        cmds:
+            - cmake --build   {{.CMAKE_BUILD_DIR}}  --target sum_coverage

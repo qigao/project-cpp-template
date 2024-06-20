@@ -5,11 +5,30 @@
 version: 3
 
 tasks:
-  test:
-    cmds:
-      - cmake --build --preset developer --target yaml_convert_test
-  coverage:
-    deps:
-      - test
-    cmds:
-      - cmake --build --preset developer --target yaml_convert_coverage
+    yaml_convert:test:
+        cmds:
+            - cmake --build  {{ .CMAKE_BUILD_DIR }}   --target yaml_convert_test
+
+    yaml_convert:run:
+        cmds:
+            - bash -c {{ .CMAKE_BUILD_DIR }}/core/http_server/test/Debug/yaml_convert_test
+
+    yaml_convert:coverage:
+        deps:
+            - yaml_convert:test
+        cmds:
+            - cmake --build   {{.CMAKE_BUILD_DIR}}  --target yaml_convert_coverage
+
+    http_server:test:
+        cmds:
+            - cmake --build  {{ .CMAKE_BUILD_DIR }}   --target http_server_test
+
+    http_server:run:
+        cmds:
+            - bash -c {{ .CMAKE_BUILD_DIR }}/core/http_server/test/Debug/http_server_test
+
+    http_server:coverage:
+        deps:
+            - http_server:test
+        cmds:
+            - cmake --build   {{.CMAKE_BUILD_DIR}}  --target http_server_coverage
