@@ -1,13 +1,22 @@
-set(TARGET_NAME http_server)
-set(TARGET_NAME_LIB ${TARGET_NAME}_lib)
+# =================================================================================
+# PROJECT
+# =================================================================================
+
+# Project Name
+set(TARGET_NAME_LIB async_download_lib)
+set(TARGET_NAME async_download)
 # ----------------------------------------------------------------------------------------------------------------------
+
+# ##############################################################################
+# Define Target Information
+# ##############################################################################
+
+file(GLOB TARGET_SOURCES *.cpp)
+file(GLOB TARGET_HEADERS *.hpp)
 
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-
-file(GLOB TARGET_SOURCES src/*.cpp src/http/*.cpp src/config/*.cpp)
-file(GLOB TARGET_HEADERS include/http/*.hpp include/config/*.hpp)
 source_group(
   TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
   FILES ${TARGET_SOURCES}
@@ -38,21 +47,15 @@ target_include_interface_directories(
 )
 # Link dependencies:
 target_find_dependencies(
-  ${TARGET_NAME_LIB}
-  PUBLIC_CONFIG
-  httplib
-  spdlog
-  cpp_yyjson
-  yaml-cpp
+  ${TARGET_NAME_LIB} PUBLIC_CONFIG httplib spdlog cpp_yyjson
 )
 target_link_system_libraries(
   ${TARGET_NAME_LIB}
   PUBLIC
   httplib::httplib
-  spdlog::spdlog
+  spdlog::spdlog_header_only
   Threads::Threads
   cpp_yyjson::cpp_yyjson
-  yaml-cpp::yaml-cpp
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )
@@ -76,22 +79,24 @@ target_include_directories(
 
 # Executable part
 add_executable(${TARGET_NAME})
-target_sources(${TARGET_NAME} PRIVATE src/main.cpp)
+target_sources(${TARGET_NAME} PRIVATE main.cpp)
 target_link_libraries(
   ${TARGET_NAME} PRIVATE ${TARGET_NAME_LIB} starter_project_options
                          starter_project_warnings
 )
 # ----------------------------------------------------------------------------------------------------------------------
 # install
-add_custom_command(
-  TARGET ${TARGET_NAME}
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/generate_keys.sh
-          ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}
-  COMMENT "Copying cmake file as demo to build dir"
+# Files to Install
+install(
+  TARGETS ${TARGET_NAME}
+  EXPORT ${TARGET_NAME}Targets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-# ----------------------------------------------------------------------------------------------------------------------
-# tests
-if(FEATURE_TESTS)
-  add_subdirectory(test)
-endif()
+install(
+  EXPORT ${TARGET_NAME}Targets
+  FILE ${TARGET_NAME}Targets.cmake
+  NAMESPACE ${TARGET_NAME}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME}
+)

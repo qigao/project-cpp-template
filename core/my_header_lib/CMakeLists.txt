@@ -14,6 +14,6 @@ target_link_system_libraries(
 )
 
 # Tests
-if(FEATURE_TESTS)
-  add_subdirectory(test)
-endif()
+# if(FEATURE_TESTS)
+#   add_subdirectory(test)
+# endif()

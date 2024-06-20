@@ -3,12 +3,12 @@
 
 #if defined(_MSC_VER)
     #if defined(MYLIB_EXPORTS)
-        #define MYLIB_API __declspec(dllexport)
+        #define MVIEW_API __declspec(dllexport)
     #else
-        #define MYLIB_API __declspec(dllimport)
+        #define MVIEW_API __declspec(dllimport)
     #endif
 #else
-    #define MYLIB_API __attribute__((visibility("default")))
+    #define MVIEW_API __attribute__((visibility("default")))
 #endif
 #ifdef __cplusplus
 extern "C" {
@@ -16,7 +16,7 @@ extern "C" {
 
     // -----------------------------------------------------------
 
-   MYLIB_API int Sum(const int pLhs, const int pRhs);
+    MVIEW_API int Sum(const int pLhs, const int pRhs);
 
     // -----------------------------------------------------------
 

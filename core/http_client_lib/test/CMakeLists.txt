@@ -1,39 +1,29 @@
 find_package(GTest REQUIRED)
-add_executable(yaml_convert_test yaml_convert_test.cpp)
+add_executable(http_client_test http_client_test.cpp)
 target_link_libraries(
-  yaml_convert_test
+  http_client_test
   PRIVATE GTest::gtest
           GTest::gtest_main
           GTest::gmock
           GTest::gmock_main
           http_server_lib
+          http_client_lib
           starter_project_options
           starter_project_warnings
 )
 
-gtest_discover_tests(yaml_convert_test)
+gtest_discover_tests(http_client_test)
 
-add_executable(http_server_test http_server_test.cpp)
+add_executable(sum_test sum_test.cpp)
 target_link_libraries(
-  http_server_test
+  sum_test
   PRIVATE GTest::gtest
           GTest::gtest_main
           GTest::gmock
           GTest::gmock_main
           http_server_lib
+          http_client_lib
           starter_project_options
           starter_project_warnings
 )
-gtest_discover_tests(http_server_test)
-
-include(CodeCoverage)
-append_coverage_compiler_flags_to_target(yaml_convert_test)
-
-setup_target_for_coverage_gcovr_html(
-  NAME
-  yaml_convert_coverage
-  EXECUTABLE
-  yaml_convert_test
-  BASE_DIRECTORY
-  ../
-)
+gtest_discover_tests(sum_test)

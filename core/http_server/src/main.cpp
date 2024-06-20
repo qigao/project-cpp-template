@@ -2,9 +2,10 @@
 
 #include "http/http_file_handle.hpp"
 #include "http/http_server.hpp"
-#include <fmt/core.h>
 #include <functional>
 #include <httplib.h>
+#include <memory>
+#include <thread>
 
 using namespace httplib;
 using namespace std::placeholders;

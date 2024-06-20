@@ -4,17 +4,28 @@
 
 #if defined(_MSC_VER)
     #if defined(MYLIB_EXPORTS)
-        #define MYLIB_API __declspec(dllexport)
+        #define MVIEW_API __declspec(dllexport)
     #else
-        #define MYLIB_API __declspec(dllimport)
+        #define MVIEW_API __declspec(dllimport)
     #endif
 #else
-    #define MYLIB_API __attribute__((visibility("default")))
+    #define MVIEW_API __attribute__((visibility("default")))
 #endif
 #ifdef __cplusplus
 extern "C" {
 #endif
+    typedef struct http_handle http_client_handle;
 
+    MVIEW_API http_client_handle* new_http_client(char const* host, int port);
+
+    MVIEW_API void free_client_handle(http_client_handle* handle);
+    MVIEW_API void setup_http_header(http_client_handle* handle,
+                                     char const* header_name,
+                                     char const* header_value);
+    MVIEW_API
+    MVIEW_API void read_config_from_yml(char const* file_path);
+    MVIEW_API void http_request_initialize(http_client_handle* handle);
+    MVIEW_API void set_auth_token(http_client_handle* handle, char const* token);
  /**
  * Calculates the sum of two integers.
  *
@@ -25,14 +36,14 @@ extern "C" {
  *
  * @throws None
  */
-   MYLIB_API int Sum(const int pLhs, const int pRhs);
+ MVIEW_API int Sum(const int pLhs, const int pRhs);
    /**
  * Downloads a file synchronously from the specified URL and saves it locally.
  *
  * @param url The URL of the file to download.
  * @param local_filename The local filename to save the downloaded file.
  */
-   MYLIB_API void sync_file_download(const char* url,const char* local_filename);
+ MVIEW_API void sync_file_download(const char* url,const char* local_filename);
    /**
  * Downloads a file asynchronously from the specified URL and saves it locally.
  *
@@ -41,7 +52,7 @@ extern "C" {
  *
  * @throws None
  */
-   MYLIB_API void async_file_download(const char* url,const char* local_filename);
+ MVIEW_API void async_file_download(const char* url,const char* local_filename);
 
 #ifdef __cplusplus
 }

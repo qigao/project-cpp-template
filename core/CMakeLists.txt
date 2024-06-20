@@ -5,6 +5,7 @@ add_subdirectory(my_exe)
 add_subdirectory(http_client_lib)
 add_subdirectory(http_server)
 add_subdirectory(http_file_transfer)
+add_subdirectory(async_demo)
 
 # ===============================================================================
 if(FEATURE_FUZZ_TESTS)

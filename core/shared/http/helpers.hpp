@@ -2,10 +2,10 @@
 #define __HELPERS_H__
 
 #include "constants.hpp"
-#include <cmath>
 #include <fmt/core.h>
 #include <httplib.h>
 #include <iostream>
+#include <spdlog/spdlog.h>
 inline int some_fun()
 {
     fmt::print("Hello {} !", "helpers");
@@ -56,46 +56,33 @@ inline std::string dump_headers(httplib::Headers const& headers)
     return s;
 }
 
-inline std::string log(httplib::Request const& req,
-                       httplib::Response const& res)
+inline static void dump_http_request(httplib::Request const& r)
 {
-    std::string s;
-    char buf[BUFSIZ];
-
-    s += "================================\n";
-
-    fmt::print("%s %s %s", req.method.c_str(), req.version.c_str(),
-               req.path.c_str());
-    s += buf;
-
-    std::string query;
-    for (auto it = req.params.begin(); it != req.params.end(); ++it)
+    spdlog::info("REQ.METHOD = {}", r.method);
+    for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
     {
-        auto const& x = *it;
-        fmt::print("%c%s=%s", (it == req.params.begin()) ? '?' : '&',
-                   x.first.c_str(), x.second.c_str());
-        query += buf;
+        spdlog::info("REQ.HEADER[{}] = {} ", it->first, it->second);
     }
-    fmt::print("%s\n", query.c_str());
-    s += buf;
+}
 
-    // s += dump_headers(req.headers);
-
-    s += "--------------------------------\n";
-
-    fmt::print("%d %s\n", res.status, res.version.c_str());
-    s += buf;
-    s += dump_headers(res.headers);
-    s += "\n";
-
-    if (!res.body.empty())
+inline static void dump_http_response(httplib::Response const& r)
+{
+    spdlog::debug("res.status={}", r.status);
+    for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
     {
-        s += res.body;
+        spdlog::debug("RES.HEADER[{}] = {} ", it->first, it->second);
     }
+    if (r.status != 200 && r.status != 206)
+    {
+        spdlog::debug("RES.BODY = {}", r.body);
+    }
+}
 
-    s += "\n";
-
-    return s;
+inline static void dump_request_response(httplib::Request const& req,
+                                         httplib::Response const& res)
+{
+    dump_http_request(req);
+    dump_http_response(res);
 }
 
 #endif // __HELPERS_H__

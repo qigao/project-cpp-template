@@ -4,8 +4,12 @@
 
 version: 3
 
-includes:
-    http_server: http_server/Taskfile.yml
-
-
-
+tasks:
+  test:
+    cmds:
+      - cmake --build --preset developer --target yaml_convert_test
+  coverage:
+    deps:
+      - test
+    cmds:
+      - cmake --build --preset developer --target yaml_convert_coverage

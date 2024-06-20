@@ -1,8 +1,4 @@
-# =================================================================================
-# PROJECT
-# =================================================================================
-
-# Project Name
+# TargetName
 set(TARGET_LIB http_client_lib)
 # ##############################################################################
 # Define Target Information
@@ -30,14 +26,11 @@ source_group(
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Find dependencies:
-#set(OS_WINDOWS TRUE)
+
 if(ENABLE_OPENSSL)
   find_package(OpenSSL REQUIRED)
 endif()
 
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED)
 # ----------------------------------------------------------------------------------------------------------------------
 # library part
 add_library(${TARGET_LIB})
@@ -49,15 +42,9 @@ target_include_interface_directories(
   ${TARGET_LIB} ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/core/shared/utils ${CMAKE_SOURCE_DIR}/core/shared/http
 )
+find_package(Threads)
 # Link dependencies:
-target_find_dependencies(
-  ${TARGET_LIB}
-  PUBLIC_CONFIG
-  httplib
-  spdlog
-  cpp_yyjson
-  ryml
-)
+target_find_dependencies(${TARGET_LIB} PUBLIC_CONFIG httplib spdlog cpp_yyjson)
 target_link_system_libraries(
   ${TARGET_LIB}
   PUBLIC
@@ -65,7 +52,6 @@ target_link_system_libraries(
   spdlog::spdlog
   Threads::Threads
   cpp_yyjson::cpp_yyjson
-  ryml::ryml
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )
@@ -92,6 +78,12 @@ target_include_directories(
           # Any other extra include required
           ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS}
 )
+
+# Tests
+if(FEATURE_TESTS)
+  add_subdirectory(test)
+endif()
+
 # =================================================================================
 # INSTALL
 # =================================================================================

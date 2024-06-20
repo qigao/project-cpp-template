@@ -9,7 +9,7 @@ include_guard()
 include(${CMAKE_CURRENT_LIST_DIR}/fetch_project_options.cmake)
 
 # compile_commands.json
-set(ENABLE_COMPILE_COMMANDS_SYMLINK_DEFAULT ON)
+set(ENABLE_COMPILE_COMMANDS_SYMLINK_DEFAULT OFF)
 
 # hardening
 set(ENABLE_CONTROL_FLOW_PROTECTION_DEFAULT ON)
@@ -26,6 +26,18 @@ endif()
 set(ENABLE_INTERPROCEDURAL_OPTIMIZATION_DEFAULT ON)
 set(ENABLE_NATIVE_OPTIMIZATION_DEFAULT ON)
 
+# threads
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+set(CMAKE_HAVE_THREADS_LIBRARY 1)
+set(CMAKE_USE_WIN32_THREADS_INIT 0)
+set(CMAKE_USE_PTHREADS_INIT 1)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+# install vcpkg/conan dependencies: - should be called before defining project()
+run_vcpkg()
+run_conan()
+
+# configure files based on CMake configuration options
 project_options(
   PREFIX
   "starter"
@@ -50,7 +62,7 @@ project_options(
   # ENABLE_PCH
   # PCH_HEADERS
   # WARNINGS_AS_ERRORS
-  # ENABLE_INCLUDE_WHAT_YOU_USE
+  ENABLE_INCLUDE_WHAT_YOU_USE
   # ENABLE_GCC_ANALYZER
   # ENABLE_BUILD_WITH_TIME_TRACE
   # ENABLE_UNITY

@@ -8,7 +8,7 @@
 #include <fmt/core.h>
 #include <httplib.h>
 
-namespace bf = std::filesystem;
+namespace fs = std::filesystem;
 
 HttpFileHandle::HttpFileHandle(std::string const& shared_folder)
     : shared_folder_(shared_folder)
@@ -53,20 +53,20 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
 {
 
     // req: /list/a.txt ---> Download/a.txt
-    bf::path path(req.path);
+    fs::path path(req.path);
     auto file_name =
         fmt::format("{}/{}", shared_folder_, path.filename().string());
     spdlog::info("trying to download: {} from: {}", path.filename().string(),
                  shared_folder_);
     // 没有请求的文件,返回404
-    if (!bf::exists(file_name))
+    if (!fs::exists(file_name))
     {
         spdlog::error("file not found: {}", file_name);
         res.status = 404;
         return;
     }
     // 请求的是目录,返回403
-    if (bf::is_directory(file_name))
+    if (fs::is_directory(file_name))
     {
         spdlog::error("file is directory: {}", file_name);
         res.status = 403;
@@ -107,7 +107,7 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
         res.status = 500;
         return;
     }
-    auto file_size = bf::file_size(file_name);
+    auto file_size = fs::file_size(file_name);
     file.close();
 
     res.status = 206;
@@ -156,7 +156,7 @@ void HttpFileHandle::download_file_by_order(httplib::Request const& req,
         OCTET_STREAM, // Content type
         [&](size_t offset, httplib::DataSink& sink)
         {
-            bf::path file_path(req.path);
+            fs::path file_path(req.path);
             auto file_name = fmt::format("{}/{}", shared_folder_,
                                          file_path.filename().string());
             // open file
@@ -234,12 +234,12 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
                                        httplib::Response& res)
 {
     auto kv_list = std::vector<std::map<std::string, std::string>>();
-    bf::directory_iterator item_begin(shared_folder_);
-    bf::directory_iterator item_end;
+    fs::directory_iterator item_begin(shared_folder_);
+    fs::directory_iterator item_end;
     for (; item_begin != item_end; ++item_begin)
     {
         // 文件夹跳过
-        if (bf::is_directory(*item_begin))
+        if (fs::is_directory(*item_begin))
         {
             continue;
         }
@@ -249,7 +249,7 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
         auto path = pathname.filename().string();
         auto result = std::map<std::string, std::string>();
         result.emplace("path", path);
-        auto str_size = fmt::format("{}", fs::get_file_size(pathname));
+        auto str_size = fmt::format("{}", get_file_size(pathname));
         result.emplace("size", str_size);
         kv_list.push_back(result);
     }
@@ -269,7 +269,7 @@ void HttpFileHandle::handle_stream_file(
         [&](char const* data, size_t data_length)
         {
             body.append(data, data_length);
-            fs::write(file_path_str, data, data_length);
+            write(file_path_str, data, data_length);
             return true;
         });
     spdlog::info("upload file by stream: {}", body);
@@ -294,7 +294,7 @@ void HttpFileHandle::handle_multipart_file(
                 fmt::format("{}/{}", shared_folder_, last_file.filename);
 
             auto contentType = last_file.content_type;
-            fs::write(file_path, data, data_length);
+            write(file_path, data, data_length);
             spdlog::info("upload file: {},type:{},size: {}", last_file.filename,
                          contentType, last_file.content.size());
             return true;

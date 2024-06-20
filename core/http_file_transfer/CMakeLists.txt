@@ -36,7 +36,6 @@ endif()
 
 find_package(httplib)
 find_package(fmt)
-find_package(Threads REQUIRED)
 find_package(spdlog)
 # ----------------------------------------------------------------------------------------------------------------------
 # executable part
@@ -48,7 +47,7 @@ target_link_libraries(
   ${PROJECT_NAME}
   PUBLIC fmt::fmt
          httplib::httplib
-         spdlog::spdlog
+         spdlog::spdlog_header_only
          Threads::Threads
          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
          $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
