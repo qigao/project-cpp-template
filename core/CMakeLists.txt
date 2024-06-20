@@ -2,9 +2,8 @@
 add_subdirectory(my_header_lib)
 add_subdirectory(my_lib)
 add_subdirectory(my_exe)
-add_subdirectory(http_client_lib)
+add_subdirectory(http_client)
 add_subdirectory(http_server)
-add_subdirectory(http_file_transfer)
 add_subdirectory(async_demo)
 
 # ===============================================================================
