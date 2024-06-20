@@ -17,6 +17,8 @@
         "gruntfuggly.todo-tree",
         "aaron-bond.better-comments",
         "ms-vscode-remote.remote-containers",
-        "maciejdems.add-to-gitignore"
+        "maciejdems.add-to-gitignore",
+        "humao.rest-client",
+        "vasubasraj.flashpost"
     ]
 }

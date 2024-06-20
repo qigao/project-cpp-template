@@ -1,8 +1,8 @@
 #include "config/server_config.hpp"
 #include "test_helper.h"
-#include "gmock/gmock.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <yaml-cpp/node/node.h>
 #include <yaml-cpp/yaml.h>
 TEST(YmlDecodeTest, authConfig)
 {
@@ -75,9 +75,18 @@ TEST(YmlEncodeTest, authConfigEncode)
     auto node = YAML::Node(auth);
 
     auto encoded = YAML::Dump(node);
+
     EXPECT_THAT(encoded, testing::HasSubstr("123456"));
     EXPECT_THAT(encoded, testing::HasSubstr("true"));
     EXPECT_THAT(encoded, testing::HasSubstr("auth"));
     EXPECT_THAT(encoded, testing::HasSubstr("enabled"));
     EXPECT_THAT(encoded, testing::HasSubstr("token"));
+}
+
+TEST(AuthConfigTest, Encode)
+{
+    auth_config config = {true, "my_token"};
+    YAML::Node node = YAML::convert<auth_config>::encode(config);
+    EXPECT_EQ(node["auth"]["enabled"].as<bool>(), true);
+    EXPECT_EQ(node["auth"]["token"].as<std::string>(), "my_token");
 }

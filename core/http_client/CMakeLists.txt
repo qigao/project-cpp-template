@@ -1,5 +1,7 @@
 # TargetName
-set(TARGET_LIB http_client_lib)
+
+set(TARGET_NAME http_client)
+
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
@@ -33,20 +35,22 @@ endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # library part
-add_library(${TARGET_LIB})
+add_library(${TARGET_NAME})
 target_sources(
-  ${TARGET_LIB} PRIVATE ${TARGET_HEADERS} ${TARGET_SOURCES}
-                        ${TARGET_PUBLIC_HEADERS}
+  ${TARGET_NAME} PRIVATE ${TARGET_HEADERS} ${TARGET_SOURCES}
+                         ${TARGET_PUBLIC_HEADERS}
 )
 target_include_interface_directories(
-  ${TARGET_LIB} ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/include
+
   ${CMAKE_SOURCE_DIR}/core/shared/utils ${CMAKE_SOURCE_DIR}/core/shared/http
 )
 find_package(Threads)
 # Link dependencies:
-target_find_dependencies(${TARGET_LIB} PUBLIC_CONFIG httplib spdlog cpp_yyjson)
+target_find_dependencies(${TARGET_NAME} PUBLIC_CONFIG httplib spdlog cpp_yyjson)
 target_link_system_libraries(
-  ${TARGET_LIB}
+  ${TARGET_NAME}
+
   PUBLIC
   httplib::httplib
   spdlog::spdlog
@@ -57,22 +61,24 @@ target_link_system_libraries(
 )
 
 set_target_properties(
-  ${TARGET_LIB} PROPERTIES CXX_VISIBILITY_PRESET hidden
-                           VISIBILITY_INLINES_HIDDEN ON
+  ${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden
+                            VISIBILITY_INLINES_HIDDEN ON
 )
-target_compile_definitions(${TARGET_LIB} PRIVATE ${TARGET_LIB}_EXPORTS)
+target_compile_definitions(${TARGET_NAME} PRIVATE ${TARGET_NAME}_EXPORTS)
 target_compile_definitions(
-  ${TARGET_LIB}
+  ${TARGET_NAME}
+
   INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
 # link project_options/warnings
 target_link_libraries(
-  ${TARGET_LIB} PRIVATE starter_project_options starter_project_warnings
+  ${TARGET_NAME} PRIVATE starter_project_options starter_project_warnings
 )
 # include all the necessary directories
 target_include_directories(
-  ${TARGET_LIB}
+  ${TARGET_NAME}
+
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include
           ${CMAKE_CURRENT_SOURCE_DIR}/public
           # Any other extra include required
@@ -93,17 +99,17 @@ include(GNUInstallDirs)
 
 # Files to Install
 install(
-  TARGETS ${TARGET_LIB}
-  EXPORT ${TARGET_LIB}Targets
+  TARGETS ${TARGET_NAME}
+  EXPORT ${TARGET_NAME}Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET_LIB}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET_NAME}
 )
 
 install(
-  EXPORT ${TARGET_LIB}Targets
-  FILE ${TARGET_LIB}Targets.cmake
-  NAMESPACE ${TARGET_LIB}::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_LIB}
+  EXPORT ${TARGET_NAME}Targets
+  FILE ${TARGET_NAME}Targets.cmake
+  NAMESPACE ${TARGET_NAME}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME}
 )
