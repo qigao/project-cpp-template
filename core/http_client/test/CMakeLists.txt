@@ -7,7 +7,7 @@ target_link_libraries(
           GTest::gmock
           GTest::gmock_main
           http_server_lib
-          http_client_lib
+          http_client
           starter_project_options
           starter_project_warnings
 )
@@ -22,14 +22,14 @@ target_link_libraries(
           GTest::gmock
           GTest::gmock_main
           http_server_lib
-          http_client_lib
+          http_client
           starter_project_options
           starter_project_warnings
 )
 gtest_discover_tests(sum_test)
 
 include(CodeCoverage)
-append_coverage_compiler_flags()
+append_coverage_compiler_flags_to_target(sum_test)
 
 setup_target_for_coverage_gcovr_html(
   NAME
@@ -39,6 +39,7 @@ setup_target_for_coverage_gcovr_html(
   BASE_DIRECTORY
   ../
 )
+append_coverage_compiler_flags_to_target(http_client_test)
 
 setup_target_for_coverage_gcovr_html(
   NAME

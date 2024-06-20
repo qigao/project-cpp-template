@@ -1,7 +1,6 @@
 #ifndef __SERVER_CONFIG_H__
 #define __SERVER_CONFIG_H__
 
-#include <map>
 #include <string>
 #include <yaml-cpp/yaml.h>
 
