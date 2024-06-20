@@ -1,5 +1,7 @@
 # TargetName
+
 set(TARGET_NAME http_client)
+
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
@@ -40,6 +42,7 @@ target_sources(
 )
 target_include_interface_directories(
   ${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/include
+
   ${CMAKE_SOURCE_DIR}/core/shared/utils ${CMAKE_SOURCE_DIR}/core/shared/http
 )
 find_package(Threads)
@@ -47,6 +50,7 @@ find_package(Threads)
 target_find_dependencies(${TARGET_NAME} PUBLIC_CONFIG httplib spdlog cpp_yyjson)
 target_link_system_libraries(
   ${TARGET_NAME}
+
   PUBLIC
   httplib::httplib
   spdlog::spdlog
@@ -63,6 +67,7 @@ set_target_properties(
 target_compile_definitions(${TARGET_NAME} PRIVATE ${TARGET_NAME}_EXPORTS)
 target_compile_definitions(
   ${TARGET_NAME}
+
   INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
 )
 
@@ -73,6 +78,7 @@ target_link_libraries(
 # include all the necessary directories
 target_include_directories(
   ${TARGET_NAME}
+
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include
           ${CMAKE_CURRENT_SOURCE_DIR}/public
           # Any other extra include required
