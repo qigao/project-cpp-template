@@ -53,6 +53,7 @@ TEST(YmlDecodeTest, serverConfig)
     auto server = root.as<server_config>();
     EXPECT_EQ(server.port, 4443);
     EXPECT_EQ(server.shared_folder, "./shared");
+    EXPECT_EQ(server.delete_after_download, true);
     EXPECT_EQ(server.ssl.enabled, false);
     EXPECT_EQ(server.auth.enabled, true);
     EXPECT_EQ(server.auth.token, "123456");
@@ -73,9 +74,7 @@ TEST(YmlEncodeTest, authConfigEncode)
     auth.enabled = true;
     auth.token = "123456";
     auto node = YAML::Node(auth);
-
     auto encoded = YAML::Dump(node);
-
     EXPECT_THAT(encoded, testing::HasSubstr("123456"));
     EXPECT_THAT(encoded, testing::HasSubstr("true"));
     EXPECT_THAT(encoded, testing::HasSubstr("auth"));

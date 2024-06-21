@@ -29,6 +29,10 @@
       "version>=": "1.13.0"
     },
     {
+      "name": "nanobench",
+      "version>=": "4.3.11"
+    },
+    {
       "name": "openssl",
       "version>=": "3.1.0"
     },

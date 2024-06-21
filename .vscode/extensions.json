@@ -19,6 +19,15 @@
         "ms-vscode-remote.remote-containers",
         "maciejdems.add-to-gitignore",
         "humao.rest-client",
-        "vasubasraj.flashpost"
+        "vasubasraj.flashpost",
+        "amiralizadeh9480.cpp-helper",
+        "matepek.vscode-catch2-test-adapter",
+        "lfs.vscode-emacs-friendly",
+        "github.vscode-pull-request-github",
+        "ms-vscode.hexeditor",
+        "christian-kohler.path-intellisense",
+        "daohong-emilio.yash",
+        "ritwickdey.liveserver",
+        "vadimcn.vscode-lldb"
     ]
 }

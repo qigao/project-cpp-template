@@ -1,21 +1,14 @@
-
-#include <map>
+#include "config/server_config.hpp"
 #include <memory>
 #include <string>
 
-class YmlProperties
+class YamlProperties
 {
 public:
-    YmlProperties() = default;
-    YmlProperties(YmlProperties&&) = default;
-    YmlProperties(YmlProperties const&) = delete;
-    YmlProperties& operator=(YmlProperties&&) = default;
-    YmlProperties& operator=(YmlProperties const&) = delete;
-    ~YmlProperties() = default;
-    explicit YmlProperties(std::string const& file_name);
-    std::string getValue(std::string const& key);
+    ~YamlProperties();
+    explicit YamlProperties(std::string const& file_name);
+    server_config getConfig();
     void parse();
-    std::map<std::string, std::string> getMap(std::string const& key);
 
 private:
     class ymlImpl;

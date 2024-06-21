@@ -65,6 +65,11 @@
     ],
     "cmake.skipConfigureIfCachePresent": true,
     "cmake.buildBeforeRun": true,
-    "flashpost.saveDataToWorkspace": true,
+    "task": {
+        "path": "/usr/bin/go-task"
+    },
+    //http collection 保存路径
+    "flashpost.saveDataToWorkspace": false,
     "flashpost.workspaceDataRelativePath": "rest-api-test",
+    "livePreview.defaultPreviewPath": "/build/developer/yaml_convert_coverage/index.html",
 }

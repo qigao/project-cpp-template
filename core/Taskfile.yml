@@ -3,14 +3,13 @@
 # - If using Visual Studio, either run the following commands inside the Visual Studio command prompt (vcvarsall) or set CMAKE_GENERATOR to "Visual Studio 17 2022"
 
 version: 3
-
 includes:
-    server:
-        taskfile: ./http_server/Taskfile.yml
-    client:
-        taskfile: ./http_client/Taskfile.yml
+  server:
+    taskfile: ./http_server/Taskfile.yml
+  client:
+    taskfile: ./http_client/Taskfile.yml
 tasks:
-    server:
-        deps:
-            - server:yaml_convert:test
-            - server:yaml_convert:coverage
+  server:
+    deps:
+      - server:yaml_convert:test
+      - server:yaml_convert:coverage

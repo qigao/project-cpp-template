@@ -1,5 +1,6 @@
 #include "http_client_lib.h"
 #include "constants.hpp"
+#include "fs.hpp"
 #include "helpers.hpp"
 #include "http_file_download.hpp"
 #include <BS_thread_pool.hpp>

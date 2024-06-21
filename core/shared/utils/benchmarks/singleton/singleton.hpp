@@ -1,88 +1,87 @@
+#ifndef SINGLETON_DCLP_HPP_
+#define SINGLETON_DCLP_HPP_
+
+#include <atomic>
 #include <mutex>
-#include <string>
-/**
- * The Singleton class defines the `GetInstance` method that serves as an
- * alternative to constructor and lets clients access the same instance of this
- * class over and over.
- */
-template <class T>
-class Singleton
+#include <shared_mutex>
+#include <utility>
+
+template <typename Derived>
+class SingletonDclp
 {
+public:
+    template <typename... Args>
+    static void Construct(Args&&... args)
+    {
+#ifndef SINGLETON_INJECT_ABSTRACT_CLASS
+        using Instance = Derived;
+#else
+        struct Dummy final : Derived
+        {
+            using Derived::Derived;
+            void ProhibitConstructFromDerived() const noexcept override {}
+        };
+        using Instance = Dummy;
+#endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
-    /**
-     * The Singleton's constructor/destructor should always be private to
-     * prevent direct construction/desctruction calls with the `new`/`delete`
-     * operator.
-     */
-private:
-    static Singleton<T>* pInstance_;
+        if (!instance_.load(std::memory_order_acquire))
+        {
+            std::lock_guard lock{mutex_};
 
-    static std::mutex mutex_;
+            if (!instance_.load(std::memory_order_relaxed))
+                instance_.store(new Instance{std::forward<Args>(args)...},
+                                std::memory_order_release);
+        }
+    }
+
+    static void Destruct()
+    {
+        if (instance_.load(std::memory_order_acquire))
+        {
+            std::lock_guard lock{mutex_};
+
+            if (auto* instance = instance_.load(std::memory_order_relaxed);
+                instance)
+            {
+                delete instance;
+                instance_.store(nullptr, std::memory_order_release);
+            }
+        }
+    }
+
+    static Derived* GetInstance()
+    {
+        auto* instance = instance_.load(std::memory_order_acquire);
+
+        if (!instance)
+        {
+            std::shared_lock lock{mutex_};
+
+            instance = instance_.load(std::memory_order_relaxed);
+        }
+
+        return instance;
+    }
 
 protected:
-    Singleton(std::string const& value) : value_(std::move(value)) {}
-    ~Singleton() {}
-    std::string value_;
+    SingletonDclp() = default;
+    SingletonDclp(SingletonDclp const&) = delete;
+    SingletonDclp(SingletonDclp&&) = delete;
+    SingletonDclp& operator=(SingletonDclp const&) = delete;
+    SingletonDclp& operator=(SingletonDclp&&) = delete;
+#ifndef SINGLETON_INJECT_ABSTRACT_CLASS
+    ~SingletonDclp() = default;
+#else
+    virtual ~SingletonDclp() = default;
+#endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
-public:
-    /**
-     * Singletons should not be cloneable.
-     */
-    Singleton() = delete;
+private:
+#ifdef SINGLETON_INJECT_ABSTRACT_CLASS
+    virtual void ProhibitConstructFromDerived() const noexcept = 0;
+#endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
-    Singleton(Singleton const&) = delete;
-    Singleton(Singleton& other) = delete;
-    /**
-     * Singletons should not be assignable.
-     */
-    Singleton& operator=(Singleton const&) = delete;
-
-    /**
-     * Singleton should not be movable.
-     */
-    Singleton(Singleton&&) = delete;
-
-    Singleton& operator=(Singleton&&) = delete;
-    /**
-     * This is the static method that controls the access to the singleton
-     * instance. On the first run, it creates a singleton object and places it
-     * into the static field. On subsequent runs, it returns the client existing
-     * object stored in the static field.
-     */
-
-    static Singleton<T>* GetInstance(std::string const& value);
-    static Singleton<T>* get(std::string const& value);
-
-    std::string value() const { return value_; }
+    inline static std::atomic<Derived*> instance_{nullptr};
+    inline static std::shared_mutex mutex_;
 };
 
-/**
- * Static methods should be defined outside the class.
- */
-template <class T>
-Singleton<T>* Singleton<T>::pInstance_{nullptr};
-template <class T>
-std::mutex Singleton<T>::mutex_;
-
-/**
- * The first time we call GetInstance we will lock the storage location
- *      and then we make sure again that the variable is null and then we
- *      set the value. RU:
- */
-template <class T>
-Singleton<T>* Singleton<T>::GetInstance(std::string const& value)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (pInstance_ == nullptr)
-    {
-        pInstance_ = new Singleton<T>(value);
-    }
-    return pInstance_;
-}
-template <class T>
-Singleton<T>* Singleton<T>::get(std::string const& value)
-{
-    static std::once_flag flag;
-    std::call_once(flag, [&]() { pInstance_ = new Singleton<T>(value); });
-    return pInstance_;
-}
+#endif // SINGLETON_DCLP_HPP_

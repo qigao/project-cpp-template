@@ -7,7 +7,8 @@
 class HttpFileHandle
 {
 public:
-    HttpFileHandle(std::string const& shared_folder);
+    HttpFileHandle(std::string const& shared_folder,
+                   bool delete_after_download = false);
     /**
      *  the upload html form
      * @param req
@@ -59,5 +60,6 @@ private:
     void handle_stream_file(std::string const& file_name,
                             httplib::ContentReader const& content_reader);
     std::string shared_folder_;
+    bool delete_after_download_;
 };
 #endif // __HTTP_FILE_H__

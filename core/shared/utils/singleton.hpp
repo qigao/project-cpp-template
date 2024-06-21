@@ -1,74 +1,81 @@
+#ifndef SINGLETON_ATOMIC_HPP_
+#define SINGLETON_ATOMIC_HPP_
+
+#include <atomic>
 #include <mutex>
-#include <string>
 #include <utility>
-/**
- * The Singleton class defines the `GetInstance` method that serves as an
- * alternative to constructor and lets clients access the same instance of this
- * class over and over.
- */
-template <class T>
+
+template <typename Derived>
 class Singleton
 {
+public:
+    template <typename... Args>
+    static void Construct(Args&&... args)
+    {
+#ifndef SINGLETON_INJECT_ABSTRACT_CLASS
+        using Instance = Derived;
+#else
+        struct Dummy final : Derived
+        {
+            using Derived::Derived;
+            consteval void
+            ProhibitConstructFromDerived() const noexcept override
+            {
+            }
+        };
+        using Instance = Dummy;
+#endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
-    /**
-     * The Singleton's constructor/destructor should always be private to
-     * prevent direct construction/desctruction calls with the `new`/`delete`
-     * operator.
-     */
-private:
-    static Singleton<T>* pInstance_;
+        if (!instance_.load(std::memory_order_acquire))
+        {
+            std::unique_lock lock{mutex_};
+
+            if (!instance_.load(std::memory_order_relaxed))
+            {
+                instance_.store(new Instance{std::forward<Args>(args)...},
+                                std::memory_order_release);
+                lock.unlock();
+                instance_.notify_all();
+            }
+        }
+    }
+
+    static Derived* GetInstance() noexcept
+    {
+        instance_.wait(nullptr, std::memory_order_acquire);
+        return instance_.load(std::memory_order_relaxed);
+    }
 
 protected:
-    explicit Singleton(std::string value) : value_(std::move(value)) {}
-    ~Singleton() {}
-    std::string value_;
-
-public:
-    /**
-     * Singletons should not be cloneable.
-     */
-    Singleton() = delete;
-
+    Singleton() = default;
     Singleton(Singleton const&) = delete;
-    Singleton(Singleton& other) = delete;
-    /**
-     * Singletons should not be assignable.
-     */
-    auto operator=(Singleton const&) -> Singleton& = delete;
-
-    /**
-     * Singleton should not be movable.
-     */
     Singleton(Singleton&&) = delete;
+    Singleton& operator=(Singleton const&) = delete;
+    Singleton& operator=(Singleton&&) = delete;
+#ifndef SINGLETON_INJECT_ABSTRACT_CLASS
+    ~Singleton() = default;
+#else
+    virtual ~SingletonAtomic() = default;
+#endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
-    auto operator=(Singleton&&) -> Singleton& = delete;
-    /**
-     * This is the static method that controls the access to the singleton
-     * instance. On the first run, it creates a singleton object and places it
-     * into the static field. On subsequent runs, it returns the client existing
-     * object stored in the static field.
-     */
+private:
+    struct Deleter
+    {
+        ~Deleter() noexcept(noexcept(std::declval<Derived>().~Derived()))
+        {
+            delete instance.load(std::memory_order_acquire);
+        }
 
-    static auto GetInstance(std::string const& value) -> Singleton<T>*;
+        std::atomic<Derived*> instance{nullptr};
+    };
 
-    [[nodiscard]] auto value() const -> std::string { return value_; }
+#ifdef SINGLETON_INJECT_ABSTRACT_CLASS
+    consteval virtual void ProhibitConstructFromDerived() const noexcept = 0;
+#endif // SINGLETON_INJECT_ABSTRACT_CLASS
+
+    inline static Deleter deleter_;
+    inline static auto& instance_{deleter_.instance};
+    inline static std::mutex mutex_;
 };
 
-/**
- * Static methods should be defined outside the class.
- */
-template <class T>
-Singleton<T>* Singleton<T>::pInstance_{nullptr};
-
-/**
- * The first time we call GetInstance we will lock the storage location
- *      and then we make sure again that the variable is null and then we
- *      set the value. RU:
- */
-template <class T>
-auto Singleton<T>::GetInstance(std::string const& value) -> Singleton<T>*
-{
-    static std::once_flag flag;
-    std::call_once(flag, [&]() { pInstance_ = new Singleton<T>(value); });
-    return pInstance_;
-}
+#endif // SINGLETON_ATOMIC_HPP_

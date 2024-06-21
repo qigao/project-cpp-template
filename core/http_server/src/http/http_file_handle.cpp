@@ -3,15 +3,24 @@
 #include "cpp_yyjson.hpp"
 #include "fs.hpp"
 #include "spdlog/spdlog.h"
+#include <algorithm>
 #include <cstdio>
 #include <filesystem>
 #include <fmt/core.h>
+#include <fstream>
+#include <functional>
 #include <httplib.h>
-
+#include <map>
+#include <spdlog/common.h>
+#include <sstream>
+#include <utility>
+#include <vector>
 namespace fs = std::filesystem;
 
-HttpFileHandle::HttpFileHandle(std::string const& shared_folder)
-    : shared_folder_(shared_folder)
+HttpFileHandle::HttpFileHandle(std::string const& shared_folder,
+                               bool delete_after_download)
+    : shared_folder_(shared_folder),
+      delete_after_download_(delete_after_download)
 {
 }
 /**

@@ -8,8 +8,12 @@
 #define CACHE_CONTROL "Cache-Control"
 #define CONTENT_RANGE "Content-Range"
 #define CONTENT_LENGTH "Content-Length"
+#define USER_AGENT "User-Agent"
 #define CONTENT_DISPOSITION "Content-Disposition"
 #define ACCEPT_RANGES "Accept-Ranges"
+#define HTTP_TEXT_RESPONSE_FORMATTER                                           \
+    "<p>Error Status: <span style='color:red;'>%d</span></p>"
+#define SHA_256_HASH_HEADER "X-Hub-Signature-256"
 
 #define CHUNK_SIZE (32 * 1024)
 

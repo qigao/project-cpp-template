@@ -4,13 +4,14 @@
 #include <httplib.h>
 #include <memory>
 #include <string>
+
 class HttpServer
 {
 public:
-    HttpServer(int port = 0, unsigned int numThreads = 4,
-               std::string const& certFile = "",
-               std::string const& keyFile = "",
-               std::string const& rootCaFile = "");
+    explicit HttpServer(int port = 0, unsigned int numThreads = 4,
+                        std::string const& certFile = "",
+                        std::string const& keyFile = "",
+                        std::string const& rootCaFile = "");
     virtual ~HttpServer();
 
     void start();
@@ -53,8 +54,8 @@ public:
      * httplib::ContentReader& as arguments and return void.
      */
     inline void
-    PostWithContentHandler(std::string const& path,
-                           httplib::Server::HandlerWithContentReader handler)
+    PostWithReader(std::string const& path,
+                   httplib::Server::HandlerWithContentReader handler)
     {
         mServer->Post(path, handler);
     }
@@ -69,7 +70,6 @@ public:
 private:
     void error_handler(httplib::Request const& req, httplib::Response& res);
     void log_handler(httplib::Request const& req, httplib::Response const& res);
-    std::string dump_headers(httplib::Headers const& headers);
 
     void post_route_handler(httplib::Request const& req,
                             httplib::Response& res);

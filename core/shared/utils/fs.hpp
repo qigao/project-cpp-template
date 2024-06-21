@@ -1,14 +1,17 @@
 #ifndef CPP_CORE_PROJECT_FS_HPP
 #define CPP_CORE_PROJECT_FS_HPP
 
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <stdexcept>
 #include <string>
-
+namespace fs = std::filesystem;
 inline int64_t get_file_size(std::string const& filename)
 {
     std::ifstream infile(filename.c_str(),
@@ -86,5 +89,46 @@ inline bool breakup_url(std::string const& url, std::string& scheme_and_host,
     }
     return true;
 }
+inline std::string create_random_path(int n)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis('a',
+                                        'z'); // Generate lowercase letters
+    std::string random_chars(n, '\0');
+    std::generate_n(random_chars.begin(), random_chars.size(),
+                    [&dis, &gen]() { return dis(gen); });
+    return random_chars;
+}
+inline bool createRandomDir(fs::path& temp_dir)
+{
+    auto random_chars = create_random_path(10);
 
+    fs::path random_dir = temp_dir / random_chars;
+    while (true)
+    {
+        if (fs::exists(random_dir))
+        {
+            random_chars = create_random_path(10);
+            random_dir = temp_dir / random_chars;
+        }
+        break;
+    }
+    if (fs::create_directory(random_dir))
+    {
+        temp_dir = random_dir;
+        return true; // Successfully created the directory
+    }
+    else
+    {
+        // Handle potential error during directory creation
+        std::cerr << "Error creating directory: " << random_dir << std::endl;
+        return false;
+    }
+}
+
+inline bool caseInsensitiveEqual(char a, char b)
+{
+    return std::tolower(a) == std::tolower(b);
+}
 #endif // CPP_CORE_PROJECT_FS_HPP
