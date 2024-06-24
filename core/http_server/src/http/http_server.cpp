@@ -2,10 +2,15 @@
 #include "helpers.hpp"
 #include "spdlog/spdlog.h"
 #include "task_queue.hpp"
+#include <bits/chrono.h>
+#include <exception>
+#include <fmt/core.h>
 #include <functional>
 #include <httplib.h>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
+#include <stdio.h>
 #include <thread>
 using namespace std::placeholders;
 
@@ -95,7 +100,6 @@ void HttpServer::start()
             {
                 if (!mServer->listen_after_bind())
                 {
-
                     throw std::runtime_error("listen_after_bind");
                 }
             }
@@ -122,10 +126,7 @@ void HttpServer::stop()
 {
     if (!mServer)
     {
-        return;
-    }
-    if (mBoundPort == 0)
-    {
+        spdlog::error("server init error");
         return;
     }
     spdlog::info("server stop ...");
@@ -148,8 +149,7 @@ void HttpServer::error_handler(httplib::Request const& /* req */,
                                httplib::Response& res)
 {
     char buf[BUFSIZ];
-    auto formatter = "<p>Error Status: <span style='color:red;'>%d</span></p>";
-    snprintf(buf, sizeof(buf), formatter, res.status);
+    snprintf(buf, sizeof(buf), HTTP_TEXT_RESPONSE_FORMATTER, res.status);
     res.set_content(buf, "text/html");
 }
 void HttpServer::log_handler(httplib::Request const& req,
@@ -158,21 +158,6 @@ void HttpServer::log_handler(httplib::Request const& req,
     dump_request_response(req, res);
 }
 
-std::string HttpServer::dump_headers(httplib::Headers const& headers)
-{
-    std::string s;
-    char buf[BUFSIZ];
-
-    for (auto it = headers.begin(); it != headers.end(); ++it)
-    {
-        auto const& x = *it;
-        snprintf(buf, sizeof(buf), "%s: %s\n", x.first.c_str(),
-                 x.second.c_str());
-        s += buf;
-    }
-
-    return s;
-}
 void HttpServer::post_route_handler(httplib::Request const& req,
                                     httplib::Response& res)
 {

@@ -11,14 +11,8 @@ file(GLOB TARGET_HEADERS public/*.h)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
-  FILES ${TARGET_SOURCES}
-)
-source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
-  FILES ${TARGET_HEADERS}
-)
+source_group(TREE . PREFIX "Source Files" FILES ${TARGET_SOURCES})
+source_group(TREE . PREFIX "Header Files" FILES ${TARGET_HEADERS})
 
 add_library(${TARGET_NAME})
 target_sources(${TARGET_NAME} PRIVATE ${TARGET_SOURCES})

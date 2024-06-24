@@ -4,6 +4,7 @@
 constexpr char const* yml_demo_data = R"(server:
     port: 4443
     shared_folder: ./shared
+    delete_after_download: true
     ssl:
         enabled: false
         key_file: ./server.key

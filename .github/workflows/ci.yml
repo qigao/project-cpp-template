@@ -109,39 +109,12 @@ jobs:
 
       - name: Test/Coverage
         run: |
-          task coverage
+          task coverage.all
         env:
           CMAKE_GENERATOR: ${{matrix.CMAKE_GENERATOR}}
           GCOV: ${{matrix.GCOV}}
 
-      - name: Test release
-        run: |
-          task test_release
-        env:
-          CMAKE_GENERATOR: ${{matrix.CMAKE_GENERATOR}}
-          GCOV: ${{matrix.GCOV}}
-
-      - name: Install
-        run: |
-          task install
-        env:
-          CMAKE_GENERATOR: ${{matrix.CMAKE_GENERATOR}}
-          CPACK_GENERATOR: ${{matrix.CPACK_GENERATOR}}
 
       - name: Perform CodeQL Analysis
         if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') }}
         uses: github/codeql-action/analyze@v3
-
-      - name: Publish Tagged Release
-        uses: softprops/action-gh-release@v2
-        if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.CPACK_GENERATOR != '' }}
-        with:
-          files: |
-            build/*-*Release*-*.*
-
-      - name: Publish to codecov
-        uses: codecov/codecov-action@v4
-        with:
-          flags: ${{ runner.os }}
-          name: ${{ runner.os }}-coverage
-          files: ./build/coverage.xml

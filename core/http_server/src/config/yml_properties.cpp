@@ -1,14 +1,13 @@
 #include "config/yml_properties.hpp"
+#include "config/server_config.hpp"
 #include <filesystem>
-#include <map>
+#include <memory>
 #include <spdlog/spdlog.h>
 #include <string>
 #include <yaml-cpp/yaml.h>
 namespace fs = std::filesystem;
-class YmlProperties::ymlImpl
+class YamlProperties::ymlImpl
 {
-    std::string file_name_;
-    YAML::Node tree_;
 
 public:
     explicit ymlImpl(std::string const& file_name) : file_name_(file_name) {}
@@ -21,38 +20,24 @@ public:
             spdlog::error("file {} does not exist", file_name_);
             return;
         }
-
         tree_ = YAML::LoadFile(file);
     }
-    std::string get(std::string const& key)
-    {
 
-        std::string result;
-        if (tree_[key])
-        {
-            result = tree_[key].as<std::string>();
-        }
-        return result;
+    server_config get(std::string const& key)
+    {
+        return tree_["server"].as<server_config>();
     }
+
+private:
+    std::string file_name_;
+    YAML::Node tree_;
 };
 
-YmlProperties::YmlProperties(std::string const& file_name)
-    : pimpl(new ymlImpl(file_name))
+YamlProperties::YamlProperties(std::string const& file_name)
+    : pimpl(std::make_unique<ymlImpl>(file_name))
 {
 }
 
-std::string YmlProperties::getValue(std::string const& key)
-{
-    if (pimpl)
-    {
-        return pimpl->get(key);
-    }
-    return "";
-}
-void YmlProperties::parse()
-{
-    if (pimpl)
-    {
-        pimpl->parse();
-    }
-}
+server_config YamlProperties::getConfig() { return pimpl->get("server"); }
+void YamlProperties::parse() { pimpl->parse(); }
+YamlProperties::~YamlProperties() = default;

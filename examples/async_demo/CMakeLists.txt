@@ -3,8 +3,8 @@
 # =================================================================================
 
 # Project Name
-set(TARGET_NAME_LIB myExe_lib)
-set(TARGET_NAME myExe)
+set(TARGET_NAME_LIB async_download_lib)
+set(TARGET_NAME async_download)
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ##############################################################################
@@ -17,14 +17,8 @@ file(GLOB TARGET_HEADERS *.hpp)
 # ##############################################################################
 # Support IDE Visualization
 # ##############################################################################
-source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
-  FILES ${TARGET_SOURCES}
-)
-source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
-  FILES ${TARGET_HEADERS}
-)
+source_group(TREE . PREFIX "Source Files" FILES ${TARGET_SOURCES})
+source_group(TREE . PREFIX "Header Files" FILES ${TARGET_HEADERS})
 # ----------------------------------------------------------------------------------------------------------------------
 # Find dependencies:
 #set(OS_WINDOWS TRUE)

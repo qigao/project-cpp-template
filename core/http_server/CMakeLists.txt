@@ -53,6 +53,7 @@ target_link_system_libraries(
   Threads::Threads
   cpp_yyjson::cpp_yyjson
   yaml-cpp::yaml-cpp
+  hash_lib
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )

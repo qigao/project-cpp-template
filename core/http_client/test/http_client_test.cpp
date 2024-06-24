@@ -21,7 +21,7 @@ TEST(HttpClientTest, uploadFileByStream)
     svr.setSharedFolder("/tmp");
 
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
-    svr.PostWithContentHandler(
+    svr.PostWithReader(
         R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
                           httplib::ContentReader const& content_reader)
         { handler->handle_file_upload(req, res, content_reader); });

@@ -11,7 +11,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Define the features of the project
 # -------------------------------------------------------------------
-include(customized_project_options)
+include(tailored_options)
 
 # enable cross-compiling: - should be called before run_vcpkg()
 if(ENABLE_CROSS_COMPILING)
@@ -26,6 +26,7 @@ set(CMAKE_PROJECT_VERSION_PATCH 3)
 set(PROJECT_VERSION
     ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
 )
+
 set(PROJECT_NAME "DemoApp Research")
 set(PROJECT_DESCRIPTION "multi-module template project for modern C++")
 set(PROJECT_WEBSITE "http://github.com/project-cpp-template.git")
@@ -45,6 +46,20 @@ project(
 # ----------------------------------------------
 # Set the features of the project
 include(Config.cmake)
+
+# threads
+if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") OR ("${CMAKE_CXX_COMPILER_ID}"
+                                                     STREQUAL "GNU")
+)
+  set(THREADS_PREFER_PTHREAD_FLAG ON)
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set(THREADS_PREFER_PTHREAD_FLAG OFF)
+endif()
+find_package(Threads REQUIRED)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
 # --------------------------------------------------------------
 add_subdirectory(configured_files)
 

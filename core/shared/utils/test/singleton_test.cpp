@@ -1,30 +1,50 @@
-#include "singleton.hpp"
-#include <future>
-#include <gtest/gtest.h>
-#include <string>
+#include <atomic>
+#include <latch>
 #include <thread>
+#include <vector>
 
-class SingletonDemo : public Singleton<SingletonDemo>
+#include "../singleton.hpp"
+
+#include <gtest/gtest.h>
+
+static std::atomic_uint32_t init{0};
+
+class Counter : public Singleton<Counter>
 {
+public:
+    Counter() { ++init; }
+
+    void Add() { ++count_; }
+    std::uint32_t GetCount() const { return count_; }
+
+private:
+    std::atomic_uint32_t count_{0};
 };
-std::string ThreadFoo()
-{
-    // Following code emulates slow initialization.
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    auto singleton = SingletonDemo::GetInstance("foo");
-    return singleton->value();
-}
-std::string ThreadBarWithMutex()
-{
-    // Following code emulates slow initialization.
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    auto singleton = SingletonDemo::GetInstance("Bar");
 
-    return singleton->value();
-}
-TEST(Singleton, GetInstance)
+TEST(SingletonTest, multiThread)
 {
-    auto future_t1 = std::async(ThreadBarWithMutex);
-    auto future_t2 = std::async(ThreadFoo);
-    ASSERT_EQ(future_t1.get(), future_t2.get());
+    auto const count = std::thread::hardware_concurrency();
+    std::cout << "hardware: " << count << std::endl;
+    std::latch block{static_cast<std::ptrdiff_t>(count)};
+    std::vector<std::thread> threads;
+
+    threads.reserve(count);
+    for (auto i = 0u; i < count; ++i)
+    {
+        threads.emplace_back(
+            [&block]
+            {
+                block.arrive_and_wait();
+                Counter::Construct();
+                Counter::GetInstance()->Add();
+            });
+    }
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    EXPECT_EQ(init, 1);
+    EXPECT_EQ(Counter::GetInstance()->GetCount(), count);
 }

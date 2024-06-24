@@ -37,6 +37,7 @@ class server_config
 public:
     int port;
     std::string shared_folder;
+    bool delete_after_download;
     ssl_config ssl;
     auth_config auth;
     webhook_config webhook;
@@ -165,6 +166,7 @@ struct convert<server_config>
         node["ssl"] = rhs.ssl;
         node["auth"] = rhs.auth;
         node["webhook"] = rhs.webhook;
+        node["delete_after_download"] = rhs.delete_after_download;
         return node;
     }
 
@@ -173,6 +175,7 @@ struct convert<server_config>
         rhs.webhook = node["webhook"].as<webhook_config>();
         rhs.ssl = node["ssl"].as<ssl_config>();
         rhs.shared_folder = node["shared_folder"].as<std::string>();
+        rhs.delete_after_download = node["delete_after_download"].as<bool>();
         rhs.port = node["port"].as<int>();
         rhs.auth = node["auth"].as<auth_config>();
         return true;

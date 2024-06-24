@@ -1,9 +1,9 @@
+#include "constants.hpp"
 #include "fs.hpp"
-#include "helpers.hpp"
 #include "http/http_file_handle.hpp"
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
-
+#include "http/web_hook_singleton.hpp"
 #include <cpp_yyjson.hpp>
 #include <cstdio>
 #include <functional>
@@ -165,7 +165,7 @@ TEST(HttpServerTest, streamUpload)
     svr.setSharedFolder("/tmp");
     // Register handler
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
-    svr.PostWithContentHandler(
+    svr.PostWithReader(
         R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
                           httplib::ContentReader const& content_reader)
         { handler->handle_file_upload(req, res, content_reader); });
@@ -208,7 +208,7 @@ TEST(HttpServerTest, multipartUpload)
     HttpServer svr(PORT);
     svr.setSharedFolder("/tmp");
     auto handler = std::make_shared<HttpFileHandle>("/tmp");
-    svr.PostWithContentHandler(
+    svr.PostWithReader(
         R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
                           httplib::ContentReader const& content_reader)
         { handler->handle_file_upload(req, res, content_reader); });
@@ -269,4 +269,62 @@ TEST(HttpServerTest, downloadFile)
     EXPECT_NE(resp, nullptr);
     EXPECT_EQ(resp->status, 200);
     std::remove(local_file.c_str());
+}
+TEST(HttpServerTest, dump)
+{
+    HttpServer svr(PORT);
+    // Register handler
+    auto handler = std::make_shared<HttpJsonHandler>();
+    svr.Post("/dump", std::bind(&HttpJsonHandler::dump, handler, _1, _2));
+    svr.start();
+    auto se = httplib::detail::scope_exit([&] { svr.stop(); });
+
+    // Send request and check response
+    httplib::Client cli(HOST, PORT);
+    auto req = yyjson::object();
+    req.emplace("id", 200);
+    req.emplace("msg", "demo");
+    auto body = req.write();
+    httplib::Headers headers = {
+        {"X-Hub-Signature-256",
+         "fa090c43f504e30497b7ef441500f9666e13aa1368e394d7d668eeb7de983bcb"}};
+    auto res = cli.Post("/dump?name=john", headers, body.data(), APP_JSON);
+    EXPECT_NE(res, nullptr);
+    EXPECT_EQ(res->status, 200);
+    auto val = yyjson::read(res->body.c_str());
+    auto obj = *val.as_object();
+    auto id = *obj["id"].as_int();
+    EXPECT_EQ(id, 200);
+    auto msg = *obj["msg"].as_string();
+    EXPECT_EQ(msg, "demo");
+}
+
+TEST(HttpServerTest, webHookDemo)
+{
+    WebHook::Construct("http://127.0.0.1:5060/dump");
+    WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
+    HttpServer svr(PORT);
+    // Register handler
+    auto handler = std::make_shared<HttpJsonHandler>();
+    svr.Post("/webhook",
+             std::bind(&HttpJsonHandler::web_hook, handler, _1, _2));
+    svr.Post("/dump", std::bind(&HttpJsonHandler::dump, handler, _1, _2));
+    svr.start();
+    auto se = httplib::detail::scope_exit([&] { svr.stop(); });
+
+    // Send request and check response
+    httplib::Client cli(HOST, PORT);
+    auto req = yyjson::object();
+    req.emplace("id", 200);
+    req.emplace("msg", "demo");
+    auto body = req.write();
+    auto res = cli.Post("/webhook", body.data(), APP_JSON);
+    EXPECT_NE(res, nullptr);
+    EXPECT_EQ(res->status, 200);
+    auto val = yyjson::read(res->body);
+    auto obj = *val.as_object();
+    auto id = *obj["id"].as_int();
+    EXPECT_EQ(id, 200);
+    auto msg = *obj["msg"].as_string();
+    EXPECT_EQ(msg, "demo");
 }
