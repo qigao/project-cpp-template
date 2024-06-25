@@ -3,7 +3,7 @@
 #include "http/http_file_handle.hpp"
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
-#include "http/web_hook_singleton.hpp"
+#include "http/http_web_hook.hpp"
 #include <cpp_yyjson.hpp>
 #include <cstdio>
 #include <functional>

@@ -60,6 +60,11 @@ public:
         mServer->Post(path, handler);
     }
 
+    inline void auth_handler(httplib::Server::HandlerWithResponse handler)
+    {
+        mServer->set_pre_routing_handler(handler);
+    }
+
     inline void setSharedFolder(std::string const& folder)
     {
         mSharedFolder = folder;

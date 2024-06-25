@@ -1,7 +1,7 @@
 # Docs at https://docs.conan.io/en/latest/reference/conanfile_txt.html
 
 [requires]
-cxxopts/3.2.0
+cli11/2.4.2
 cpp-httplib/0.15.3
 
 # serialization

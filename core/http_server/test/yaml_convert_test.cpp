@@ -26,7 +26,7 @@ TEST(YmlDecodeTest, webhook)
     auto webhook = root["webhook"].as<webhook_config>();
     EXPECT_EQ(webhook.enabled, true);
     EXPECT_EQ(webhook.url, "http://127.0.0.1:8080/webhook");
-    EXPECT_EQ(webhook.bearer_token, "123456");
+    EXPECT_EQ(webhook.api_key, "123456");
     auto headers = webhook.headers;
     EXPECT_EQ(headers.size(), 2);
     EXPECT_EQ(headers[0].header, "x-test");
@@ -59,7 +59,7 @@ TEST(YmlDecodeTest, serverConfig)
     EXPECT_EQ(server.auth.token, "123456");
     EXPECT_EQ(server.webhook.enabled, true);
     EXPECT_EQ(server.webhook.url, "http://127.0.0.1:8080/webhook");
-    EXPECT_EQ(server.webhook.bearer_token, "123456");
+    EXPECT_EQ(server.webhook.api_key, "123456");
     auto headers = server.webhook.headers;
     EXPECT_EQ(headers.size(), 2);
     EXPECT_EQ(headers[0].header, "x-test");

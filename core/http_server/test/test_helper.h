@@ -17,7 +17,7 @@ constexpr char const* yml_demo_data = R"(server:
     webhook:
         enabled: true
         url: http://127.0.0.1:8080/webhook
-        bearer_token: 123456
+        api_key: 123456
         headers:
             - header: x-test
               value: true

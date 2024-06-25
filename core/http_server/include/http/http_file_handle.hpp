@@ -7,8 +7,8 @@
 class HttpFileHandle
 {
 public:
-    HttpFileHandle(std::string const& shared_folder,
-                   bool delete_after_download = false);
+    explicit HttpFileHandle(std::string const& shared_folder,
+                            bool delete_after_download = false);
     /**
      *  the upload html form
      * @param req

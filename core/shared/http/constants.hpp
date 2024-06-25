@@ -11,8 +11,9 @@
 #define USER_AGENT "User-Agent"
 #define CONTENT_DISPOSITION "Content-Disposition"
 #define ACCEPT_RANGES "Accept-Ranges"
+#define API_KEY "X-API-Key"
 #define HTTP_TEXT_RESPONSE_FORMATTER                                           \
-    "<p>Error Status: <span style='color:red;'>%d</span></p>"
+    "<p>Error Status: <span style='color:red;'>{}</span></p>"
 #define SHA_256_HASH_HEADER "X-Hub-Signature-256"
 
 #define CHUNK_SIZE (32 * 1024)
