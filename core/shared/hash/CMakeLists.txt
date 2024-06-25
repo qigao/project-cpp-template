@@ -22,18 +22,20 @@ source_group(
 
 add_library(${TARGET_NAME})
 target_sources(${TARGET_NAME} PRIVATE ${TARGET_SOURCES})
-target_include_interface_directories(${TARGET_NAME} include) # Includes
+target_include_interface_directories(
+  ${TARGET_NAME} include ${CMAKE_SOURCE_DIR}/core/shared/utils
+) # Includes
 target_link_libraries(
   ${TARGET_NAME} PRIVATE starter_project_options starter_project_warnings
 )
-
+find_package(OpenSSL REQUIRED)
 target_find_dependencies(
   ${TARGET_NAME} # Find dependencies
-  PRIVATE_CONFIG range-v3 libsodium
+  PRIVATE_CONFIG range-v3
 )
 target_link_system_libraries(
   ${TARGET_NAME} # Link dependencies
-  PRIVATE range-v3::range-v3 libsodium::libsodium
+  PRIVATE OpenSSL::SSL OpenSSL::Crypto
 )
 
 # =================================================================================

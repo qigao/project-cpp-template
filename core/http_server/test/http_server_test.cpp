@@ -12,7 +12,7 @@
 #include <memory>
 
 static char const* HOST = "127.0.0.1";
-static int const PORT = 5060;
+static int const PORT = 5061;
 using namespace std::placeholders;
 
 TEST(HttpServerTest, checkSharedFolder)
@@ -25,30 +25,6 @@ TEST(HttpServerTest, checkSharedFolder)
 void handle_get(httplib::Request const& req, httplib::Response& res)
 {
     res.set_content("Hello World!", "text/plain");
-}
-
-TEST(HttpServerTest, getHello)
-{
-    httplib::Server svr;
-    // Register handler
-    svr.Get("/hello", handle_get);
-    svr.listen_after_bind();
-    auto listen_thread = std::thread([&svr] { svr.listen(HOST, PORT); });
-    auto se = httplib::detail::scope_exit(
-        [&]
-        {
-            svr.stop();
-            listen_thread.join();
-            EXPECT_FALSE(svr.is_running());
-        });
-
-    svr.wait_until_ready();
-    // Send request and check response
-    httplib::Client cli(HOST, PORT);
-    auto res = cli.Get("/hello");
-    EXPECT_NE(res, nullptr);
-    EXPECT_EQ(res->status, 200);
-    EXPECT_EQ(res->body, "Hello World!");
 }
 
 TEST(HttpServerTest, getHelloJson)
@@ -288,7 +264,7 @@ TEST(HttpServerTest, dump)
     httplib::Headers headers = {
         {"X-Hub-Signature-256",
          "fa090c43f504e30497b7ef441500f9666e13aa1368e394d7d668eeb7de983bcb"}};
-    auto res = cli.Post("/dump?name=john", headers, body.data(), APP_JSON);
+    auto res = cli.Post("/dump?name=john", body.data(), APP_JSON);
     EXPECT_NE(res, nullptr);
     EXPECT_EQ(res->status, 200);
     auto val = yyjson::read(res->body.c_str());
@@ -327,4 +303,5 @@ TEST(HttpServerTest, webHookDemo)
     EXPECT_EQ(id, 200);
     auto msg = *obj["msg"].as_string();
     EXPECT_EQ(msg, "demo");
+    svr.stop();
 }

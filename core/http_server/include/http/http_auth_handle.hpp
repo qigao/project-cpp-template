@@ -2,7 +2,6 @@
 #define __HTTP_AUTH_HANDLE_H__
 
 #include "singleton.hpp"
-#include <BS_thread_pool.hpp>
 #include <httplib.h>
 #include <string>
 class AuthHandler : public Singleton<AuthHandler>

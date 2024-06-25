@@ -1,5 +1,4 @@
 find_package(GTest REQUIRED)
-include(CodeCoverage)
 
 # --------------- YAML_CONVERT TEST -------------------
 add_executable(hash_function_test hash_function_test.cpp)
@@ -15,15 +14,6 @@ target_link_libraries(
 )
 
 gtest_discover_tests(hash_function_test)
-
-# --------------- COVERAGE -----------------------------
-
-append_coverage_compiler_flags()
-setup_target_for_coverage_gcovr_html(
-  NAME
-  hash_function_coverage
-  EXECUTABLE
-  hash_function_test
-  BASE_DIRECTORY
-  ${PROJECT_SOURCE_DIR}/core/shared/hash
-)
+if(${ENABLE_COVERAGE})
+  set(COVERAGE_ARGS REPORTER xml)
+endif()

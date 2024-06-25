@@ -6,23 +6,17 @@ version: 3
 tasks:
   http_client:test:
     cmds:
-      - cmake --build  {{ .CMAKE_BUILD_DIR }}   --target http_client_test
+      - cmake --build  $BUILD_DIR   --target http_client_test
   http_client:run:
-    cmds:
-      - bash -c {{ .CMAKE_BUILD_DIR }}/core/http_client/test/Debug/http_client_test
-  http_client:coverage:
     deps:
-      - http_client:test
+      - task: http_client:test
     cmds:
-      - cmake --build   {{.CMAKE_BUILD_DIR}}  --target http_client_coverage
+      - $OUTPUT_DIR/$BUILD_TYPE/http_client_test
   sum:test:
     cmds:
-      - cmake --build  {{ .CMAKE_BUILD_DIR }}  --target sum_test
+      - cmake --build  $BUILD_DIR  --target sum_test
   sum:run:
-    cmds:
-      - bash -c {{ .CMAKE_BUILD_DIR }}/core/http_client/test/Debug/sum_test
-  sum:coverage:
     deps:
-      - sum:test
+      - task: sum:test
     cmds:
-      - cmake --build   {{.CMAKE_BUILD_DIR}}  --target sum_coverage
+      - $OUTPUT_DIR/$BUILD_TYPE/sum_test

@@ -227,7 +227,7 @@ void setup_http_header(http_client_handle* handle, char const* header_name,
 
 void set_auth_token(http_client_handle* handle, char const* token)
 {
-    handle->mClient->set_api_key_auth(token);
+    handle->mHeaders.emplace("X-API-KEY", token);
 }
 void read_config_from_yml(char const* file_path) {}
 

@@ -131,4 +131,21 @@ inline bool caseInsensitiveEqual(char a, char b)
 {
     return std::tolower(a) == std::tolower(b);
 }
+
+static char const hex_chars[] = "0123456789ABCDEF";
+
+inline std::string to_hex(unsigned char const* input, size_t length)
+{
+    std::string result;
+    result.reserve(length * 2);
+
+    for (size_t i = 0; i < length; ++i)
+    {
+        result.push_back(hex_chars[input[i] >> 4]);
+        result.push_back(hex_chars[input[i] & 0x0F]);
+    }
+
+    return result;
+}
+
 #endif // CPP_CORE_PROJECT_FS_HPP

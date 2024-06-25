@@ -8,6 +8,8 @@ includes:
     taskfile: ./http_server/Taskfile.yml
   client:
     taskfile: ./http_client/Taskfile.yml
+  shared:
+    taskfile: ./shared/Taskfile.yml
 tasks:
   server:
     deps:

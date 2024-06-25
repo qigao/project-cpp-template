@@ -31,8 +31,7 @@ set(PROJECT_NAME "DemoApp Research")
 set(PROJECT_DESCRIPTION "multi-module template project for modern C++")
 set(PROJECT_WEBSITE "http://github.com/project-cpp-template.git")
 set(APPLICATION_LICENSE "MIT License")
-# Binary Output Dir
-set(BIN_DIR "${CMAKE_SOURCE_DIR}/bin/${BUILD_TYPE_DIR}")
+
 # Set the project name and language
 project(
   cpp_core_project
@@ -60,6 +59,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
+# share vars with Taskfile
+file(
+  WRITE ${CMAKE_BINARY_DIR}/task_vars.env
+  "
+CMAKE_BUILD_DIR=${CMAKE_BINARY_DIR}
+CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+CNMAKE_OUTPUT_DIR=${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}
+"
+)
+file(CREATE_LINK ${CMAKE_BINARY_DIR}/task_vars.env
+     ${PROJECT_SOURCE_DIR}/task_vars.env
+)
 # --------------------------------------------------------------
 add_subdirectory(configured_files)
 
