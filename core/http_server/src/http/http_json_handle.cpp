@@ -1,15 +1,13 @@
 #include "http/http_json_handle.hpp"
 #include "constants.hpp"
 #include "cpp_yyjson.hpp"
-#include "fs.hpp"
-#include "hash_function.hpp"
 #include "spdlog/spdlog.h"
 #include <BS_thread_pool.hpp>
 #include <fmt/core.h>
 
 #include <httplib.h>
 
-#include "http/web_hook_singleton.hpp"
+#include "http/http_web_hook.hpp"
 
 void HttpJsonHandler::getMsg(httplib::Request const& req,
                              httplib::Response& res)

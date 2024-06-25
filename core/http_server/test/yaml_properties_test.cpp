@@ -54,7 +54,7 @@ TEST_F(YamlPropertiesTest, Parse)
     EXPECT_THAT(config.ssl.root_ca_file, Eq("./rootCA/rootCA-crt.pem"));
     EXPECT_THAT(config.ssl.root_ca_key_file, Eq("./rootCA/rootCA-key.pem"));
     EXPECT_THAT(config.webhook.url, Eq("http://127.0.0.1:8080/webhook"));
-    EXPECT_THAT(config.webhook.bearer_token, Eq("123456"));
+    EXPECT_THAT(config.webhook.api_key, Eq("123456"));
     EXPECT_THAT(config.webhook.headers[0].header, Eq("x-test"));
     EXPECT_THAT(config.webhook.headers[0].value, Eq("true"));
     EXPECT_THAT(config.webhook.headers[1].header, Eq("x-agent"));

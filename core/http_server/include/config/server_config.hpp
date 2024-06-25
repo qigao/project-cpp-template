@@ -29,7 +29,7 @@ class webhook_config
 public:
     bool enabled = false;
     std::string url;
-    std::string bearer_token;
+    std::string api_key;
     std::vector<header_config> headers;
 };
 class server_config
@@ -140,7 +140,7 @@ struct convert<webhook_config>
         YAML::Node node;
         node["enabled"] = rhs.enabled;
         node["url"] = rhs.url;
-        node["bearer_token"] = rhs.bearer_token;
+        node["api_key"] = rhs.api_key;
         node["headers"] = rhs.headers;
         return node;
     }
@@ -149,7 +149,7 @@ struct convert<webhook_config>
     {
         rhs.enabled = node["enabled"].as<bool>();
         rhs.url = node["url"].as<std::string>();
-        rhs.bearer_token = node["bearer_token"].as<std::string>();
+        rhs.api_key = node["api_key"].as<std::string>();
         rhs.headers = node["headers"].as<std::vector<header_config>>();
         return true;
     }

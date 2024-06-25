@@ -10,7 +10,6 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <stdio.h>
 #include <thread>
 using namespace std::placeholders;
 
@@ -148,9 +147,8 @@ void HttpServer::stop()
 void HttpServer::error_handler(httplib::Request const& /* req */,
                                httplib::Response& res)
 {
-    char buf[BUFSIZ];
-    snprintf(buf, sizeof(buf), HTTP_TEXT_RESPONSE_FORMATTER, res.status);
-    res.set_content(buf, "text/html");
+    auto error_info = fmt::format(HTTP_TEXT_RESPONSE_FORMATTER, res.status);
+    res.set_content(error_info, "text/html");
 }
 void HttpServer::log_handler(httplib::Request const& req,
                              httplib::Response const& res)
