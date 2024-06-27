@@ -4,14 +4,14 @@
 #include <gtest/gtest.h>
 #include <yaml-cpp/node/node.h>
 #include <yaml-cpp/yaml.h>
-TEST(YmlDecodeTest, authConfig)
+TEST(YmlTest, authConfig)
 {
     auto node = YAML::Load("auth: {enabled: false, token: 123456} ");
     auto value = node["auth"].as<auth_config>();
     EXPECT_EQ(value.token, "123456");
 }
 
-TEST(YmlDecodeTest, container)
+TEST(YmlTest, container)
 {
     auto node = YAML::Load("label: {name: tom, age: 12} ");
     auto value = node["label"].as<container>();
@@ -19,7 +19,7 @@ TEST(YmlDecodeTest, container)
     EXPECT_EQ(value.name, "tom");
 }
 
-TEST(YmlDecodeTest, webhook)
+TEST(YmlTest, webhook)
 {
     auto node = YAML::Load(yml_demo_data);
     auto root = node["server"];
@@ -34,7 +34,7 @@ TEST(YmlDecodeTest, webhook)
     EXPECT_EQ(headers[1].header, "x-agent");
     EXPECT_EQ(headers[1].value, "mview_http_webhook");
 }
-TEST(YmlDecodeTest, sslConfig)
+TEST(YmlTest, sslConfig)
 {
     auto node = YAML::Load(yml_demo_data);
     auto root = node["server"];
@@ -46,7 +46,7 @@ TEST(YmlDecodeTest, sslConfig)
     EXPECT_EQ(ssl.root_ca_key_file, "./rootCA/rootCA-key.pem");
 }
 
-TEST(YmlDecodeTest, serverConfig)
+TEST(YmlTest, serverConfig)
 {
     auto node = YAML::Load(yml_demo_data);
     auto root = node["server"];
@@ -68,7 +68,7 @@ TEST(YmlDecodeTest, serverConfig)
     EXPECT_EQ(headers[1].value, "mview_http_webhook");
 }
 
-TEST(YmlEncodeTest, authConfigEncode)
+TEST(YmlTest, authConfigEncode)
 {
     auth_config auth;
     auth.enabled = true;
@@ -82,7 +82,7 @@ TEST(YmlEncodeTest, authConfigEncode)
     EXPECT_THAT(encoded, testing::HasSubstr("token"));
 }
 
-TEST(AuthConfigTest, Encode)
+TEST(YmlTest, Encode)
 {
     auth_config config = {true, "my_token"};
     YAML::Node node = YAML::convert<auth_config>::encode(config);

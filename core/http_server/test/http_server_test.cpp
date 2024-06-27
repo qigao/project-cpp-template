@@ -14,7 +14,7 @@
 static char const* HOST = "127.0.0.1";
 static int const PORT = 5061;
 using namespace std::placeholders;
-
+static char const* const SHARED_FOLDER = ".";
 TEST(HttpServerTest, checkSharedFolder)
 {
     HttpServer svr(PORT);
@@ -116,9 +116,9 @@ TEST(HttpServerTest, multipartForm)
 {
 
     HttpServer svr(PORT);
-    svr.setSharedFolder("/tmp");
+    svr.setSharedFolder(SHARED_FOLDER);
     // Register handler
-    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.Get("/", std::bind(&HttpFileHandle::list_upload_form, handler, _1, _2));
     svr.Post("/multipart", std::bind(&HttpFileHandle::upload_file_by_multiform,
                                      handler, _1, _2));
@@ -138,9 +138,9 @@ TEST(HttpServerTest, streamUpload)
 {
 
     HttpServer svr(PORT);
-    svr.setSharedFolder("/tmp");
+    svr.setSharedFolder(SHARED_FOLDER);
     // Register handler
-    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.PostWithReader(
         R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
                           httplib::ContentReader const& content_reader)
@@ -182,8 +182,8 @@ TEST(HttpServerTest, streamUpload)
 TEST(HttpServerTest, multipartUpload)
 {
     HttpServer svr(PORT);
-    svr.setSharedFolder("/tmp");
-    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    svr.setSharedFolder(SHARED_FOLDER);
+    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.PostWithReader(
         R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
                           httplib::ContentReader const& content_reader)
@@ -203,8 +203,8 @@ TEST(HttpServerTest, multipartUpload)
 TEST(HttpServerTest, getFileLists)
 {
     HttpServer svr(PORT);
-    svr.setSharedFolder("/tmp");
-    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    svr.setSharedFolder(SHARED_FOLDER);
+    auto handler = std::make_shared<HttpFileHandle>( SHARED_FOLDER);
     svr.Get("/",
             std::bind(&HttpFileHandle::handle_file_lists, handler, _1, _2));
     svr.start();
@@ -218,8 +218,8 @@ TEST(HttpServerTest, getFileLists)
 TEST(HttpServerTest, downloadFile)
 {
     HttpServer svr(PORT);
-    svr.setSharedFolder("/tmp");
-    auto handler = std::make_shared<HttpFileHandle>("/tmp");
+    svr.setSharedFolder(SHARED_FOLDER);
+    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.Get("/download/(.*)",
             std::bind(&HttpFileHandle::handle_file_download, handler, _1, _2));
     svr.start();

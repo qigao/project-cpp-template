@@ -1,12 +1,10 @@
 #include "human_readable.hpp"
-#include <catch2/catch_test_macros.hpp>
+#include <gtest/gtest.h>
 constexpr size_t IntegerRepresentableBoundary()
 {
-    static_assert(std::numeric_limits<double>::radix, 2,
-                  "Method only valid for binary floating point format.");
     return size_t{2} << (std::numeric_limits<double>::digits - 1);
 }
-TEST_CASE("HumanReadable output stream operator test")
+TEST(HumanReadableTest, kilo)
 {
     HumanReadable hr;
     hr.size = 1024;
@@ -14,32 +12,32 @@ TEST_CASE("HumanReadable output stream operator test")
     std::ostringstream oss;
     oss << hr;
 
-    REQUIRE(oss.str() == "1KB (1024)");
+    EXPECT_EQ(oss.str() , "1KB (1024)");
 }
-TEST_CASE("Human Readable cast tests")
+TEST(HumanReadableTest,streamcast)
 {
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() - 2})) ==
+    EXPECT_EQ(static_cast<size_t>(NarrowCast<double>(
+                size_t{IntegerRepresentableBoundary() - 2})) ,
             size_t{IntegerRepresentableBoundary() - 2});
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() - 1})) ==
+    EXPECT_EQ(static_cast<size_t>(NarrowCast<double>(
+                size_t{IntegerRepresentableBoundary() - 1})) ,
             size_t{IntegerRepresentableBoundary() - 1});
-    REQUIRE(static_cast<size_t>(
-                NarrowCast<double>(size_t{IntegerRepresentableBoundary()})) ==
+    EXPECT_EQ(static_cast<size_t>(
+                NarrowCast<double>(size_t{IntegerRepresentableBoundary()})) ,
             size_t{IntegerRepresentableBoundary()});
-    REQUIRE_THROWS_AS(
+    EXPECT_THROW(
         NarrowCast<double>(size_t{IntegerRepresentableBoundary() + 1}),
         std::exception);
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() + 2})) ==
+    EXPECT_EQ(static_cast<size_t>(NarrowCast<double>(
+                size_t{IntegerRepresentableBoundary() + 2})) ,
             size_t{IntegerRepresentableBoundary() + 2});
-    REQUIRE_THROWS_AS(
+    EXPECT_THROW(
         NarrowCast<double>(size_t{IntegerRepresentableBoundary() + 3}),
         std::exception);
-    REQUIRE(static_cast<size_t>(NarrowCast<double>(
-                size_t{IntegerRepresentableBoundary() + 4})) ==
+    EXPECT_EQ(static_cast<size_t>(NarrowCast<double>(
+                size_t{IntegerRepresentableBoundary() + 4})) ,
             size_t{IntegerRepresentableBoundary() + 4});
-    REQUIRE_THROWS_AS(
+    EXPECT_THROW(
         NarrowCast<double>(size_t{IntegerRepresentableBoundary() + 5}),
         std::exception);
 }

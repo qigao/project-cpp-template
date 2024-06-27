@@ -2,7 +2,7 @@
 
 [requires]
 cli11/2.4.2
-cpp-httplib/0.15.3 
+cpp-httplib/0.15.3
 
 # serialization
 cpp-yyjson/0.5.0
@@ -11,7 +11,6 @@ taskflow/3.7.0
 
 # Tools
 easy_profiler/2.1.0
-benchmark/1.8.4
 
 concurrentqueue/1.0.3
 readerwriterqueue/1.0.6

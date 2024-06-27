@@ -14,6 +14,3 @@ target_link_libraries(
 )
 
 gtest_discover_tests(hash_function_test)
-if(${ENABLE_COVERAGE})
-  set(COVERAGE_ARGS REPORTER xml)
-endif()

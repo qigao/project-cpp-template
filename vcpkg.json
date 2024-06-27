@@ -12,11 +12,6 @@
       "version>=": "1.25.0"
     },
     {
-      "name": "catch2",
-      "version>=": "3.5.0"
-    },
-    "cppzmq",
-    {
       "name": "eigen3",
       "version>=": "3.4.0#2"
     },
@@ -40,7 +35,6 @@
     {
       "name": "spdlog",
       "version>=": "1.13.0"
-    },
-    "tinyfiledialogs"
+    }
   ]
 }
