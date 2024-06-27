@@ -1,11 +1,10 @@
 #include "http/http_json_handle.hpp"
 #include "constants.hpp"
 #include "cpp_yyjson.hpp"
+#include "http_lib_header.hpp"
 #include "spdlog/spdlog.h"
 #include <BS_thread_pool.hpp>
 #include <fmt/core.h>
-
-#include <httplib.h>
 
 #include "http/http_web_hook.hpp"
 HttpJsonHandler::HttpJsonHandler() : pool(std::make_shared<BS::thread_pool>(2))

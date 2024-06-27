@@ -2,10 +2,10 @@
 #define CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
 #include "constants.hpp"
 #include "fs.hpp"
+#include "http_lib_header.hpp"
 #include "spdlog/spdlog.h"
 #include "stream_cast.hpp"
 #include <cstdint>
-#include <httplib.h>
 #include <iostream>
 #include <stdexcept>
 #include <string>

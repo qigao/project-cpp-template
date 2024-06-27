@@ -4,11 +4,11 @@
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
+#include "http_lib_header.hpp"
 #include <cpp_yyjson.hpp>
 #include <cstdio>
 #include <functional>
 #include <gtest/gtest.h>
-#include <httplib.h>
 #include <memory>
 
 static char const* HOST = "127.0.0.1";

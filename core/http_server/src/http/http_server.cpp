@@ -5,11 +5,13 @@
 #include <exception>
 #include <fmt/core.h>
 #include <functional>
-#include <httplib.h>
+
+#include "http_lib_header.hpp"
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <thread>
+
 using namespace std::placeholders;
 
 HttpServer::HttpServer(int port, unsigned int numThreads,

@@ -1,7 +1,6 @@
 #include "config/yml_properties.hpp"
 #include "config/server_config.hpp"
 #include <filesystem>
-#include <memory>
 #include <spdlog/spdlog.h>
 #include <string>
 #include <yaml-cpp/yaml.h>

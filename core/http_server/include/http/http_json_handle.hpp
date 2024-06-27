@@ -1,8 +1,9 @@
 #ifndef CPP_CORE_PROJECT_HTTP_HANDLER_HPP
 #define CPP_CORE_PROJECT_HTTP_HANDLER_HPP
 
+#include "http_lib_header.hpp"
 #include <BS_thread_pool.hpp>
-#include <httplib.h>
+
 class HttpJsonHandler
 {
 public:

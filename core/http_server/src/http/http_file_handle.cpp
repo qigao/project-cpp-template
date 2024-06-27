@@ -8,12 +8,14 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
-#include <httplib.h>
+
 #include <map>
 #include <sstream>
 #include <vector>
-namespace fs = std::filesystem;
 
+#include "http_lib_header.hpp"
+
+namespace fs = std::filesystem;
 HttpFileHandle::HttpFileHandle(std::string const& shared_folder,
                                bool delete_after_download)
     : shared_folder_(shared_folder),

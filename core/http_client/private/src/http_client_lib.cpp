@@ -3,10 +3,10 @@
 #include "fs.hpp"
 #include "helpers.hpp"
 #include "http_file_download.hpp"
+#include "http_lib_header.hpp"
 #include <BS_thread_pool.hpp>
 #include <cpp_yyjson.hpp>
 #include <filesystem>
-#include <httplib.h>
 #include <range/v3/all.hpp>
 #include <thread>
 

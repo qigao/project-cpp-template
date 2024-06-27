@@ -1,8 +1,8 @@
 #ifndef __HTTP_AUTH_HANDLE_H__
 #define __HTTP_AUTH_HANDLE_H__
 
+#include "http_lib_header.hpp"
 #include "singleton.hpp"
-#include <httplib.h>
 #include <string>
 class AuthHandler : public Singleton<AuthHandler>
 {

@@ -2,8 +2,8 @@
 #define __HELPERS_H__
 
 #include "constants.hpp"
+#include "http_lib_header.hpp"
 #include <fmt/core.h>
-#include <httplib.h>
 #include <iostream>
 #include <spdlog/spdlog.h>
 inline int some_fun()

@@ -9,7 +9,7 @@
 #include "http/http_file_handle.hpp"
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
-#include <httplib.h>
+#include "http_lib_header.hpp"
 #include <memory>
 
 using namespace std::placeholders;

@@ -2,7 +2,8 @@
 #define __TASK_QUEUE_H__
 
 #include "BS_thread_pool.hpp"
-#include <httplib.h>
+#include "http_lib_header.hpp"
+
 class TaskQueue : public httplib::TaskQueue
 {
 public:
