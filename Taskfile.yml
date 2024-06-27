@@ -2,9 +2,12 @@ version: 3
 includes:
   core:
     taskfile: ./core/Taskfile.yml
-vars:
-  CMAKE_PRESET_DIR: build/developer
-  CMAKE_BUILD_DIR: "{{.ROOT_DIR}}/{{.CMAKE_PRESET_DIR}}"
+dotenv: ['.env', 'task_vars.env']
+env:
+  CONFIG: '{{.CONFIG | default "developer"}}'
+  BUILD_DIR: '{{ .CMAKE_BUILD_DIR }}'
+  BUILD_TYPE: '{{ .CMAKE_BUILD_TYPE }}'
+  OUTPUT_DIR: '{{.CNMAKE_OUTPUT_DIR}}'
 tasks:
   lint:clang-format:
     cmds:
@@ -20,6 +23,35 @@ tasks:
         platforms: [linux, darwin]
     vars:
       CMAKE_LINT_FLAGS: --disabled-codes C0103 C0301 R0912 R0915 R0913 --suppress-decorations
+  # Run with coverage analysis
+  coverage.all:
+    cmds:
+      # Set --sources "your_source_folder\*" and --filter "your_source_folder/" to have a clean coverage report
+      - |
+        {{if eq OS "windows"}}
+
+          OpenCppCoverage.exe --export_type html:./build/coverage --export_type cobertura:./build/coverage.xml --cover_children --sources "core\*" --modules "build\*" -- task test.all
+
+          powershell -c "if (!\$env:CI) { echo '[info] Opening ./build/coverage/index.html...'; start ./build/coverage/index.html }"
+        {{else}}
+          mkdir -p ./build/coverage/
+
+          gcovr -j {{.nproc | default 1}} --delete \
+          --filter "core/" \
+          --filter "my_lib/" \
+          --filter "my_header_lib/" \
+          -e '/.*/build/' \
+          -e "project" \
+          -e ".*/test/.*" \
+           --root ./ --print-summary \
+           --html-details ./build/coverage/index.html \
+           --xml-pretty --xml ./build/coverage.xml ./build
+
+          echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
+        {{end}}
+    env:
+      CMAKE_BUILD_TYPE: "{{.CMAKE_BUILD_TYPE}}"
+
   lint:vcpkg:
     cmds:
       - ~/vcpkg/vcpkg format-manifest ./vcpkg.json
@@ -43,27 +75,27 @@ tasks:
     cmds:
       - cmd: powershell -c 'function rmrf($path) { if (test-path $path) { rm -r -force $path }}; rmrf ./build; rmrf ./install'
         platforms: [windows]
-      - cmd: rm -rf ./install ./build
+      - cmd: rm -rf ./build && rm -fr CMakeUserPresets.json && rm -fr task_vars.env
         platforms: [linux, darwin]
   clean.all:
-    desc: clean all build artifacts
+    desc: clean all build artifacts and packages
     deps:
       - task: clean:vcpkg
       - task: clean:conan
       - task: clean:build
   test.all:
     desc: all the test tasks from modules
-    deps:
-      - task: core:server:yaml_convert:test
-  coverage.all:
-    desc: all the coverage tasks from modules
-    deps:
-      - task: core:server:yaml_convert:coverage
+    cmds:
+      - task: core:server:yaml_convert:run
+      - task: core:server:yaml_properties:run
+      - task: core:server:http_server:run
+      - task: core:client:http_client:run
+      - task: core:client:sum:run
   config:
     desc: list all cmake presets, then generate the developer preset
     cmds:
-      - cmake --workflow --list-presets
-      - cmake --workflow --preset developer
+      - cmake --build --list-presets
+      - cmake --preset $CONFIG
   default:
     desc: list all tasks
     cmds:

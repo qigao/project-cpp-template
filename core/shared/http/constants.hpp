@@ -15,7 +15,7 @@
 #define HTTP_TEXT_RESPONSE_FORMATTER                                           \
     "<p>Error Status: <span style='color:red;'>{}</span></p>"
 #define SHA_256_HASH_HEADER "X-Hub-Signature-256"
-
+#define SHA1_HASH_HEADER "X-Hub-Signature"
 #define CHUNK_SIZE (32 * 1024)
 
 #endif // CPP_CORE_PROJECT_CONSTANTS_HPP

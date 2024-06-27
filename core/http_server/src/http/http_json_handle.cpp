@@ -1,14 +1,15 @@
 #include "http/http_json_handle.hpp"
 #include "constants.hpp"
 #include "cpp_yyjson.hpp"
+#include "http_lib_header.hpp"
 #include "spdlog/spdlog.h"
 #include <BS_thread_pool.hpp>
 #include <fmt/core.h>
 
-#include <httplib.h>
-
 #include "http/http_web_hook.hpp"
-
+HttpJsonHandler::HttpJsonHandler() : pool(std::make_shared<BS::thread_pool>(2))
+{
+}
 void HttpJsonHandler::getMsg(httplib::Request const& req,
                              httplib::Response& res)
 {
@@ -55,15 +56,11 @@ void HttpJsonHandler::dump(httplib::Request const& req, httplib::Response& res)
             fmt::format("missing header {}", SHA_256_HASH_HEADER);
         jsonResp.emplace("message", missing_header);
         res.set_content(jsonResp.write().data(), APP_JSON);
-        res.status = 406;
     }
-    spdlog::info("request info:{},path params: X-Hub-Signature-256={}",
-                 req.body, sha256_header);
     if (req.body.empty())
     {
         jsonResp.emplace("message", "empty body");
         res.set_content(jsonResp.write().data(), APP_JSON);
-        res.status = 422;
     }
     res.set_content(req.body, APP_JSON);
 }
@@ -71,9 +68,22 @@ void HttpJsonHandler::dump(httplib::Request const& req, httplib::Response& res)
 void HttpJsonHandler::web_hook(httplib::Request const& req,
                                httplib::Response& res)
 {
+
+    std::future<void> const my_future = pool->submit_task(
+        [&]
+        {
+            auto web_hook_call = WebHook::GetInstance();
+            web_hook_call->call(req.body);
+        });
+    while (true)
+    {
+        if (my_future.wait_for(std::chrono::milliseconds(2000)) !=
+            std::future_status::ready)
+            std::cout << "Sorry, the task is not done yet.\n";
+        else
+            break;
+    }
     auto val = yyjson::read(req.body);
     res.set_content(val.write().data(), APP_JSON);
     res.status = 200;
-    auto web_hook_call = WebHook::GetInstance();
-    web_hook_call->call(req.body);
 }

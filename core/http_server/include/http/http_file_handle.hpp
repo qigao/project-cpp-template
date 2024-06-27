@@ -1,7 +1,8 @@
 #ifndef __HTTP_FILE_H__
 #define __HTTP_FILE_H__
+#include "http_lib_header.hpp"
 #include <fmt/core.h>
-#include <httplib.h>
+
 #include <string>
 
 class HttpFileHandle

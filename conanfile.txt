@@ -2,13 +2,12 @@
 
 [requires]
 cli11/2.4.2
-cpp-httplib/0.15.3
+cpp-httplib/0.15.3 
 
 # serialization
 cpp-yyjson/0.5.0
 yaml-cpp/0.8.0
 taskflow/3.7.0
-libsodium/cci.20220430
 
 # Tools
 easy_profiler/2.1.0

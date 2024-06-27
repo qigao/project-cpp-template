@@ -18,7 +18,6 @@ if(FEATURE_TESTS)
   # IMHO(CK) either:
   set(ENABLE_CLANG_TIDY "ENABLE_CLANG_TIDY")
   # XXX or: set(ENABLE_CPPCHECK "ENABLE_CPPCHECK")
-  # set(ENABLE_COVERAGE "ENABLE_COVERAGE")
   set(ENABLE_VS_ANALYSIS "ENABLE_VS_ANALYSIS")
 
   check_sanitizers_support(
@@ -27,6 +26,10 @@ if(FEATURE_TESTS)
   )
   include(GoogleTest)
   enable_testing()
+  # code coverage
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+  set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+
 endif()
 
 if(FEATURE_DOCS)

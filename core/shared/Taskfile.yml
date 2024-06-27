@@ -1,0 +1,8 @@
+version: 3
+tasks:
+  hash:test:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target hash_function_test
+  hash:run:
+    cmds:
+      - $OUTPUT_DIR/$BUILD_TYPE/hash_function_test

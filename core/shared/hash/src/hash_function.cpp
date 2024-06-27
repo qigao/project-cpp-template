@@ -1,65 +1,100 @@
 #include "hash_function.hpp"
-#include <fmt/core.h>
-#include <iterator>
-#include <range/v3/all.hpp>
-#include <sodium.h>
-#include <sodium/crypto_hash_sha256.h>
-
+#include "fs.hpp"
+#include <cstring>
+#include <openssl/evp.h>
 class hash_function::hashImpl
 {
 public:
-    bool sha_256_hash_sodium(char const* data, int len, unsigned char* out)
+    std::string sha_256_hash(char const* input, int len)
     {
-        int result = crypto_hash_sha256(
-            out, reinterpret_cast<unsigned char const*>(data), len);
-        return result == 0;
+        unsigned char hash[EVP_MAX_MD_SIZE];
+        unsigned int hashLen;
+        EVP_MD_CTX* ctx = EVP_MD_CTX_new();
+        EVP_DigestInit_ex(ctx, EVP_sha256(), nullptr);
+        EVP_DigestUpdate(ctx, input, len);
+        EVP_DigestFinal_ex(ctx, hash, &hashLen);
+        EVP_MD_CTX_free(ctx);
+        return to_hex(hash, hashLen);
     }
-    std::string bin2hex_sodium(unsigned char* hash, int len_hash)
+
+    std::string md5(char const* input, int len)
     {
-        unsigned int const max_hash_len = crypto_hash_sha256_BYTES * 2 + 1;
-        char hashHex[max_hash_len];
-        sodium_bin2hex(hashHex, max_hash_len, hash, len_hash);
-        std::string result;
-        ranges::copy(hashHex, hashHex + max_hash_len - 1,
-                     std::back_inserter(result));
-        return result;
+        EVP_MD_CTX* context = EVP_MD_CTX_new();
+        const EVP_MD* md = EVP_md5();
+        unsigned char md_value[EVP_MAX_MD_SIZE];
+        unsigned int md_len;
+
+        EVP_DigestInit_ex2(context, md, nullptr);
+        EVP_DigestUpdate(context, input, len);
+        EVP_DigestFinal_ex(context, md_value, &md_len);
+        EVP_MD_CTX_free(context);
+
+        return to_hex(md_value, md_len);
     }
-    hashImpl()
+    std::string sha1_hash(char const* input, int len)
     {
-        if (sodium_init() < 0)
+        EVP_MD_CTX* context = EVP_MD_CTX_new();
+        if (context == nullptr)
         {
-            throw std::runtime_error("Failed to initialize hash ");
+            throw std::runtime_error("EVP_MD_CTX_new failed");
         }
+
+        if (EVP_DigestInit_ex(context, EVP_sha1(), nullptr) != 1)
+        {
+            EVP_MD_CTX_free(context);
+            throw std::runtime_error("EVP_DigestInit_ex failed");
+        }
+
+        if (EVP_DigestUpdate(context, input, len) != 1)
+        {
+            EVP_MD_CTX_free(context);
+            throw std::runtime_error("EVP_DigestUpdate failed");
+        }
+
+        unsigned char digest[EVP_MAX_MD_SIZE];
+        unsigned int digest_length;
+        if (EVP_DigestFinal_ex(context, digest, &digest_length) != 1)
+        {
+            EVP_MD_CTX_free(context);
+            throw std::runtime_error("EVP_DigestFinal_ex failed");
+        }
+
+        EVP_MD_CTX_free(context);
+
+        return to_hex(digest, digest_length);
     }
+    hashImpl() {}
+
+private:
 };
 
-hash_function::hash_function() : pimpl(new hashImpl) {}
+hash_function::hash_function() : pimpl(std::make_unique<hashImpl>()) {}
 hash_function::~hash_function() {}
 
 std::string hash_function::sha_256_hash(std::string const& data)
 {
-    unsigned char hash[crypto_hash_sha256_BYTES];
-    auto result = pimpl->sha_256_hash_sodium(data.c_str(), data.length(), hash);
-    if (result)
-    {
-        return pimpl->bin2hex_sodium(hash, crypto_hash_sha256_BYTES);
-    }
-    else
-    {
-        return "";
-    }
+    return pimpl->sha_256_hash(data.c_str(), data.length());
 }
 
 std::string hash_function::sha_256_hash(char const* data)
 {
-    unsigned char hash[crypto_hash_sha256_BYTES];
-    auto result = pimpl->sha_256_hash_sodium(data, strlen(data), hash);
-    if (result)
-    {
-        return pimpl->bin2hex_sodium(hash, crypto_hash_sha256_BYTES);
-    }
-    else
-    {
-        return "";
-    }
+    return pimpl->sha_256_hash(data, strlen(data));
+}
+std::string hash_function::sha1_hash(std::string const& data)
+{
+    return pimpl->sha1_hash(data.c_str(), data.length());
+}
+
+std::string hash_function::sha1_hash(char const* data)
+{
+    return pimpl->sha1_hash(data, strlen(data));
+}
+
+std::string hash_function::md5_hash(char const* data)
+{
+    return pimpl->md5(data, strlen(data));
+}
+std::string hash_function::md5_hash(std::string const& data)
+{
+    return pimpl->md5(data.c_str(), data.length());
 }

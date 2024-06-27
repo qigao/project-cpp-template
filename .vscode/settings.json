@@ -71,5 +71,5 @@
     //http collection 保存路径
     "flashpost.saveDataToWorkspace": false,
     "flashpost.workspaceDataRelativePath": "rest-api-test",
-    "livePreview.defaultPreviewPath": "/build/developer/yaml_convert_coverage/index.html",
+    "liveServer.settings.port": 5501,
 }
