@@ -257,7 +257,7 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
         auto path = pathname.filename().string();
         auto result = std::map<std::string, std::string>();
         result.emplace("path", path);
-        auto str_size = fmt::format("{}", get_file_size(pathname));
+        auto str_size = fmt::format("{}", get_file_size(path));
         result.emplace("size", str_size);
         kv_list.push_back(result);
     }

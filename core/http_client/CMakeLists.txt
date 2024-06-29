@@ -46,7 +46,7 @@ target_include_interface_directories(
 )
 find_package(Threads)
 # Link dependencies:
-target_find_dependencies(${TARGET_NAME} PUBLIC_CONFIG httplib spdlog cpp_yyjson)
+target_find_dependencies(${TARGET_NAME} PUBLIC_CONFIG httplib spdlog cpp_yyjson fmt)
 target_link_system_libraries(
   ${TARGET_NAME}
   PUBLIC
@@ -54,6 +54,7 @@ target_link_system_libraries(
   spdlog::spdlog
   Threads::Threads
   cpp_yyjson::cpp_yyjson
+  fmt::fmt
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )

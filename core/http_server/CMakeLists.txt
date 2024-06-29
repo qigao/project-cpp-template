@@ -45,6 +45,7 @@ target_find_dependencies(
   cpp_yyjson
   yaml-cpp
   CLI11
+  fmt
 )
 target_link_system_libraries(
   ${TARGET_NAME_LIB}
@@ -56,6 +57,7 @@ target_link_system_libraries(
   yaml-cpp::yaml-cpp
   hash_lib
   CLI11::CLI11
+  fmt::fmt
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )

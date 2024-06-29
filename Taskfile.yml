@@ -96,6 +96,10 @@ tasks:
     cmds:
       - cmake --build --list-presets
       - cmake --preset $CONFIG
+  build.all:
+    desc: build all the targets by presets
+    cmds:
+      - cmake --build --preset $CONFIG
   default:
     desc: list all tasks
     cmds:

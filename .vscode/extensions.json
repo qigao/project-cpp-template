@@ -28,6 +28,7 @@
         "christian-kohler.path-intellisense",
         "daohong-emilio.yash",
         "ritwickdey.liveserver",
-        "vadimcn.vscode-lldb"
+        "vadimcn.vscode-lldb",
+        "amazonwebservices.amazon-q-vscode"
     ]
 }

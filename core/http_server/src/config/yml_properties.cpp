@@ -19,7 +19,7 @@ public:
             spdlog::error("file {} does not exist", file_name_);
             return;
         }
-        tree_ = YAML::LoadFile(file);
+        tree_ = YAML::LoadFile(file_name_);
     }
 
     server_config get(std::string const& key)
