@@ -1,11 +1,12 @@
-#include "../public/http_client_lib.h"
 #include "fs.hpp"
-#include <cpp_yyjson.hpp>
 #include <cstdio>
 #include <filesystem>
 #include <functional>
 #include <gtest/gtest.h>
+#include <string>
+#include <yyjson.h>
 
+#include "../public/http_client_lib.h"
 #include "http/http_file_handle.hpp"
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
@@ -31,17 +32,18 @@ TEST(HttpClientTest, uploadFileByStream)
     auto http_client_api = new_http_client(HOST, PORT);
     set_auth_token(http_client_api, "123456");
     http_request_initialize(http_client_api);
-    auto tmp_folder = mkdir("/tmp/test", 0777);
-    char const* filename = "/tmp/test/test.txt";
+    fs::path tmp{std::filesystem::temp_directory_path()};
+    std::string filename = tmp / "test.txt";
+
     std::ofstream ofs(filename, std::ofstream::binary);
     ofs.write("hello", 5);
     ofs.close();
 
     std::ifstream file(filename, std::ifstream::binary);
-    post_file_stream_request(http_client_api, "/upload", filename);
+    post_file_stream_request(http_client_api, "/upload", filename.c_str());
 
     file.close();
-    std::remove(filename);
+    fs::remove(filename);
 }
 TEST(HttpClientTest, listFile)
 {
@@ -130,9 +132,11 @@ TEST(HttpClientTest, postJsonRequest)
     auto http_client_api = new_http_client(HOST, PORT);
     http_request_initialize(http_client_api);
     // When
-    auto req = yyjson::object();
-    req.emplace("id", 200);
-    req.emplace("msg", "demo");
-    auto body = req.write();
-    post_json_request(http_client_api, "/hello/100", body.data());
+    yyjson_mut_doc* doc = yyjson_mut_doc_new(nullptr);
+    yyjson_mut_val* root = yyjson_mut_obj(doc);
+    yyjson_mut_doc_set_root(doc, root);
+    yyjson_mut_obj_add_str(doc, root, "msg", "demo");
+    yyjson_mut_obj_add_int(doc, root, "id", 200);
+    auto json = yyjson_mut_write(doc, 0, nullptr);
+    post_json_request(http_client_api, "/hello/100", json);
 }

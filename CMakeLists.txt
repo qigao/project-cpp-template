@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.21...3.28)
 # set a default CXX standard for the tools and targets that do not specify them.
 # If commented, the latest supported standard for your compiler is automatically set.
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -63,10 +63,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 file(
   WRITE ${CMAKE_BINARY_DIR}/task_vars.env
   "
-CMAKE_BUILD_DIR=${CMAKE_BINARY_DIR}
-CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-CNMAKE_OUTPUT_DIR=${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}
-"
+    CMAKE_BUILD_DIR=${CMAKE_BINARY_DIR}
+    CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    CMAKE_OUTPUT_DIR=${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}
+  "
 )
 file(CREATE_LINK ${CMAKE_BINARY_DIR}/task_vars.env
      ${PROJECT_SOURCE_DIR}/task_vars.env

@@ -1,5 +1,4 @@
 #include <atomic>
-#include <latch>
 #include <thread>
 #include <vector>
 
@@ -25,16 +24,14 @@ TEST(SingletonTest, multiThread)
 {
     auto const count = std::thread::hardware_concurrency();
     std::cout << "hardware: " << count << std::endl;
-    std::latch block{static_cast<std::ptrdiff_t>(count)};
     std::vector<std::thread> threads;
 
     threads.reserve(count);
     for (auto i = 0u; i < count; ++i)
     {
         threads.emplace_back(
-            [&block]
+            [&]
             {
-                block.arrive_and_wait();
                 Counter::Construct();
                 Counter::GetInstance()->Add();
             });

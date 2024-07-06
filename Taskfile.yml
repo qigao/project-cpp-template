@@ -94,7 +94,7 @@ tasks:
   config:
     desc: list all cmake presets, then generate the developer preset
     cmds:
-      - cmake --build --list-presets
+      - cmake --list-presets all
       - cmake --preset $CONFIG
   build.all:
     desc: build all the targets by presets

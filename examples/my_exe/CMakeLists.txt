@@ -40,16 +40,13 @@ target_include_interface_directories(
   ${CMAKE_SOURCE_DIR}/core/shared/utils ${CMAKE_SOURCE_DIR}/core/shared/http
 )
 # Link dependencies:
-target_find_dependencies(
-  ${TARGET_NAME_LIB} PUBLIC_CONFIG httplib spdlog cpp_yyjson
-)
+target_find_dependencies(${TARGET_NAME_LIB} PUBLIC_CONFIG httplib spdlog)
 target_link_system_libraries(
   ${TARGET_NAME_LIB}
   PUBLIC
   httplib::httplib
   spdlog::spdlog_header_only
   Threads::Threads
-  cpp_yyjson::cpp_yyjson
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )

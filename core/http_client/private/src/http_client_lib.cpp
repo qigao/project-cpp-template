@@ -1,14 +1,12 @@
 #include "http_client_lib.h"
 #include "constants.hpp"
-#include "fs.hpp"
 #include "helpers.hpp"
 #include "http_file_download.hpp"
-#include "http_lib_header.hpp"
 #include <BS_thread_pool.hpp>
-#include <cpp_yyjson.hpp>
 #include <filesystem>
 #include <range/v3/all.hpp>
 #include <thread>
+#include <yyjson.h>
 
 namespace fs = std::filesystem;
 
@@ -78,12 +76,7 @@ void post_json_request(http_client_handle* handle, char const* url,
     auto resp_result = handle->pool->submit_task(
         [&]
         {
-            auto req = yyjson::object();
-            req.emplace("id", 200);
-            req.emplace("msg", "demo");
-            auto body = req.write();
-            auto resp =
-                handle->mClient->Post("/hello/100", body.data(), APP_JSON);
+            auto resp = handle->mClient->Post("/hello/100", json, APP_JSON);
             return resp;
         });
     auto resp = resp_result.get();
@@ -92,11 +85,6 @@ void post_json_request(http_client_handle* handle, char const* url,
         spdlog::error("failed to post json request");
         return;
     }
-    auto val = yyjson::read(resp->body);
-    auto obj = *val.as_object();
-    auto id = *obj["id"].as_int();
-
-    auto msg = *obj["msg"].as_string();
 }
 
 void post_image_info_request(http_client_handle* handle, char const* url,
@@ -116,11 +104,8 @@ void post_image_info_request(http_client_handle* handle, char const* url,
                 spdlog::error("failed to post json request");
                 return;
             }
-            auto val = yyjson::read(resp->body);
-            auto obj = *val.as_object();
-            auto id = *obj["id"].as_int();
-            auto msg = *obj["msg"].as_string();
-            spdlog::info("id: {}, msg: {}", id, msg);
+            auto doc =
+                yyjson_read(resp->body.c_str(), resp->content_length_, 0);
         });
 }
 void post_file_request(http_client_handle* handle, char const* url,
