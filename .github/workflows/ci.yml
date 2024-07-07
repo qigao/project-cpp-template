@@ -36,8 +36,7 @@ jobs:
           - compiler: gcc
             GCOV: gcov
           - os: windows-2022
-            compiler: msvc
-            CMAKE_GENERATOR: "Visual Studio 17 2022"
+            compiler: cl
     steps:
       - uses: actions/checkout@v4
       - name: Cache
