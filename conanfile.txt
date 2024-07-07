@@ -5,7 +5,7 @@ cli11/2.4.2
 cpp-httplib/0.15.3
 
 # serialization
-cpp-yyjson/0.5.0
+yyjson/0.9.0
 yaml-cpp/0.8.0
 taskflow/3.7.0
 

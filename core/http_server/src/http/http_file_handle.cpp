@@ -1,19 +1,18 @@
 #include "http/http_file_handle.hpp"
 #include "constants.hpp"
-#include "cpp_yyjson.hpp"
 #include "fs.hpp"
 #include "spdlog/spdlog.h"
+#include "yyjson.h"
 #include <algorithm>
 #include <cstdio>
-#include <filesystem>
+#include <cstring>
+#include <experimental/filesystem>
 #include <fmt/core.h>
 #include <fstream>
 
 #include <map>
 #include <sstream>
 #include <vector>
-
-#include "http_lib_header.hpp"
 
 namespace fs = std::filesystem;
 HttpFileHandle::HttpFileHandle(std::string const& shared_folder,
@@ -241,7 +240,11 @@ void HttpFileHandle::upload_file_by_multiform(httplib::Request const& req,
 void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
                                        httplib::Response& res)
 {
-    auto kv_list = std::vector<std::map<std::string, std::string>>();
+    // Create a mutable doc
+    yyjson_mut_doc* doc = yyjson_mut_doc_new(NULL);
+    yyjson_mut_val* root = yyjson_mut_arr(doc);
+    yyjson_mut_doc_set_root(doc, root);
+
     fs::directory_iterator item_begin(shared_folder_);
     fs::directory_iterator item_end;
     for (; item_begin != item_end; ++item_begin)
@@ -251,20 +254,25 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
         {
             continue;
         }
-
-        // 文件则放入body中,用\n分割标记
         auto pathname = item_begin->path();
-        auto path = pathname.filename().string();
-        auto result = std::map<std::string, std::string>();
-        result.emplace("path", path);
-        auto str_size = fmt::format("{}", get_file_size(path));
-        result.emplace("size", str_size);
-        kv_list.push_back(result);
+        auto path = pathname.filename().c_str();
+        auto file_size = get_file_size(path);
+        yyjson_mut_val* obj = yyjson_mut_obj(doc);
+        yyjson_mut_obj_add_str(doc, obj, "path", path);
+        yyjson_mut_obj_add_int(doc, obj, "size", file_size);
+        yyjson_mut_arr_append(root, obj);
     }
     // 设置body格式--文本文件 和状态码
-    auto body = yyjson::array(kv_list).write();
-    res.set_content(body.data(), APP_JSON);
+    char const* json = yyjson_mut_write(doc, 0, nullptr);
+    if (json)
+    {
+        res.set_content(json, strlen(json), APP_JSON);
+        free((void*)json);
+    }
+    char const* not_found = R"({"message":"no files found"})";
+    res.set_content(not_found, strlen(not_found), APP_JSON);
     res.status = 200;
+    yyjson_mut_doc_free(doc);
 }
 
 void HttpFileHandle::handle_stream_file(
@@ -317,7 +325,7 @@ void HttpFileHandle::handle_file_upload(
     {
         spdlog::info("upload file by multipart");
         handle_multipart_file(content_reader);
-        res.set_content(R"({"message":"upload result"})", APP_JSON);
+        res.set_content(UP_LOAD_MESSAGE, APP_JSON);
     }
     else
     {
@@ -342,7 +350,7 @@ void HttpFileHandle::handle_file_upload(
                 spdlog::info("filename: {}", filename);
             }
             handle_stream_file(filename, content_reader);
-            res.set_content(R"({"message":"upload result"})", APP_JSON);
+            res.set_content(UP_LOAD_MESSAGE, APP_JSON);
         }
         else
         {

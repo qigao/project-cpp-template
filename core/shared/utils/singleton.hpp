@@ -1,8 +1,9 @@
-#ifndef SINGLETON_ATOMIC_HPP_
-#define SINGLETON_ATOMIC_HPP_
+#ifndef SINGLETON_DCLP_HPP_
+#define SINGLETON_DCLP_HPP_
 
 #include <atomic>
 #include <mutex>
+#include <shared_mutex>
 #include <utility>
 
 template <typename Derived>
@@ -18,32 +19,48 @@ public:
         struct Dummy final : Derived
         {
             using Derived::Derived;
-            consteval void
-            ProhibitConstructFromDerived() const noexcept override
-            {
-            }
+            void ProhibitConstructFromDerived() const noexcept override {}
         };
         using Instance = Dummy;
 #endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
         if (!instance_.load(std::memory_order_acquire))
         {
-            std::unique_lock lock{mutex_};
+            std::lock_guard lock{mutex_};
 
             if (!instance_.load(std::memory_order_relaxed))
-            {
                 instance_.store(new Instance{std::forward<Args>(args)...},
                                 std::memory_order_release);
-                lock.unlock();
-                instance_.notify_all();
+        }
+    }
+
+    static void Destruct()
+    {
+        if (instance_.load(std::memory_order_acquire))
+        {
+            std::lock_guard lock{mutex_};
+
+            if (auto* instance = instance_.load(std::memory_order_relaxed);
+                instance)
+            {
+                delete instance;
+                instance_.store(nullptr, std::memory_order_release);
             }
         }
     }
 
-    static Derived* GetInstance() noexcept
+    static Derived* GetInstance()
     {
-        instance_.wait(nullptr, std::memory_order_acquire);
-        return instance_.load(std::memory_order_relaxed);
+        auto* instance = instance_.load(std::memory_order_acquire);
+
+        if (!instance)
+        {
+            std::shared_lock lock{mutex_};
+
+            instance = instance_.load(std::memory_order_relaxed);
+        }
+
+        return instance;
     }
 
 protected:
@@ -55,27 +72,16 @@ protected:
 #ifndef SINGLETON_INJECT_ABSTRACT_CLASS
     ~Singleton() = default;
 #else
-    virtual ~SingletonAtomic() = default;
+    virtual ~SingletonDclp() = default;
 #endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
 private:
-    struct Deleter
-    {
-        ~Deleter() noexcept(noexcept(std::declval<Derived>().~Derived()))
-        {
-            delete instance.load(std::memory_order_acquire);
-        }
-
-        std::atomic<Derived*> instance{nullptr};
-    };
-
 #ifdef SINGLETON_INJECT_ABSTRACT_CLASS
-    consteval virtual void ProhibitConstructFromDerived() const noexcept = 0;
+    virtual void ProhibitConstructFromDerived() const noexcept = 0;
 #endif // SINGLETON_INJECT_ABSTRACT_CLASS
 
-    inline static Deleter deleter_;
-    inline static auto& instance_{deleter_.instance};
-    inline static std::mutex mutex_;
+    inline static std::atomic<Derived*> instance_{nullptr};
+    inline static std::shared_mutex mutex_;
 };
 
-#endif // SINGLETON_ATOMIC_HPP_
+#endif // SINGLETON_DCLP_HPP_

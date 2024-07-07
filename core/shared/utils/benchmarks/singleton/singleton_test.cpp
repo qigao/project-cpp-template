@@ -2,7 +2,7 @@
 #include "singleton.hpp"
 #include <gtest/gtest.h>
 #include <nanobench.h>
-class Foo : public SingletonDclp<Foo>
+class Foo : public Singleton<Foo>
 {
 public:
     explicit Foo(int n) : n_{n} {}

@@ -5,6 +5,7 @@
 
 #include <string>
 
+#define UP_LOAD_MESSAGE R"({"message":"upload result"})"
 class HttpFileHandle
 {
 public:

@@ -4,19 +4,19 @@
 
 version: 3
 tasks:
-  http_client:test:
+  http_client:test:build:
     cmds:
       - cmake --build  $BUILD_DIR   --target http_client_test
-  http_client:run:
+  http_client:test:run:
     deps:
-      - task: http_client:test
+      - task: http_client:test:build
     cmds:
-      - $OUTPUT_DIR/$BUILD_TYPE/http_client_test
-  sum:test:
+      - cmd: cd $BUILD_DIR && ctest -R HttpClientTest
+  sum:test:build:
     cmds:
       - cmake --build  $BUILD_DIR  --target sum_test
-  sum:run:
+  sum:test:run:
     deps:
-      - task: sum:test
+      - task: sum:test:build
     cmds:
-      - $OUTPUT_DIR/$BUILD_TYPE/sum_test
+      - cmd: cd $BUILD_DIR && ctest -R DemoTest

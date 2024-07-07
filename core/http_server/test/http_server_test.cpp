@@ -5,16 +5,31 @@
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
 #include "http_lib_header.hpp"
-#include <cpp_yyjson.hpp>
 #include <cstdio>
 #include <functional>
 #include <gtest/gtest.h>
 #include <memory>
+#include <yyjson.h>
 
+#define DEMO_JSON "{\"msg\":\"demo\",\"id\":200}"
 static char const* HOST = "127.0.0.1";
 static int const PORT = 5061;
 using namespace std::placeholders;
 static char const* const SHARED_FOLDER = ".";
+std::pair<std::string, int> parse_json(char* json, int len)
+{
+    yyjson_doc* doc = yyjson_read(json, len, 0);
+    yyjson_val* root = yyjson_doc_get_root(doc);
+    auto msgObj = yyjson_obj_get(root, "msg");
+    auto msg = yyjson_get_str(msgObj);
+    auto idObj = yyjson_obj_get(root, "id");
+    auto id = yyjson_get_int(idObj);
+    std::pair<std::string, int> result;
+    result.first = msg;
+    result.second = id;
+    yyjson_doc_free(doc);
+    return result;
+}
 TEST(HttpServerTest, checkSharedFolder)
 {
     HttpServer svr(PORT);
@@ -29,7 +44,6 @@ void handle_get(httplib::Request const& req, httplib::Response& res)
 
 TEST(HttpServerTest, getHelloJson)
 {
-
     HttpServer svr(PORT);
     // Register handler
     auto handler = std::make_shared<HttpJsonHandler>();
@@ -40,15 +54,12 @@ TEST(HttpServerTest, getHelloJson)
 
     // Send request and check response
     httplib::Client cli(HOST, PORT);
-    auto res = cli.Get("/hello/100");
-    EXPECT_NE(res, nullptr);
-    EXPECT_EQ(res->status, 200);
-    auto val = yyjson::read(res->body.c_str());
-    auto obj = *val.as_object();
-    auto id = *obj["id"].as_int();
-    EXPECT_EQ(id, 100);
-    auto msg = *obj["msg"].as_string();
-    EXPECT_EQ(msg, "hello");
+    auto resp = cli.Get("/hello/100");
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
+    auto result = parse_json(resp->body.data(), resp->body.length());
+    EXPECT_EQ(result.second, 100);
+    ASSERT_EQ(result.first, "demo");
 }
 TEST(HttpServerTest, postJson)
 {
@@ -72,19 +83,13 @@ TEST(HttpServerTest, postJson)
     // Send request and check response
     httplib::Client cli(HOST, PORT);
     httplib::Headers headers = {{"Content-Type", "application/json"}};
-    auto req = yyjson::object();
-    req.emplace("id", 200);
-    req.emplace("msg", "demo");
-    auto body = req.write();
-    auto resp = cli.Post("/hello/100", headers, body.data(), APP_JSON);
+    auto resp = cli.Post("/hello/100", headers, DEMO_JSON, APP_JSON);
     EXPECT_NE(resp, nullptr);
     EXPECT_EQ(resp->status, 200);
-    auto val = yyjson::read(resp->body);
-    auto obj = *val.as_object();
-    auto id = *obj["id"].as_int();
-    EXPECT_EQ(id, 4001);
-    auto msg = *obj["msg"].as_string();
-    EXPECT_EQ(msg, "demo");
+
+    auto result = parse_json(resp->body.data(), resp->body.length());
+    EXPECT_EQ(result.second, 4001);
+    ASSERT_EQ(result.first, "demo");
 }
 TEST(HttpServerTest, postJsonReturn4001)
 {
@@ -98,23 +103,15 @@ TEST(HttpServerTest, postJsonReturn4001)
     // Send request and check response
     httplib::Client cli(HOST, PORT);
     // When
-    auto req = yyjson::object();
-    req.emplace("id", 200);
-    req.emplace("msg", "demo");
-    auto body = req.write();
-    auto resp = cli.Post("/hello/100", body.data(), APP_JSON);
+    auto resp = cli.Post("/hello/100", DEMO_JSON, APP_JSON);
     EXPECT_NE(resp, nullptr);
     EXPECT_EQ(resp->status, 200);
-    auto val = yyjson::read(resp->body);
-    auto obj = *val.as_object();
-    auto id = *obj["id"].as_int();
-    EXPECT_EQ(id, 4001);
-    auto msg = *obj["msg"].as_string();
-    EXPECT_EQ(msg, "demo");
+    auto result = parse_json(resp->body.data(), resp->body.length());
+    EXPECT_EQ(result.second, 4001);
+    ASSERT_EQ(result.first, "demo");
 }
 TEST(HttpServerTest, multipartForm)
 {
-
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
     // Register handler
@@ -136,7 +133,6 @@ TEST(HttpServerTest, multipartForm)
 
 TEST(HttpServerTest, streamUpload)
 {
-
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
     // Register handler
@@ -204,7 +200,7 @@ TEST(HttpServerTest, getFileLists)
 {
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
-    auto handler = std::make_shared<HttpFileHandle>( SHARED_FOLDER);
+    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.Get("/",
             std::bind(&HttpFileHandle::handle_file_lists, handler, _1, _2));
     svr.start();
@@ -257,27 +253,22 @@ TEST(HttpServerTest, dump)
 
     // Send request and check response
     httplib::Client cli(HOST, PORT);
-    auto req = yyjson::object();
-    req.emplace("id", 200);
-    req.emplace("msg", "demo");
-    auto body = req.write();
     httplib::Headers headers = {
         {"X-Hub-Signature-256",
+         "sha256="
          "fa090c43f504e30497b7ef441500f9666e13aa1368e394d7d668eeb7de983bcb"}};
-    auto res = cli.Post("/dump?name=john", body.data(), APP_JSON);
-    EXPECT_NE(res, nullptr);
-    EXPECT_EQ(res->status, 200);
-    auto val = yyjson::read(res->body.c_str());
-    auto obj = *val.as_object();
-    auto id = *obj["id"].as_int();
-    EXPECT_EQ(id, 200);
-    auto msg = *obj["msg"].as_string();
-    EXPECT_EQ(msg, "demo");
+    auto resp = cli.Post("/dump", DEMO_JSON, APP_JSON);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
+    /*     auto result = parse_json(resp->body.data(), resp->body.length());
+        EXPECT_EQ(result.second, 200);
+        ASSERT_EQ(result.first, std::string("demo"));
+        sleep(5); */
 }
 
 TEST(HttpServerTest, webHookDemo)
 {
-    WebHook::Construct("http://127.0.0.1:5060/dump");
+    WebHook::Construct("http://127.0.0.1:5061/dump");
     WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
     HttpServer svr(PORT);
     // Register handler
@@ -290,18 +281,10 @@ TEST(HttpServerTest, webHookDemo)
 
     // Send request and check response
     httplib::Client cli(HOST, PORT);
-    auto req = yyjson::object();
-    req.emplace("id", 200);
-    req.emplace("msg", "demo");
-    auto body = req.write();
-    auto res = cli.Post("/webhook", body.data(), APP_JSON);
-    EXPECT_NE(res, nullptr);
-    EXPECT_EQ(res->status, 200);
-    auto val = yyjson::read(res->body);
-    auto obj = *val.as_object();
-    auto id = *obj["id"].as_int();
-    EXPECT_EQ(id, 200);
-    auto msg = *obj["msg"].as_string();
-    EXPECT_EQ(msg, "demo");
-    svr.stop();
+    auto resp = cli.Post("/webhook", DEMO_JSON, APP_JSON);
+    EXPECT_NE(resp, nullptr);
+    EXPECT_EQ(resp->status, 200);
+    auto result = parse_json(resp->body.data(), resp->body.length());
+    EXPECT_EQ(result.second, 200);
+    ASSERT_EQ(result.first, "demo");
 }

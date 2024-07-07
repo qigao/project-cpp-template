@@ -9,7 +9,7 @@ option(FEATURE_DOCS "Enable the docs" OFF)
 option(ENABLE_OPENSSL "Enable OpenSSL support" ON)
 # fuzz tests
 option(FEATURE_FUZZ_TESTS "Enable the fuzz tests" OFF)
-
+option(ENABLE_BENCHMARKS "Enable benchmark tests" OFF)
 option(ENABLE_CROSS_COMPILING "Detect cross compiler and setup toolchain" OFF)
 option(ENABLE_SAMPLE_PROJECT_COMPILING "Enable sample projects" OFF)
 

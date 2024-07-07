@@ -23,8 +23,6 @@ if(ENABLE_OPENSSL)
   find_package(OpenSSL REQUIRED)
 endif()
 
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
 
@@ -42,7 +40,7 @@ target_find_dependencies(
   PUBLIC_CONFIG
   httplib
   spdlog
-  cpp_yyjson
+  yyjson
   yaml-cpp
   CLI11
   fmt
@@ -53,7 +51,7 @@ target_link_system_libraries(
   httplib::httplib
   spdlog::spdlog
   Threads::Threads
-  cpp_yyjson::cpp_yyjson
+  yyjson::yyjson
   yaml-cpp::yaml-cpp
   hash_lib
   CLI11::CLI11
