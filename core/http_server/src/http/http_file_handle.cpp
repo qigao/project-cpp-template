@@ -255,7 +255,7 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
             continue;
         }
         auto pathname = item_begin->path();
-        auto path = pathname.filename();
+        auto path = pathname.filename().string();
         auto file_size = get_file_size(path);
         yyjson_mut_val* obj = yyjson_mut_obj(doc);
         yyjson_mut_obj_add_str(doc, obj, "path", path.c_str());
