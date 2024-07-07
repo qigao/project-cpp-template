@@ -36,7 +36,7 @@ jobs:
           - compiler: gcc
             GCOV: gcov
           - os: windows-2022
-            compiler: cl
+            compiler: msvc
     steps:
       - uses: actions/checkout@v4
       - name: Cache
@@ -58,7 +58,7 @@ jobs:
         uses: aminya/setup-cpp@v1
         with:
           compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+          vcvarsall: ${{ contains(matrix.os, 'windows') }}
           cmake: true
           ninja: true
           vcpkg: true
@@ -81,8 +81,6 @@ jobs:
       - name: config and setup project
         run: |
             task config
-        env:
-            CMAKE_GENERATOR: ${{env.CMAKE_GENERATOR}}
       - name: build all the project
         run: |
             task build.all
