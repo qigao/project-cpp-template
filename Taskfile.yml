@@ -86,11 +86,7 @@ tasks:
   test.all:
     desc: all the test tasks from modules
     cmds:
-      - task: core:server:yaml_convert:run
-      - task: core:server:yaml_properties:run
-      - task: core:server:http_server:run
-      - task: core:client:http_client:run
-      - task: core:client:sum:run
+      - ctest --preset $CONFIG
   config:
     desc: list all cmake presets, then generate the developer preset
     cmds:
