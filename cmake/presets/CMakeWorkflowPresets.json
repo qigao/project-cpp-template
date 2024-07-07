@@ -54,7 +54,6 @@
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_SKIP_INSTALL_RULES": false,
         "BUILD_SHARED_LIBS": true,
-        "FEATURE_FUZZ_TESTS": false,
         "FEATURE_TESTS": true,
         "FEATURE_DOCS": false,
         "WARNINGS_AS_ERRORS": false

@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
 
@@ -241,7 +241,7 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
                                        httplib::Response& res)
 {
     // Create a mutable doc
-    yyjson_mut_doc* doc = yyjson_mut_doc_new(NULL);
+    yyjson_mut_doc* doc = yyjson_mut_doc_new(nullptr);
     yyjson_mut_val* root = yyjson_mut_arr(doc);
     yyjson_mut_doc_set_root(doc, root);
 
@@ -255,10 +255,10 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
             continue;
         }
         auto pathname = item_begin->path();
-        auto path = pathname.filename().c_str();
+        auto path = pathname.filename();
         auto file_size = get_file_size(path);
         yyjson_mut_val* obj = yyjson_mut_obj(doc);
-        yyjson_mut_obj_add_str(doc, obj, "path", path);
+        yyjson_mut_obj_add_str(doc, obj, "path", path.c_str());
         yyjson_mut_obj_add_int(doc, obj, "size", file_size);
         yyjson_mut_arr_append(root, obj);
     }

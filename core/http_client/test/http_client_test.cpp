@@ -33,7 +33,7 @@ TEST(HttpClientTest, uploadFileByStream)
     set_auth_token(http_client_api, "123456");
     http_request_initialize(http_client_api);
     fs::path tmp{std::filesystem::temp_directory_path()};
-    std::string filename = tmp / "test.txt";
+    std::string filename = tmp.append("test.txt");
 
     std::ofstream ofs(filename, std::ofstream::binary);
     ofs.write("hello", 5);
