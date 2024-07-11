@@ -73,19 +73,19 @@ jobs:
       - name: Test
         run: |
             task test.all
-    #   - name: Test/Coverage
-    #     run: |
-    #         task coverage.all
-    #   - name: Publish Tagged Release
-    #     uses: softprops/action-gh-release@v2
-    #     if: ${{ startsWith(github.ref, 'refs/tags/')  }}
-    #     with:
-    #         files: |
-    #           build/*-*Release*-*.*
-    #   - name: Publish to codecov
-    #     uses: codecov/codecov-action@v4.0.1
-    #     with:
-    #         flags: ${{ runner.os }}
-    #         name: ${{ runner.os }}-coverage
-    #         files: ./build/coverage.xml
-    #         token: ${{ secrets.CODECOV_TOKEN  }}
+      - name: Test/Coverage
+        run: |
+            task coverage.all
+      - name: Publish Tagged Release
+        uses: softprops/action-gh-release@v2
+        if: ${{ startsWith(github.ref, 'refs/tags/')  }}
+        with:
+            files: |
+              build/*-*Release*-*.*
+      - name: Publish to codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+            flags: ${{ runner.os }}
+            name: ${{ runner.os }}-coverage
+            files: ./build/coverage.xml
+            token: ${{ secrets.CODECOV_TOKEN  }}

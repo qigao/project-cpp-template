@@ -36,14 +36,7 @@ tasks:
         {{else}}
            mkdir -p ./build/coverage/
 
-          gcovr -j {{.nproc | default 1}} --delete \
-          --filter "core/" \ 
-          -e '/.*/build/' \
-          -e "project" \
-          -e ".*/test/.*" \
-           --root ./ --print-summary \
-           --html-details ./build/coverage/index.html \
-           --xml-pretty --xml ./build/coverage.xml ./build
+         gcovr -r . -e '/.*/build/'  -e '/.*/test/'   --html --html-details -o build/coverage/index.html --xml-pretty --xml build/coverage.xml
 
           echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
         {{end}}
