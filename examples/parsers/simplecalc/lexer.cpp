@@ -4,6 +4,7 @@
 //  Reads in a file, and outputs the result of each calculation.
 
 #include "parser.c"
+
 #include <iostream>
 #include <stdlib.h>
 #include <string>

@@ -29,6 +29,8 @@
         "daohong-emilio.yash",
         "ritwickdey.liveserver",
         "vadimcn.vscode-lldb",
-        "amazonwebservices.amazon-q-vscode"
+        "amazonwebservices.amazon-q-vscode",
+        "jacqueslucke.gcov-viewer",
+        "sr-team.gcov-viewer-cmake"
     ]
 }

@@ -1,13 +1,14 @@
 
 #line 1 "ini.rl"
+#include "ini.hh"
+
+#include "mmap.hh"
+
 #include <cassert>
 #include <cstddef>
 #include <cstring>
 #include <memory>
 #include <string>
-
-#include "ini.hh"
-#include "mmap.hh"
 
 using std::unique_ptr;
 

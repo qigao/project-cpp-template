@@ -1,4 +1,5 @@
 #include "hash_function.hpp"
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 

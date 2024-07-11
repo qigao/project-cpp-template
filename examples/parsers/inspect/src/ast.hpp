@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "address.hpp"
 #include "binary_op.h"
+
+#include <string>
+#include <vector>
 
 typedef std::vector<std::string> Arguments;
 

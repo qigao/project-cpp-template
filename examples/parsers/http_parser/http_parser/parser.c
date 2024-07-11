@@ -5,6 +5,7 @@
  * You can redistribute it and/or modify it under the same terms as Ruby.
  */
 #include "parser.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>

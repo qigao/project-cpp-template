@@ -6,6 +6,7 @@
 #include "http/http_json_handle.hpp"
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
+
 #include <CLI/CLI.hpp>
 #include <functional>
 #include <memory>
@@ -33,8 +34,9 @@ void startServerSSL(server_config const& config)
     server.PostWithReader(
         "/upload",
         std::bind(&HttpFileHandle::handle_file_upload, mHttpFile, _1, _2, _3));
-    server.Post("/download", std::bind(&HttpFileHandle::handle_file_download,
-                                       mHttpFile, _1, _2));
+    server.Post(
+        "/download/(.*)",
+        std::bind(&HttpFileHandle::handle_file_download, mHttpFile, _1, _2));
     server.Get("/list", std::bind(&HttpFileHandle::handle_file_lists, mHttpFile,
                                   _1, _2));
     server.Post("/webhook",

@@ -3,10 +3,11 @@
 #include "constants.hpp"
 #include "fs.hpp"
 #include "http_lib_header.hpp"
-#include "spdlog/spdlog.h"
 #include "stream_cast.hpp"
+
 #include <cstdint>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <string>
 class HttpFileDownload

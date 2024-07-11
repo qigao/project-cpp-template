@@ -5,11 +5,11 @@
 #ifndef ATCOMMANDS_COMMANDS_HPP
 #define ATCOMMANDS_COMMANDS_HPP
 
+#include "radio.hpp"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-#include "radio.hpp"
 
 extern int const NUM_FREQ_TEXT;
 

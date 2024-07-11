@@ -1,5 +1,6 @@
 #include "../../singleton.hpp"
 #include "singleton.hpp"
+
 #include <gtest/gtest.h>
 #include <nanobench.h>
 class Foo : public Singleton<Foo>

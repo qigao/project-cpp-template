@@ -6,10 +6,8 @@
 //  Copyright, 2017, by Samuel Williams. All rights reserved.
 //
 
-#include <UnitTest/UnitTest.hpp>
-
 #include <URI/Encoding.hpp>
-
+#include <UnitTest/UnitTest.hpp>
 #include <map>
 
 namespace URI

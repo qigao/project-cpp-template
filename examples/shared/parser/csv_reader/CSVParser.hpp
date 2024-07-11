@@ -2,6 +2,7 @@
 #define __CSVPARSER_H__
 
 #include "CSVParser_export.h"
+
 #include <string>
 #include <vector>
 namespace Parser

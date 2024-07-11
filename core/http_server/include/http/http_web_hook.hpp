@@ -4,6 +4,7 @@
 #include "hash_function.hpp"
 #include "http_request.hpp"
 #include "singleton.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>

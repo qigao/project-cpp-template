@@ -1,9 +1,9 @@
 #include "socket/tcp_client_handle.hpp"
 #include "socket/tcp_server_handle.hpp"
 #include "socket/uv_loop.hpp"
-#include <gtest/gtest.h>
 
 #include <future>
+#include <gtest/gtest.h>
 #include <limits>
 #include <string>
 #include <uvw.hpp>

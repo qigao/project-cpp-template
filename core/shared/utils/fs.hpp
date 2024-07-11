@@ -89,7 +89,7 @@ inline bool breakup_url(std::string const& url, std::string& scheme_and_host,
     }
     return true;
 }
-inline std::string create_random_path(int n)
+inline std::string create_random_str(int n)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -102,14 +102,14 @@ inline std::string create_random_path(int n)
 }
 inline bool createRandomDir(fs::path& temp_dir)
 {
-    auto random_chars = create_random_path(10);
+    auto random_chars = create_random_str(10);
 
     fs::path random_dir = temp_dir / random_chars;
     while (true)
     {
         if (fs::exists(random_dir))
         {
-            random_chars = create_random_path(10);
+            random_chars = create_random_str(10);
             random_dir = temp_dir / random_chars;
         }
         break;

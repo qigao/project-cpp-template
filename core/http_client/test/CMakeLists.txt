@@ -27,6 +27,34 @@ target_link_libraries(
           starter_project_warnings
 )
 gtest_discover_tests(sum_test)
-if(${ENABLE_COVERAGE})
-  set(COVERAGE_ARGS REPORTER xml)
-endif()
+
+# --------------- YAML_PROPERTIES ---------------------
+add_executable(
+  client_yaml_test ../private/src/client_yaml.cpp client_yml_test.cpp
+)
+target_link_libraries(
+  client_yaml_test
+  PRIVATE GTest::gtest
+          GTest::gtest_main
+          GTest::gmock
+          GTest::gmock_main
+          http_client
+          starter_project_options
+          starter_project_warnings
+)
+gtest_discover_tests(client_yaml_test)
+
+# --------------- YAML_CONVERT TEST -------------------
+add_executable(client_yaml_convert_test yaml_convert_test.cpp)
+target_link_libraries(
+  client_yaml_convert_test
+  PRIVATE GTest::gtest
+          GTest::gtest_main
+          GTest::gmock
+          GTest::gmock_main
+          http_client
+          starter_project_options
+          starter_project_warnings
+)
+
+gtest_discover_tests(client_yaml_convert_test)

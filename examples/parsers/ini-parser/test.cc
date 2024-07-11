@@ -1,9 +1,9 @@
+#include "ini.hh"
+#include "maybe.hh"
+
 #include <cstdio>
 #include <functional>
 #include <string>
-
-#include "ini.hh"
-#include "maybe.hh"
 
 using std::string;
 

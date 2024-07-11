@@ -1,5 +1,7 @@
 #include "config/yml_properties.hpp"
+
 #include "config/server_config.hpp"
+
 #include <filesystem>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -24,7 +26,7 @@ public:
 
     server_config get(std::string const& key)
     {
-        return tree_["server"].as<server_config>();
+        return tree_[key].as<server_config>();
     }
 
 private:

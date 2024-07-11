@@ -3,6 +3,7 @@
 
 #include "http_lib_header.hpp"
 #include "singleton.hpp"
+
 #include <string>
 class AuthHandler : public Singleton<AuthHandler>
 {

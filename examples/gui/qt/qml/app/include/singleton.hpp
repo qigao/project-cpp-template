@@ -1,6 +1,7 @@
 #pragma once
 
 #include "thing.hpp"
+
 #include <QObject>
 #include <qqml.h>
 

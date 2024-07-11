@@ -20,3 +20,19 @@ tasks:
       - task: sum:test:build
     cmds:
       - cmd: cd $BUILD_DIR && ctest -R DemoTest
+  yaml_convert:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target client_yaml_convert_test
+  yaml_convert:test:run:
+    deps:
+      - task: yaml_convert:test:build
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest -R YAMLConverterTest
+  yaml_properties:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target client_yaml_test
+  yaml_properties:test:run:
+    deps:
+      - task: yaml_properties:test:build
+    cmds:
+      - cmd:  cd $BUILD_DIR && ctest  -R RemoteYmlTest

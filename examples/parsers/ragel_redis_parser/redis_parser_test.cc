@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE redis_parser
 
 #include "redis_parser.hh"
+
 #include <boost/test/included/unit_test.hpp>
 
 std::unique_ptr<redis_cmd> test_str(redis_parser& parser, std::string s)

@@ -22,6 +22,7 @@
  * IN THE SOFTWARE.
  */
 #include "nodejs_http_parser.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
