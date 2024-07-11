@@ -37,9 +37,7 @@ tasks:
           mkdir -p ./build/coverage/
 
           gcovr -j {{.nproc | default 1}} --delete \
-          --filter "core/" \
-          --filter "my_lib/" \
-          --filter "my_header_lib/" \
+          --filter "core/" \ 
           -e '/.*/build/' \
           -e "project" \
           -e ".*/test/.*" \

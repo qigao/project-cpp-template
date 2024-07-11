@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <filesystem>
+#include <fmt/core.h>
 #include <functional>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -76,6 +77,27 @@ TEST_F(HttpClientTest, uploadFileByStream)
 
     file.close();
     fs::remove(filename);
+}
+
+TEST_F(HttpClientTest, uploadByStream)
+{
+    HttpServer svr(PORT);
+    svr.setSharedFolder(SHARED_FOLDER);
+
+    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
+    svr.PostWithReader(
+        R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
+                          httplib::ContentReader const& content_reader)
+        { handler->handle_file_upload(req, res, content_reader); });
+    svr.start();
+
+    auto http_client_api = new_http_client(full_path_file_name->c_str());
+    set_auth_token(http_client_api, "123456");
+    http_request_initialize(http_client_api);
+
+    post_file_stream(http_client_api, "/upload", "101","hello",5);
+    std::string filename = fmt::format("{}/{}", SHARED_FOLDER,101);
+    EXPECT_TRUE(std::filesystem::exists(filename));
 }
 
 TEST_F(HttpClientTest, listFile)
