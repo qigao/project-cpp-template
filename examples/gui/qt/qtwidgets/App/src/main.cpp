@@ -1,11 +1,11 @@
+#include "MainWindow.h"
+#include "QtDemoClass.h"
+
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
-
-#include "MainWindow.h"
-#include "QtDemoClass.h"
 
 static int const width = 640;
 static int const height = 480;

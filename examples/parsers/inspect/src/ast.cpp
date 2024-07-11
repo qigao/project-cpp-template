@@ -1,6 +1,6 @@
-#include <sstream>
-
 #include "ast.hpp"
+
+#include <sstream>
 
 namespace
 {

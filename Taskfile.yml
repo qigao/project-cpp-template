@@ -62,14 +62,6 @@ tasks:
       - task: lint:clang-format
     cmds:
       - task: lint:vcpkg
-  clean:vcpkg:
-    desc: clean vcpkg
-    cmds:
-      - rm -rf ./vcpkg
-  clean:conan:
-    desc: clean conan
-    cmds:
-      - rm -rf ./conan2
   clean:build:
     desc: clean all build artifacts
     cmds:
@@ -80,8 +72,6 @@ tasks:
   clean.all:
     desc: clean all build artifacts and packages
     deps:
-      - task: clean:vcpkg
-      - task: clean:conan
       - task: clean:build
   test.all:
     desc: all the test tasks from modules

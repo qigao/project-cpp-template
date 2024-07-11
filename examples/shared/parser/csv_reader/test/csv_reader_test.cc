@@ -1,15 +1,14 @@
 #ifndef _CSV_READER_TEST_H_
 #define _CSV_READER_TEST_H_
 
-#include <fstream>
-#include <iostream>
-
-#include <gtest/gtest.h>
-
 #include "csv_record_parser.h"
 #include "csv_stream_parser.h"
 #include "error.h"
 #include "input_reader.h"
+
+#include <fstream>
+#include <gtest/gtest.h>
+#include <iostream>
 class CSVReaderTest : public ::testing::Test
 {
 };

@@ -1,10 +1,9 @@
-#include <atomic>
-#include <thread>
-#include <vector>
-
 #include "../singleton.hpp"
 
+#include <atomic>
 #include <gtest/gtest.h>
+#include <thread>
+#include <vector>
 
 static std::atomic_uint32_t init{0};
 

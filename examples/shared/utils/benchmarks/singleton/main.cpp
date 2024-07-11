@@ -1,4 +1,5 @@
 #include "singleton.hpp"
+
 #include <benchmark/benchmark.h>
 #include <string>
 class SingletonDemo : public Singleton<SingletonDemo>

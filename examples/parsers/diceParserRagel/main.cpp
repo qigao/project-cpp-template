@@ -1,4 +1,5 @@
 #include "diceparser.h"
+
 #include <benchmark/benchmark.h>
 #include <iostream>
 #include <sstream>

@@ -1,4 +1,5 @@
 #include "test_defines.h"
+
 #include <benchmark/benchmark.h>
 #include <string>
 

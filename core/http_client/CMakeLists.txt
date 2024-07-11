@@ -41,8 +41,9 @@ target_sources(
                          ${TARGET_PUBLIC_HEADERS}
 )
 target_include_interface_directories(
-  ${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/private
-  ${CMAKE_SOURCE_DIR}/core/shared/utils ${CMAKE_SOURCE_DIR}/core/shared/http
+  ${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/private/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/public ${CMAKE_SOURCE_DIR}/core/shared/utils
+  ${CMAKE_SOURCE_DIR}/core/shared/http
 )
 find_package(Threads)
 # Link dependencies:
@@ -51,7 +52,7 @@ target_find_dependencies(
   PUBLIC_CONFIG
   httplib
   spdlog
-  yyjson
+  yaml-cpp
   fmt
 )
 target_link_system_libraries(
@@ -60,7 +61,7 @@ target_link_system_libraries(
   httplib::httplib
   spdlog::spdlog
   Threads::Threads
-  yyjson::yyjson
+  yaml-cpp::yaml-cpp
   fmt::fmt
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>

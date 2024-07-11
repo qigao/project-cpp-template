@@ -1,11 +1,12 @@
-#include <iostream>
-#include <string>
-#include <unordered_map>
+#include "sheet.hpp"
 
 #include "address.hpp"
 #include "cell.hpp"
 #include "formula.hpp"
-#include "sheet.hpp"
+
+#include <iostream>
+#include <string>
+#include <unordered_map>
 
 namespace
 {

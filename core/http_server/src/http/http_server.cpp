@@ -1,14 +1,15 @@
 #include "http/http_server.hpp"
+
 #include "helpers.hpp"
-#include "spdlog/spdlog.h"
+#include "http_lib_header.hpp"
 #include "task_queue.hpp"
+
 #include <exception>
 #include <fmt/core.h>
 #include <functional>
-
-#include "http_lib_header.hpp"
 #include <iostream>
 #include <memory>
+#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <thread>
 

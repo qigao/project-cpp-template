@@ -6,10 +6,8 @@
 //  Copyright, 2017, by Samuel Williams. All rights reserved.
 //
 
-#include <UnitTest/UnitTest.hpp>
-
 #include <URI/QueryParser.hpp>
-
+#include <UnitTest/UnitTest.hpp>
 #include <typeinfo>
 
 namespace URI

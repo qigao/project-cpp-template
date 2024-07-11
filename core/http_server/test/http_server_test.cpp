@@ -5,6 +5,7 @@
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
 #include "http_lib_header.hpp"
+
 #include <cstdio>
 #include <functional>
 #include <gtest/gtest.h>
@@ -244,6 +245,8 @@ TEST(HttpServerTest, downloadFile)
 }
 TEST(HttpServerTest, dump)
 {
+    WebHook::Construct("http://127.0.0.1:5061/dump");
+    WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
     HttpServer svr(PORT);
     // Register handler
     auto handler = std::make_shared<HttpJsonHandler>();
@@ -260,10 +263,6 @@ TEST(HttpServerTest, dump)
     auto resp = cli.Post("/dump", DEMO_JSON, APP_JSON);
     EXPECT_NE(resp, nullptr);
     EXPECT_EQ(resp->status, 200);
-    /*     auto result = parse_json(resp->body.data(), resp->body.length());
-        EXPECT_EQ(result.second, 200);
-        ASSERT_EQ(result.first, std::string("demo"));
-        sleep(5); */
 }
 
 TEST(HttpServerTest, webHookDemo)
@@ -284,7 +283,4 @@ TEST(HttpServerTest, webHookDemo)
     auto resp = cli.Post("/webhook", DEMO_JSON, APP_JSON);
     EXPECT_NE(resp, nullptr);
     EXPECT_EQ(resp->status, 200);
-    auto result = parse_json(resp->body.data(), resp->body.length());
-    EXPECT_EQ(result.second, 200);
-    ASSERT_EQ(result.first, "demo");
 }

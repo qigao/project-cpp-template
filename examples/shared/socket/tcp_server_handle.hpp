@@ -3,6 +3,7 @@
 
 #include "base_queue.hpp"
 #include "typedef.h"
+
 #include <cassert>
 #include <iostream>
 #include <memory>

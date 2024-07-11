@@ -1,13 +1,13 @@
 #include "http/http_json_handle.hpp"
+
 #include "constants.hpp"
+#include "http/http_web_hook.hpp"
 #include "http_lib_header.hpp"
 #include "spdlog/spdlog.h"
 #include "yyjson.h"
-#include <BS_thread_pool.hpp>
-#include <cstdlib>
-#include <fmt/core.h>
 
-#include "http/http_web_hook.hpp"
+#include <BS_thread_pool.hpp>
+#include <fmt/core.h>
 HttpJsonHandler::HttpJsonHandler() : pool(std::make_shared<BS::thread_pool>(2))
 {
 }
@@ -54,47 +54,21 @@ void HttpJsonHandler::postMsg(httplib::Request const& req,
 void HttpJsonHandler::dump(httplib::Request const& req, httplib::Response& res)
 {
     std::string sha256_header = req.get_header_value(SHA_256_HASH_HEADER);
-    // Create a mutable doc
-    yyjson_mut_doc* doc = yyjson_mut_doc_new(nullptr);
-    yyjson_mut_val* root = yyjson_mut_obj(doc);
-    yyjson_mut_doc_set_root(doc, root);
+    if (sha256_header.empty())
+    {
+        spdlog::info("no sha header");
+    }
     for (auto const& param : req.params)
     {
         spdlog::info("Parameter: {} = {}", param.first, param.second);
-        yyjson_mut_val* obj = yyjson_mut_obj(doc);
-        yyjson_mut_obj_add_str(doc, obj, param.first.c_str(),
-                               param.second.c_str());
-        yyjson_mut_arr_append(root, obj);
     }
     if (req.body.empty())
     {
         spdlog::info("message: empty body");
-        yyjson_mut_obj_add_str(doc, root, "message", "empty body");
-        char const* jsonResp = yyjson_mut_write(doc, 0, nullptr);
-        if (jsonResp)
-        {
-            spdlog::info("Response: {}", jsonResp);
-            res.set_content(jsonResp, APP_JSON);
-            free((void*)jsonResp);
-            yyjson_mut_doc_free(doc);
-        }
+
         return;
     }
-    spdlog::info("body: {}", req.body);
-    yyjson_mut_obj_add_str(doc, root, "message", req.body.c_str());
-    char const* jsonResp = yyjson_mut_write(doc, 0, nullptr);
-    if (jsonResp)
-    {
-        spdlog::info("Response: {}", jsonResp);
-        res.set_content(jsonResp, APP_JSON);
-
-        // yyjson_mut_doc_free(doc);free((void*)jsonResp);
-        return;
-    }
-    yyjson_mut_doc_free(doc);
-
-    char const* error_msg = R"({"message":"error"})";
-    res.set_content(error_msg, strlen(error_msg), APP_JSON);
+    spdlog::info("dump body: {}", req.body);
 }
 
 void HttpJsonHandler::web_hook(httplib::Request const& req,

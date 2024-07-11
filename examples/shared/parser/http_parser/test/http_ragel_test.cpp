@@ -1,4 +1,5 @@
 #include "test_defines.h"
+
 #include <gtest/gtest.h>
 #include <string>
 TEST(ParserPerformance, ragel_dump)

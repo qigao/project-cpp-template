@@ -6,9 +6,8 @@
 //  Copyright, 2017, by Samuel Williams. All rights reserved.
 //
 
-#include <UnitTest/UnitTest.hpp>
-
 #include <URI/Path.hpp>
+#include <UnitTest/UnitTest.hpp>
 
 namespace URI
 {

@@ -2,6 +2,7 @@
 #define __DATA_FRAME_H__
 
 #include "utils/types.h"
+
 #include <memory>
 
 typedef struct DataFrame

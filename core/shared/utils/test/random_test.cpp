@@ -1,8 +1,7 @@
-#include <gtest/gtest.h>
-
-#include <string>
-
 #include "random.hpp"
+
+#include <gtest/gtest.h>
+#include <string>
 TEST(RandomTest, StringGenerator)
 {
     std::string str = random_string(10);

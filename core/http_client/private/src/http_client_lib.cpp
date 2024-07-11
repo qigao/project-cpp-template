@@ -1,23 +1,25 @@
 #include "http_client_lib.h"
+
+#include "client_yaml.hpp"
 #include "constants.hpp"
 #include "helpers.hpp"
 #include "http_file_download.hpp"
+
 #include <BS_thread_pool.hpp>
 #include <filesystem>
-#include <range/v3/all.hpp>
 #include <thread>
-#include <yyjson.h>
 
 namespace fs = std::filesystem;
 
 struct http_handle
 {
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-    std::shared_ptr<httplib::SSlClient> mClient;
+    std::shared_ptr<httplib::SSLClient> mClient;
 #else
     std::shared_ptr<httplib::Client> mClient;
 #endif
     std::multimap<std::string, std::string> mHeaders;
+    client_config config;
     bool debug = true;
     std::shared_ptr<BS::thread_pool> pool;
 };
@@ -95,19 +97,16 @@ void post_image_info_request(http_client_handle* handle, char const* url,
         spdlog::error("invalid http connection");
         return;
     }
-    handle->pool->detach_task(
-        [&]
-        {
-            auto resp = handle->mClient->Post(url, json, APP_JSON);
-            if (resp == nullptr || resp->status != 200)
-            {
-                spdlog::error("failed to post json request");
-                return;
-            }
-            auto doc =
-                yyjson_read(resp->body.c_str(), resp->content_length_, 0);
-        });
+    auto resp_result = handle->pool->submit_task(
+        [&] { return handle->mClient->Post(url, json, APP_JSON); });
+    auto resp = resp_result.get();
+    if (resp == nullptr || resp->status != 200)
+    {
+        spdlog::error("failed to post json request");
+        return;
+    }
 }
+
 void post_file_request(http_client_handle* handle, char const* url,
                        char const* filename)
 {
@@ -170,15 +169,17 @@ void post_file_stream_request(http_client_handle* handle, char const* url,
         return;
     }
 }
-
-http_client_handle* new_http_client(char const* host, int port)
+http_client_handle* new_http_client(char const* filename)
 {
+    auto yaml = std::make_shared<ClientYml>(std::string(filename));
+    yaml->parse();
+    auto config = yaml->getConfig();
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-    auto cli = std::make_shared<httplib::SSLClient>(host, port);
+    auto cli = std::make_shared<httplib::SSLClient>(config.host, config.port);
     cli->enable_server_certificate_verification(true);
-    cli->set_ca_cert_path("ca-bundle.crt");
+    cli->set_ca_cert_path(config.auth_token);
 #else
-    auto cli = std::make_shared<httplib::Client>(host, port);
+    auto cli = std::make_shared<httplib::Client>(config.host, config.port);
 #endif
     if (!cli->is_valid())
     {
@@ -187,15 +188,17 @@ http_client_handle* new_http_client(char const* host, int port)
     auto handle = new http_client_handle();
     handle->mClient = cli;
     handle->pool = std::make_shared<BS::thread_pool>(2);
+    handle->config = config;
     return handle;
 }
-
 void free_client_handle(http_client_handle* handle)
 {
     if (handle == nullptr)
     {
         return;
     }
+    handle->mHeaders.clear();
+    free(handle);
 }
 /**
  *  headers will be applicable to all the request, such as http request of
@@ -214,7 +217,6 @@ void set_auth_token(http_client_handle* handle, char const* token)
 {
     handle->mHeaders.emplace("X-API-KEY", token);
 }
-void read_config_from_yml(char const* file_path) {}
 
 void http_request_initialize(http_client_handle* handle)
 {
@@ -227,13 +229,12 @@ void http_request_initialize(http_client_handle* handle)
     handle->mClient->set_write_timeout(5, 0);
     httplib::Headers headers = {{"User-Agent", "MicroView Http library"}};
 
-    ranges::for_each(handle->mHeaders,
-                     [&headers](auto const& header)
-                     {
-                         spdlog::info("header[{}] = {}", header.first,
-                                      header.second);
-                         headers.emplace(header.first, header.second);
-                     });
+    for (auto const& [key, value] : handle->mHeaders)
+    {
+        spdlog::debug("Header: {}: {}", key, value);
+        headers.emplace(key, value);
+    }
+
     handle->mClient->set_default_headers(headers);
     if (handle->debug)
     {

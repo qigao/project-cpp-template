@@ -2,6 +2,7 @@
 #define __BASE_QUEUE_H__
 
 #include "typedef.h"
+
 #include <atomic>
 #include <memory>
 class BaseQueue

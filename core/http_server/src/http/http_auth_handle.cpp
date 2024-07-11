@@ -1,4 +1,5 @@
 #include "http/http_auth_handle.hpp"
+
 #include "constants.hpp"
 
 bool AuthHandler::is_valid_key(std::string const& key)

@@ -1,5 +1,7 @@
 #include "hash_function.hpp"
+
 #include "fs.hpp"
+
 #include <cstring>
 #include <openssl/evp.h>
 class hash_function::hashImpl

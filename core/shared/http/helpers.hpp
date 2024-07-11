@@ -3,6 +3,7 @@
 
 #include "constants.hpp"
 #include "http_lib_header.hpp"
+
 #include <fmt/core.h>
 #include <iostream>
 #include <spdlog/spdlog.h>

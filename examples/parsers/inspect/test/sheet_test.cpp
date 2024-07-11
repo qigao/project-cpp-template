@@ -21,14 +21,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <map>
-
-#include "gtest/gtest.h"
-
 #include "address.hpp"
 #include "formula.hpp"
 #include "sheet.hpp"
+
+#include "gtest/gtest.h"
+#include <iostream>
+#include <map>
 
 using namespace std;
 

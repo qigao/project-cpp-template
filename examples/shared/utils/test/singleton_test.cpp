@@ -1,4 +1,5 @@
 #include "singleton.hpp"
+
 #include <future>
 #include <gtest/gtest.h>
 #include <string>

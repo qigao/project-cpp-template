@@ -1,4 +1,5 @@
 #include "diceparser.h"
+
 #include <algorithm>
 #include <random>
 

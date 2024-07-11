@@ -3,10 +3,10 @@
 #
 # Include this module right after `project()` to make use
 #
-# If conan2 or vcpkg is requried, include(fetch_project_options) separately and invoke `run_conan2()` or `run_vcpkg()`
+# If conan2 or vcpkg is requried, include(project_options) separately and invoke `run_conan2()` or `run_vcpkg()`
 include_guard()
 
-include(${CMAKE_CURRENT_LIST_DIR}/fetch_project_options.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/project_options.cmake)
 
 # compile_commands.json
 set(ENABLE_COMPILE_COMMANDS_SYMLINK_DEFAULT OFF)

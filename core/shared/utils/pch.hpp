@@ -52,13 +52,10 @@
 
 //! General utilities
 #include <any>
-
 #include <bitset>
 #include <cstdlib>
-
 #include <functional>
 #include <memory>
-
 #include <optional>
 #include <ratio>
 #include <scoped_allocator>
@@ -79,7 +76,6 @@
 //! I/O and formatting
 #include <cinttypes>
 #include <cstdio>
-
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -97,7 +93,6 @@
 #include <cfloat>
 #include <climits>
 #include <codecvt>
-
 #include <csetjmp>
 #include <csignal>
 #include <cstdarg>
@@ -118,7 +113,6 @@
 #include <charconv>
 #include <cstdlib>
 #include <cstring>
-
 #include <cwchar>
 #include <cwctype>
 #include <regex>

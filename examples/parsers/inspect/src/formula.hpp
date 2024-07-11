@@ -1,10 +1,10 @@
 #pragma once
 
+#include "address.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "address.hpp"
 
 class Node;
 
