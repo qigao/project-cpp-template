@@ -34,7 +34,7 @@ tasks:
 
           powershell -c "if (!\$env:CI) { echo '[info] Opening ./build/coverage/index.html...'; start ./build/coverage/index.html }"
         {{else}}
-          mkdir -p ./build/coverage/
+           mkdir -p ./build/coverage/
 
           gcovr -j {{.nproc | default 1}} --delete \
           --filter "core/" \ 
