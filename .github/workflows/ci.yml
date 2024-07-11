@@ -73,11 +73,11 @@ jobs:
         if: ${{  contains(matrix.os, 'ubuntu') || contains(matrix.os, 'debian') }}
         run: |
           sudo apt-get install -y  linux-libc-dev
-      - name: Initialize CodeQL
-        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'llvm') }}
-        uses: github/codeql-action/init@v3
+      - name: windows cpp dev(Windows)
+        if: ${{ contains(matrix.os, 'windows') }}
+        uses: ilammy/msvc-dev-cmd@v1
         with:
-          languages: "cpp"
+            arch: amd64
       - name: config and setup project
         run: |
             task config

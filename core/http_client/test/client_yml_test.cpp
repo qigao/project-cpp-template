@@ -45,7 +45,7 @@ TEST_F(RemoteYmlTest, ParseTest)
     yml_properties_->parse();
     auto config = yml_properties_->getConfig();
     EXPECT_THAT(config.host, Eq("127.0.0.1"));
-    EXPECT_THAT(config.port, Eq(4443));
+    EXPECT_THAT(config.port, Eq(5060));
     EXPECT_THAT(config.auth_token, Eq("123456"));
     EXPECT_THAT(config.files_url, Eq("/upload"));
     EXPECT_THAT(config.webhook_url, Eq("/webhook"));
