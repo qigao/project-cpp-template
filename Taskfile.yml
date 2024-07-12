@@ -34,18 +34,9 @@ tasks:
 
           powershell -c "if (!\$env:CI) { echo '[info] Opening ./build/coverage/index.html...'; start ./build/coverage/index.html }"
         {{else}}
-          mkdir -p ./build/coverage/
+           mkdir -p ./build/coverage/
 
-          gcovr -j {{.nproc | default 1}} --delete \
-          --filter "core/" \
-          --filter "my_lib/" \
-          --filter "my_header_lib/" \
-          -e '/.*/build/' \
-          -e "project" \
-          -e ".*/test/.*" \
-           --root ./ --print-summary \
-           --html-details ./build/coverage/index.html \
-           --xml-pretty --xml ./build/coverage.xml ./build
+         gcovr -r . -e '/.*/build/'  -e '/.*/test/'   --html --html-details -o build/coverage/index.html --xml-pretty --xml build/coverage.xml
 
           echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
         {{end}}

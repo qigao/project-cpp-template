@@ -144,6 +144,19 @@ extern "C"
     MVIEW_API void post_file_stream_request(http_client_handle* handle,
                                             char const* url,
                                             char const* filename);
+
+    /** Sends a POST request to the relative URL with the provided file data.
+     *
+     * @param url The relative URL to send the POST request to.
+     * @param file_id The file ID to send in the request body.
+     * @param data The file data to send in the request body.
+     * @param size The size of the file data.
+     *
+     * @throws None
+     */
+    MVIEW_API void post_file_stream(http_client_handle* handle,char const* url,
+                                            char const* file_id, char const* data,
+                                            unsigned long size);
     /**
      * Sends a POST request to the relative URL with the provided file data.
      *

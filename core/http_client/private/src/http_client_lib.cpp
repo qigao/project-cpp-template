@@ -6,10 +6,11 @@
 #include "http_file_download.hpp"
 
 #include <BS_thread_pool.hpp>
+#include <algorithm>
 #include <filesystem>
 #include <thread>
-
 namespace fs = std::filesystem;
+static constexpr size_t BUF_SIZE = 16384L;
 
 struct http_handle
 {
@@ -147,20 +148,46 @@ void post_file_stream_request(http_client_handle* handle, char const* url,
     auto file_attach = fmt::format("attachment; filename=\"{}\"", file_name);
     httplib::Headers headers = {{CONTENT_DISPOSITION, file_attach.c_str()}};
     std::ifstream file(filename, std::ifstream::binary);
+    if (!file.is_open())
+    {
+        spdlog::error("failed to open file {}", filename);
+        return;
+    }
+
     auto resp = handle->mClient->Post(
         url, headers,
         [&](size_t offset, httplib::DataSink& sink)
         {
-            // Read the file data in chunks and write to the sink
-            char buffer[16384];
+            const size_t remaining = file_size - offset;
+            size_t chunk_size = std::min(BUF_SIZE, remaining);
             file.seekg(offset);
-            while (file.read(buffer, sizeof(buffer)))
-            {
-                sink.write(buffer, file.gcount());
-            }
-            sink.write(buffer, file.gcount());
-            sink.done();
-            return true;
+            char buffer[BUF_SIZE];
+            file.read(buffer, chunk_size);
+            sink.write(buffer, chunk_size);
+            return remaining <= BUF_SIZE;
+        },
+        OCTET_STREAM);
+    if (resp == nullptr || resp->status != 200)
+    {
+        spdlog::error("failed to post file request");
+        return;
+    }
+}
+
+void post_file_stream(http_client_handle* handle, char const* url,
+                      char const* file_id, char const* data, unsigned long size)
+{
+
+    auto file_attach = fmt::format("attachment; filename=\"{}\"", file_id);
+    httplib::Headers headers = {{CONTENT_DISPOSITION, file_attach.c_str()}};
+    auto resp = handle->mClient->Post(
+        url, headers,
+        [&](size_t offset, httplib::DataSink& sink)
+        {
+            const size_t remaining = size - offset;
+            size_t chunk_size = std::min(BUF_SIZE, remaining);
+            sink.write(data + offset, chunk_size);
+            return remaining <= BUF_SIZE;
         },
         OCTET_STREAM);
     if (resp == nullptr || resp->status != 200)
@@ -215,7 +242,7 @@ void setup_http_header(http_client_handle* handle, char const* header_name,
 
 void set_auth_token(http_client_handle* handle, char const* token)
 {
-    handle->mHeaders.emplace("X-API-KEY", token);
+    handle->mHeaders.emplace(API_KEY, token);
 }
 
 void http_request_initialize(http_client_handle* handle)
