@@ -1,5 +1,5 @@
 find_package(
-  Qt6 REQUIRED COMPONENTS Core Qml Quick QuickControls2 QmlImportScanner
+    Qt6 REQUIRED COMPONENTS Core Qml Quick QuickControls2 QmlImportScanner
 )
 
 set(CMAKE_AUTOUIC ON)

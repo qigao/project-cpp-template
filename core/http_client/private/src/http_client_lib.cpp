@@ -132,7 +132,6 @@ void post_file_request(http_client_handle* handle, char const* url,
     }
 }
 
-
 void post_file_stream(http_client_handle* handle, char const* url,
                       char const* file_id, char const* data, unsigned long size)
 {

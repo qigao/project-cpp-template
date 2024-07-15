@@ -1,7 +1,8 @@
 #ifndef __TEST_HELPER_H__
 #define __TEST_HELPER_H__
 
-constexpr char const* yml_demo_data = R"(server:
+constexpr char const* yml_demo_data = R"(
+  server:
     port: 4443
     shared_folder: ./shared
     delete_after_download: true

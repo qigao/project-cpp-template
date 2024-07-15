@@ -8,13 +8,13 @@
 #include "http/http_web_hook.hpp"
 
 #include <cxxopts.hpp>
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <optional>
+#include <spdlog/spdlog.h>
 #include <string>
 #include <thread>
-#include <filesystem>
-#include <spdlog/spdlog.h>
 using namespace std::placeholders;
 namespace fs = std::filesystem;
 
@@ -90,51 +90,65 @@ int main(int argc, char** argv)
 
     std::optional<bool> minimized(false);
     bool enableDebugLogs = false;
-
-    cxxopts::Options options("http_server", "A http server which process upload/download file and forward json request");
-
+    std::string filename;
+    cxxopts::Options options("http_server",
+                             "A http server which process upload/download file "
+                             "and forward json request");
+    server_config config;
+    // clang-format off
     options.add_options()
         ("h,help", "Print usage")
-        ("f,file", "yaml config file", cxxopts::value<std::string>())
-        ("v,verbose", "Verbose output", cxxopts::value<bool>()->default_value("false"));
-
-    try {
+        ("f,file", "yaml config file",
+                cxxopts::value<std::string>()->default_value("application.yml"))
+        ("d,debug", "Enable debugging",
+                 cxxopts::value<bool>()->default_value("false"));
+    // clang-format on
+    try
+    {
         auto result = options.parse(argc, argv);
 
-        if (result.count("help")) {
+        if (result.count("help"))
+        {
             std::cout << options.help() << std::endl;
             return 0;
         }
 
         // Check if any options were provided
-        if (result.arguments().empty()) {
-            std::cout<< options.help()<<std::endl;
+        if (result.arguments().empty())
+        {
+            std::cout << options.help() << std::endl;
             // Implement your default behavior here
-        } else {
+        }
+        else
+        {
 
-            if (result["verbose"].as<bool>()) {
+            if (result["debug"].as<bool>())
+            {
                 std::cout << "Verbose mode enabled" << std::endl;
-                spdlog::set_level(spdlog::level::trace);
+                spdlog::set_level(spdlog::level::debug);
             }
             // Process the provided options
-            if (result.count("file")) {
-                auto filename = result["file"].as<std::string>();
+            if (result.count("file"))
+            {
+                filename = result["file"].as<std::string>();
                 std::cout << "File: " << filename << std::endl;
                 auto file = fs::path(filename);
                 if (!fs::exists(file))
                 {
-                    spdlog::error("file {} does not exist", file_name_);
-                    return;
+                    spdlog::error("file {} does not exist", filename);
+                    return 0;
                 }
+                auto yaml = std::make_unique<YamlProperties>(filename);
+                config = yaml->getConfig();
+                setup_webhook(config);
+                setup_auth(config);
+                std::thread serverSSL(startServerSSL, config);
+                serverSSL.join();
             }
         }
-        auto yaml = std::make_unique<YamlProperties>(filename);
-        auto config = yaml->getConfig();
-        setup_webhook(config);
-        setup_auth(config);
-        std::thread serverSSL(startServerSSL, config);
-        serverSSL.join();
-    } catch (const cxxopts::exceptions::exception& e) {
+    }
+    catch (cxxopts::exceptions::exception const& e)
+    {
         std::cerr << "Error parsing options: " << e.what() << std::endl;
         return 1;
     }

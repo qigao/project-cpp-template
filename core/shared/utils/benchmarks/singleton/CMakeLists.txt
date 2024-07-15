@@ -8,9 +8,9 @@ find_package(GTest REQUIRED)
 # ---------------- Singleton Benchmark TEST ---------------------
 add_executable(singleton_benchmark singleton_test.cpp)
 target_link_libraries(
-  singleton_benchmark
-  PRIVATE GTest::gtest GTest::gtest_main nanobench::nanobench
-          starter_project_options starter_project_warnings
+    singleton_benchmark
+    PRIVATE GTest::gtest GTest::gtest_main nanobench::nanobench
+            starter_project_options starter_project_warnings
 )
 # include all the necessary directories
 #target_include_directories(

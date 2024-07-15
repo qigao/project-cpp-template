@@ -46,61 +46,62 @@ mark_as_advanced(RAGEL_EXECUTABLE)
 
 if(RAGEL_EXECUTABLE)
 
-  execute_process(
-    COMMAND ${RAGEL_EXECUTABLE} --version
-    OUTPUT_VARIABLE RAGEL_version_output
-    ERROR_VARIABLE RAGEL_version_error
-    RESULT_VARIABLE RAGEL_version_result
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-
-  if(${RAGEL_version_result} EQUAL 0)
-    string(REGEX REPLACE "^Ragel State Machine Compiler version ([^ ]+) .*$"
-                         "\\1" RAGEL_VERSION "${RAGEL_version_output}"
+    execute_process(
+        COMMAND ${RAGEL_EXECUTABLE} --version
+        OUTPUT_VARIABLE RAGEL_version_output
+        ERROR_VARIABLE RAGEL_version_error
+        RESULT_VARIABLE RAGEL_version_result
+        OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-  else()
-    message(
-      SEND_ERROR "Command \"${RAGEL_EXECUTABLE} --version\" failed with output:
+
+    if(${RAGEL_version_result} EQUAL 0)
+        string(REGEX REPLACE "^Ragel State Machine Compiler version ([^ ]+) .*$"
+                             "\\1" RAGEL_VERSION "${RAGEL_version_output}"
+        )
+    else()
+        message(
+            SEND_ERROR
+                "Command \"${RAGEL_EXECUTABLE} --version\" failed with output:
 ${RAGEL_version_error}"
-    )
-  endif()
-
-  #============================================================
-  # RAGEL_TARGET (public macro)
-  #============================================================
-  #
-  macro(RAGEL_TARGET Name Input Output)
-    set(RAGEL_TARGET_usage
-        "RAGEL_TARGET(<Name> <Input> <Output> [COMPILE_FLAGS <string>]"
-    )
-    if(${ARGC} GREATER 3)
-      if(${ARGC} EQUAL 5)
-        if("${ARGV3}" STREQUAL "COMPILE_FLAGS")
-          set(RAGEL_EXECUTABLE_opts "${ARGV4}")
-          separate_arguments(RAGEL_EXECUTABLE_opts)
-        else()
-          message(SEND_ERROR ${RAGEL_TARGET_usage})
-        endif()
-      else()
-        message(SEND_ERROR ${RAGEL_TARGET_usage})
-      endif()
+        )
     endif()
 
-    add_custom_command(
-      OUTPUT ${Output}
-      COMMAND ${RAGEL_EXECUTABLE} ARGS ${RAGEL_EXECUTABLE_opts} -o${Output}
-              ${Input}
-      DEPENDS ${Input}
-      COMMENT
-        "[RAGEL][${Name}] Compiling state machine with Ragel ${RAGEL_VERSION}"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+    #============================================================
+    # RAGEL_TARGET (public macro)
+    #============================================================
+    #
+    macro(RAGEL_TARGET Name Input Output)
+        set(RAGEL_TARGET_usage
+            "RAGEL_TARGET(<Name> <Input> <Output> [COMPILE_FLAGS <string>]"
+        )
+        if(${ARGC} GREATER 3)
+            if(${ARGC} EQUAL 5)
+                if("${ARGV3}" STREQUAL "COMPILE_FLAGS")
+                    set(RAGEL_EXECUTABLE_opts "${ARGV4}")
+                    separate_arguments(RAGEL_EXECUTABLE_opts)
+                else()
+                    message(SEND_ERROR ${RAGEL_TARGET_usage})
+                endif()
+            else()
+                message(SEND_ERROR ${RAGEL_TARGET_usage})
+            endif()
+        endif()
 
-    set(RAGEL_${Name}_DEFINED TRUE)
-    set(RAGEL_${Name}_OUTPUTS ${Output})
-    set(RAGEL_${Name}_INPUT ${Input})
-    set(RAGEL_${Name}_COMPILE_FLAGS ${RAGEL_EXECUTABLE_opts})
-  endmacro()
+        add_custom_command(
+            OUTPUT ${Output}
+            COMMAND ${RAGEL_EXECUTABLE} ARGS ${RAGEL_EXECUTABLE_opts}
+                    -o${Output} ${Input}
+            DEPENDS ${Input}
+            COMMENT
+                "[RAGEL][${Name}] Compiling state machine with Ragel ${RAGEL_VERSION}"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+
+        set(RAGEL_${Name}_DEFINED TRUE)
+        set(RAGEL_${Name}_OUTPUTS ${Output})
+        set(RAGEL_${Name}_INPUT ${Input})
+        set(RAGEL_${Name}_COMPILE_FLAGS ${RAGEL_EXECUTABLE_opts})
+    endmacro()
 
 endif()
 
@@ -109,5 +110,5 @@ endif()
 # use this include when module file is located in build tree
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
-  RAGEL REQUIRED_VARS RAGEL_EXECUTABLE VERSION_VAR RAGEL_VERSION
+    RAGEL REQUIRED_VARS RAGEL_EXECUTABLE VERSION_VAR RAGEL_VERSION
 )

@@ -15,7 +15,7 @@ include(tailored_options)
 
 # enable cross-compiling: - should be called before run_vcpkg()
 if(ENABLE_CROSS_COMPILING)
-  enable_cross_compiler()
+    enable_cross_compiler()
 endif()
 
 # Set additional project information
@@ -34,11 +34,11 @@ set(APPLICATION_LICENSE "MIT License")
 
 # Set the project name and language
 project(
-  cpp_core_project
-  VERSION ${PROJECT_VERSION}
-  DESCRIPTION ${PROJECT_DESCRIPTION}
-  HOMEPAGE_URL ${PROJECT_WEBSITE}
-  LANGUAGES CXX C
+    cpp_core_project
+    VERSION ${PROJECT_VERSION}
+    DESCRIPTION ${PROJECT_DESCRIPTION}
+    HOMEPAGE_URL ${PROJECT_WEBSITE}
+    LANGUAGES CXX C
 )
 
 ## projects
@@ -50,9 +50,9 @@ include(Config.cmake)
 if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") OR ("${CMAKE_CXX_COMPILER_ID}"
                                                      STREQUAL "GNU")
 )
-  set(THREADS_PREFER_PTHREAD_FLAG ON)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-  set(THREADS_PREFER_PTHREAD_FLAG OFF)
+    set(THREADS_PREFER_PTHREAD_FLAG OFF)
 endif()
 find_package(Threads REQUIRED)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -61,8 +61,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 # share vars with Taskfile
 file(
-  WRITE ${CMAKE_BINARY_DIR}/task_vars.env
-  "
+    WRITE ${CMAKE_BINARY_DIR}/task_vars.env
+    "
     CMAKE_BUILD_DIR=${CMAKE_BINARY_DIR}
     CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     CMAKE_OUTPUT_DIR=${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}
@@ -76,5 +76,5 @@ add_subdirectory(configured_files)
 
 add_subdirectory(core)
 if(ENABLE_SAMPLE_PROJECT_COMPILING)
-  add_subdirectory(project)
+    add_subdirectory(project)
 endif()
