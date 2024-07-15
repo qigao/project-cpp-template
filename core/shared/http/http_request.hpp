@@ -1322,8 +1322,8 @@ public:
             [](std::chrono::steady_clock::time_point const time) noexcept
             -> std::int64_t
         {
-            const auto now = std::chrono::steady_clock::now();
-            const auto remainingTime =
+            auto const now = std::chrono::steady_clock::now();
+            auto const remainingTime =
                 std::chrono::duration_cast<std::chrono::milliseconds>(time -
                                                                       now);
             return (remainingTime.count() > 0) ? remainingTime.count() : 0;

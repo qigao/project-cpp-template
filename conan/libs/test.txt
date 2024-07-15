@@ -1,0 +1,10 @@
+[requires]
+catch2/2.13.10
+nanobench/4.3.11
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout

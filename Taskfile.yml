@@ -4,10 +4,10 @@ includes:
     taskfile: ./core/Taskfile.yml
 dotenv: ['.env', 'task_vars.env']
 env:
-  CONFIG: '{{.CONFIG | default "developer"}}'
   BUILD_DIR: '{{ .CMAKE_BUILD_DIR }}'
   BUILD_TYPE: '{{ .CMAKE_BUILD_TYPE }}'
   OUTPUT_DIR: '{{.CNMAKE_OUTPUT_DIR}}'
+
 tasks:
   lint:clang-format:
     cmds:
@@ -40,19 +40,12 @@ tasks:
 
           echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
         {{end}}
-    env:
-      CMAKE_BUILD_TYPE: "{{.CMAKE_BUILD_TYPE}}"
-
-  lint:vcpkg:
-    cmds:
-      - ~/vcpkg/vcpkg format-manifest ./vcpkg.json
   lint.all:
     desc: cpp, cmake, and vcpkg linting
     deps:
       - task: lint:cmake
       - task: lint:clang-format
-    cmds:
-      - task: lint:vcpkg
+
   clean:build:
     desc: clean all build artifacts
     cmds:
@@ -68,15 +61,37 @@ tasks:
     desc: all the test tasks from modules
     cmds:
       - ctest --preset $CONFIG
-  config:
-    desc: list all cmake presets, then generate the developer preset
+  template:config:
+    desc: template for cmake project config
     cmds:
-      - cmake --list-presets all
-      - cmake --preset $CONFIG
-  build.all:
+      - cmake -S ./ -B ./build/ -G '{{.CMAKE_GENERATOR | default "Ninja Multi-Config"}}' -DCMAKE_TOOLCHAIN_FILE=generators/conan_toolchain.cmake -DBUILD_SHARED_LIBS:BOOL={{.SHARED_LIBS}} -DENABLE_OPENSSL:BOOL={{.ENABLE_OPENSSL}} -DCMAKE_BUILD_TYPE:STRING={{.CMAKE_BUILD_TYPE}} -DFEATURE_TESTS:BOOL={{.FEATURE_TESTS}} -DFEATURE_DOCS:BOOL='{{.FEATURE_DOCS | default "OFF"}}' {{.CONFIGURE_FLAGS}}
+  template:build:
     desc: build all the targets by presets
     cmds:
-      - cmake --build --preset $CONFIG
+      - cmake --build ./build  --config {{.CMAKE_BUILD_TYPE}}
+  conan:init:
+    desc: create default conan profile
+    cmds:
+      - conan profile detect
+  conan:libs:
+     desc: install external libs
+     cmds:
+       - conan install conan/libs/libs.txt --profile conan/profiles/{{.PROFILE}} -b missing -s build_type=Release -of .
+  conan:test:
+     desc: install external libs
+     cmds:
+       - conan install conan/libs/test.txt --profile conan/profiles/{{.PROFILE}} -b missing -s build_type=Release -of .
+  config.all:
+     desc: prepare and install conan managed packages
+     cmds:
+      - task: conan:libs
+      - task: conan:test
+      - task: template:config
+  build.all:
+      desc: build all
+      cmds:
+        - task: template:build
+
   default:
     desc: list all tasks
     cmds:

@@ -63,14 +63,12 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
         fmt::format("{}/{}", shared_folder_, path.filename().string());
     spdlog::info("trying to download: {} from: {}", path.filename().string(),
                  shared_folder_);
-    // 没有请求的文件,返回404
     if (!fs::exists(file_name))
     {
         spdlog::error("file not found: {}", file_name);
         res.status = 404;
         return;
     }
-    // 请求的是目录,返回403
     if (fs::is_directory(file_name))
     {
         spdlog::error("file is directory: {}", file_name);
@@ -92,8 +90,6 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
         res.status = 416;
         return;
     }
-    // TODO:: read file by multithread
-    //  file读入文件
     std::ifstream file(file_name, std::ios::binary);
     if (!file.is_open())
     {
@@ -101,11 +97,9 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
         res.status = 500;
         return;
     }
-    // 跳转到下载位置,写入rsp
     file.seekg(start, std::ios::beg);
     res.body.resize(len);
     file.read(res.body.data(), len);
-    // 文件出错
     if (!file.good())
     {
         spdlog::error("file read error: {}", file_name);
@@ -128,7 +122,6 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
 bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
                                  int64_t& len)
 {
-    // 检查格式
     auto pos1 = range.find('=');
     auto pos2 = range.find('-');
     if (pos1 == std::string::npos || pos2 == std::string::npos)
@@ -137,7 +130,6 @@ bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
         return false;
     }
 
-    // 解析start,end
     int64_t end;
     auto sstart = range.substr(pos1 + 1, pos2 - pos1 - 1);
     auto send = range.substr(pos2 + 1);
@@ -247,7 +239,6 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
     fs::directory_iterator item_end;
     for (; item_begin != item_end; ++item_begin)
     {
-        // 文件夹跳过
         if (fs::is_directory(*item_begin))
         {
             continue;
@@ -260,7 +251,6 @@ void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
         yyjson_mut_obj_add_int(doc, obj, "size", file_size);
         yyjson_mut_arr_append(root, obj);
     }
-    // 设置body格式--文本文件 和状态码
     char const* json = yyjson_mut_write(doc, 0, nullptr);
     if (json)
     {

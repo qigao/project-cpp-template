@@ -14,6 +14,7 @@
       "description": "Windows settings for MSBuild toolchain that apply to msvc and clang",
       "hidden": true,
       "inherits": "conf-common",
+      "generator": "Visual Studio 17 2022",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -30,7 +31,9 @@
       "cacheVariables": {
         "ENABLE_CPPCHECK_DEFAULT": false,
         "ENABLE_CLANG_TIDY_DEFAULT": false
-      }
+      },
+      "toolchainFile": "build\\generators\\conan_toolchain.cmake",
+      "binaryDir": "build"
     },
     {
       "name": "windows-msvc-debug",
@@ -38,8 +41,8 @@
       "description": "Target Windows with the msvc compiler, debug build type",
       "inherits": "conf-windows-common",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
         "CMAKE_BUILD_TYPE": "Debug",
         "FEATURE_DOCS": false,
         "FEATURE_TESTS": true
@@ -47,12 +50,12 @@
     },
     {
       "name": "windows-msvc-release",
-      "displayName": "msvc Debug",
+      "displayName": "msvc Release",
       "description": "Target Windows with the msvc compiler, release build type",
       "inherits": "conf-windows-common",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
@@ -122,6 +125,7 @@
   "buildPresets": [
     {
       "name": "windows-msvc-release",
+      "configuration": "Release",
       "configurePreset": "windows-msvc-release"
     },
     {
@@ -134,6 +138,7 @@
     },
     {
       "name": "windows-msvc-debug",
+      "configuration": "Debug",
       "configurePreset": "windows-msvc-debug"
     },
     {

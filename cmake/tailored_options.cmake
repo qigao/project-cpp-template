@@ -6,7 +6,7 @@
 # If conan2 or vcpkg is requried, include(project_options) separately and invoke `run_conan2()` or `run_vcpkg()`
 include_guard()
 
-include(${CMAKE_CURRENT_LIST_DIR}/project_options.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/options/index.cmake)
 
 # compile_commands.json
 set(ENABLE_COMPILE_COMMANDS_SYMLINK_DEFAULT OFF)
@@ -25,10 +25,6 @@ endif()
 # optimization
 set(ENABLE_INTERPROCEDURAL_OPTIMIZATION_DEFAULT ON)
 set(ENABLE_NATIVE_OPTIMIZATION_DEFAULT ON)
-
-# install vcpkg/conan dependencies: - should be called before defining project()
-run_vcpkg()
-run_conan()
 
 # configure files based on CMake configuration options
 project_options(

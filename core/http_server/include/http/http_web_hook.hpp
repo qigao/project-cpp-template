@@ -1,7 +1,7 @@
 #ifndef __WEB_HOOK_SINGLETON_H__
 #define __WEB_HOOK_SINGLETON_H__
 
-#include "hash_function.hpp"
+#include "hash/hash_function.hpp"
 #include "http_request.hpp"
 #include "singleton.hpp"
 

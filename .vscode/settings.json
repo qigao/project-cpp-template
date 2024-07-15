@@ -65,9 +65,6 @@
     ],
     "cmake.skipConfigureIfCachePresent": true,
     "cmake.buildBeforeRun": true,
-    "task": {
-        "path": "/usr/bin/go-task"
-    },
     //http collection 保存路径
     "flashpost.saveDataToWorkspace": false,
     "flashpost.workspaceDataRelativePath": "rest-api-test",

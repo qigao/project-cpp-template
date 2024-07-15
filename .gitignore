@@ -68,3 +68,6 @@ Thumbs.db
 compile_commands.json
 CMakeUserPresets.json
 task_vars.env
+
+# Env vars
+.env

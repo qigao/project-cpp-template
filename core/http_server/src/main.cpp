@@ -7,12 +7,16 @@
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
 
-#include <CLI/CLI.hpp>
+#include <cxxopts.hpp>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <thread>
+#include <filesystem>
+#include <spdlog/spdlog.h>
 using namespace std::placeholders;
+namespace fs = std::filesystem;
 
 void startServerSSL(server_config const& config)
 {
@@ -70,17 +74,70 @@ void setup_auth(server_config const& config)
 }
 int main(int argc, char** argv)
 {
-    CLI::App app{"FileServer - A http based file server"};
-    std::string filename;
-    app.add_option("-f,--file", filename,
-                   "Input config file name, applicaton.yml")
-        ->required();
-    app.add_option("-h --help", "Usage:  FileServer -f application.yml");
-    CLI11_PARSE(app, argc, argv);
-    auto yaml = std::make_unique<YamlProperties>(filename);
-    auto server_config = yaml->getConfig();
-    setup_webhook(server_config);
-    setup_auth(server_config);
-    std::thread serverSSL(startServerSSL, server_config);
-    serverSSL.join();
+    /*     CLI::App app{"FileServer - A http based file server"};
+
+        app.add_option("-f,--file", filename,
+                       "Input config file name, applicaton.yml")
+            ->required();
+        app.add_option("-h --help", "Usage:  FileServer -f application.yml");
+        CLI11_PARSE(app, argc, argv);
+        auto yaml = std::make_unique<YamlProperties>(filename);
+        auto server_config = yaml->getConfig();
+        setup_webhook(server_config);
+        setup_auth(server_config);
+        std::thread serverSSL(startServerSSL, server_config);
+        serverSSL.join(); */
+
+    std::optional<bool> minimized(false);
+    bool enableDebugLogs = false;
+
+    cxxopts::Options options("http_server", "A http server which process upload/download file and forward json request");
+
+    options.add_options()
+        ("h,help", "Print usage")
+        ("f,file", "yaml config file", cxxopts::value<std::string>())
+        ("v,verbose", "Verbose output", cxxopts::value<bool>()->default_value("false"));
+
+    try {
+        auto result = options.parse(argc, argv);
+
+        if (result.count("help")) {
+            std::cout << options.help() << std::endl;
+            return 0;
+        }
+
+        // Check if any options were provided
+        if (result.arguments().empty()) {
+            std::cout<< options.help()<<std::endl;
+            // Implement your default behavior here
+        } else {
+
+            if (result["verbose"].as<bool>()) {
+                std::cout << "Verbose mode enabled" << std::endl;
+                spdlog::set_level(spdlog::level::trace);
+            }
+            // Process the provided options
+            if (result.count("file")) {
+                auto filename = result["file"].as<std::string>();
+                std::cout << "File: " << filename << std::endl;
+                auto file = fs::path(filename);
+                if (!fs::exists(file))
+                {
+                    spdlog::error("file {} does not exist", file_name_);
+                    return;
+                }
+            }
+        }
+        auto yaml = std::make_unique<YamlProperties>(filename);
+        auto config = yaml->getConfig();
+        setup_webhook(config);
+        setup_auth(config);
+        std::thread serverSSL(startServerSSL, config);
+        serverSSL.join();
+    } catch (const cxxopts::exceptions::exception& e) {
+        std::cerr << "Error parsing options: " << e.what() << std::endl;
+        return 1;
+    }
+
+    return 0;
 }

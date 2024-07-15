@@ -2,22 +2,15 @@
 
 [requires]
 cli11/2.4.2
+cxxopts/3.1.1
 cpp-httplib/0.15.3
-
+bshoshany-thread-pool/4.1.0
 # serialization
 yyjson/0.9.0
 yaml-cpp/0.8.0
-taskflow/3.7.0
 
-# Tools
-easy_profiler/2.1.0
-
-concurrentqueue/1.0.3
-readerwriterqueue/1.0.6
-
-# compiler
-ragel/6.10
-lemon/3.32.3
+openssl/3.1.0
+spdlog/1.14.1
 
 [generators]
 CMakeDeps
@@ -25,6 +18,3 @@ CMakeToolchain
 
 [layout]
 cmake_layout
-
-[imports]
-"bin, ragel* -> ./bin"

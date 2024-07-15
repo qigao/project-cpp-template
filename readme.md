@@ -1,15 +1,16 @@
 # cpp_core_project
 
-an exmaple project based on project_options
+## pre-install
+
+* install cmake
+* install task(taskfile.dev)
 
 ## Usage
 
+### build by taskfile
 ```sh
-cmake --list-presets all                    # List all CMake presets
-cmake --preset windows                      # Configure
-cmake --build --preset windows              # Build
-ctest --preset windows                      # Test
-cmake --build --preset windows -t install   # Install
+task config.all
+task build.all
 ```
 
 ## More Details

@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <thread>
 namespace fs = std::filesystem;
-static constexpr size_t BUF_SIZE = 16384L;
+static constexpr size_t BUF_SIZE = 16384;
 
 struct http_handle
 {
@@ -24,8 +24,6 @@ struct http_handle
     bool debug = true;
     std::shared_ptr<BS::thread_pool> pool;
 };
-
-int Sum(int const pLhs, int const pRhs) { return pLhs + pRhs; }
 
 void async_file_download(http_client_handle* handle, char const* url,
                          char const* local_filename)
@@ -134,45 +132,6 @@ void post_file_request(http_client_handle* handle, char const* url,
     }
 }
 
-void post_file_stream_request(http_client_handle* handle, char const* url,
-                              char const* filename)
-{
-    auto file_path = fs::path(filename);
-    if (!fs::exists(file_path))
-    {
-        spdlog::error("file {} does not exist", filename);
-        return;
-    }
-    auto file_name = file_path.filename().string();
-    auto file_size = fs::file_size(file_path);
-    auto file_attach = fmt::format("attachment; filename=\"{}\"", file_name);
-    httplib::Headers headers = {{CONTENT_DISPOSITION, file_attach.c_str()}};
-    std::ifstream file(filename, std::ifstream::binary);
-    if (!file.is_open())
-    {
-        spdlog::error("failed to open file {}", filename);
-        return;
-    }
-
-    auto resp = handle->mClient->Post(
-        url, headers,
-        [&](size_t offset, httplib::DataSink& sink)
-        {
-            const size_t remaining = file_size - offset;
-            size_t chunk_size = std::min(BUF_SIZE, remaining);
-            file.seekg(offset);
-            char buffer[BUF_SIZE];
-            file.read(buffer, chunk_size);
-            sink.write(buffer, chunk_size);
-            return remaining <= BUF_SIZE;
-        },
-        OCTET_STREAM);
-    if (resp == nullptr || resp->status != 200)
-    {
-        spdlog::error("failed to post file request");
-        return;
-    }
-}
 
 void post_file_stream(http_client_handle* handle, char const* url,
                       char const* file_id, char const* data, unsigned long size)
@@ -184,10 +143,8 @@ void post_file_stream(http_client_handle* handle, char const* url,
         url, headers,
         [&](size_t offset, httplib::DataSink& sink)
         {
-            const size_t remaining = size - offset;
-            size_t chunk_size = std::min(BUF_SIZE, remaining);
-            sink.write(data + offset, chunk_size);
-            return remaining <= BUF_SIZE;
+            sink.write(data + offset, size);
+            return true;
         },
         OCTET_STREAM);
     if (resp == nullptr || resp->status != 200)
@@ -196,6 +153,7 @@ void post_file_stream(http_client_handle* handle, char const* url,
         return;
     }
 }
+
 http_client_handle* new_http_client(char const* filename)
 {
     auto yaml = std::make_shared<ClientYml>(std::string(filename));

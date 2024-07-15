@@ -4,6 +4,9 @@
 
 version: 3
 tasks:
+  http_client:build:
+    cmds:
+      - cmake --build  $BUILD_DIR   --target http_client
   http_client:test:build:
     cmds:
       - cmake --build  $BUILD_DIR   --target http_client_test

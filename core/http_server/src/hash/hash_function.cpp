@@ -1,4 +1,4 @@
-#include "hash_function.hpp"
+#include "hash/hash_function.hpp"
 
 #include "fs.hpp"
 

@@ -25,17 +25,6 @@ extern "C"
     MVIEW_API void set_auth_token(http_client_handle* handle,
                                   char const* token);
     /**
-     * Calculates the sum of two integers.
-     *
-     * @param pLhs The first integer to be summed.
-     * @param pRhs The second integer to be summed.
-     *
-     * @return The sum of the two integers.
-     *
-     * @throws None
-     */
-    MVIEW_API int Sum(int const pLhs, int const pRhs);
-    /**
      * Downloads a file synchronously from the relative URL and saves it
      * locally.
      *
@@ -133,17 +122,7 @@ extern "C"
      */
     MVIEW_API void post_file_request(http_client_handle* handle,
                                      char const* url, char const* filename);
-    /**
-     * Sends a POST request to the relative URL with the provided file data.
-     *
-     * @param url The relative URL to send the POST request to.
-     * @param filename The name of the file to send in the request body.
-     *
-     * @throws None
-     */
-    MVIEW_API void post_file_stream_request(http_client_handle* handle,
-                                            char const* url,
-                                            char const* filename);
+
 
     /** Sends a POST request to the relative URL with the provided file data.
      *

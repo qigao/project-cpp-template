@@ -95,8 +95,8 @@ TEST_F(HttpClientTest, uploadByStream)
     set_auth_token(http_client_api, "123456");
     http_request_initialize(http_client_api);
 
-    post_file_stream(http_client_api, "/upload", "101","hello",5);
-    std::string filename = fmt::format("{}/{}", SHARED_FOLDER,101);
+    post_file_stream(http_client_api, "/upload", "101", "hello", 5);
+    std::string filename = fmt::format("{}/{}", SHARED_FOLDER, 101);
     EXPECT_TRUE(std::filesystem::exists(filename));
 }
 
