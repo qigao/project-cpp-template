@@ -1,12 +1,8 @@
 #include "client_yaml.hpp"
 
 #include "client_config.hpp"
+#include "utils.hpp"
 
-#include <filesystem>
-#include <spdlog/spdlog.h>
-#include <string>
-#include <yaml-cpp/yaml.h>
-namespace fs = std::filesystem;
 class ClientYml::remoteCfg
 {
 public:

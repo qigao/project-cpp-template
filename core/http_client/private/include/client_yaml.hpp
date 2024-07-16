@@ -2,9 +2,7 @@
 #define __CLIENT_YML_PROPERTIES_H__
 
 #include "client_config.hpp"
-
-#include <memory>
-#include <string>
+#include "utils.hpp"
 
 class ClientYml
 {

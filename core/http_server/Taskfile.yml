@@ -10,7 +10,7 @@ tasks:
       - cmd: cd $BUILD_DIR && ctest -T test --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_server_lib\.yaml_convert$
   yaml_config:test:build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target test.http_server_lib.yaml_test
+      - cmake --build  $BUILD_DIR  --target test.http_server_lib.yaml_config
   yaml_config:test:run:
     deps:
       - task: yaml_config:test:build

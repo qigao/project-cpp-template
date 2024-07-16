@@ -1,15 +1,8 @@
 #ifndef CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
 #define CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
-#include "constants.hpp"
-#include "fs.hpp"
-#include "http_lib_header.hpp"
-#include "stream_cast.hpp"
 
-#include <cstdint>
-#include <iostream>
-#include <spdlog/spdlog.h>
-#include <stdexcept>
-#include <string>
+#include "utils.hpp"
+
 class HttpFileDownload
 {
 public:

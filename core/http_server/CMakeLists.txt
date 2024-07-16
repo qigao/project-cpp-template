@@ -68,7 +68,7 @@ target_compile_definitions(
 target_link_libraries(
   ${TARGET_NAME_LIB} INTERFACE starter_project_options starter_project_warnings
 )
-
+target_precompile_headers(${TARGET_NAME_LIB} INTERFACE include/config/utils.hpp)
 # Executable part
 add_executable(${TARGET_NAME})
 target_sources(${TARGET_NAME} PRIVATE src/main.cpp)

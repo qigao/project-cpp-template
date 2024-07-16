@@ -1,6 +1,6 @@
 #include "http/http_auth_handle.hpp"
 
-#include "constants.hpp"
+#include "config/utils.hpp"
 
 bool AuthHandler::is_valid_key(std::string const& key)
 {

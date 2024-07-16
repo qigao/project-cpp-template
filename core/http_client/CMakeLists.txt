@@ -78,14 +78,8 @@ target_compile_definitions(
 target_link_libraries(
   ${TARGET_NAME} PRIVATE starter_project_options starter_project_warnings
 )
-# include all the necessary directories
-target_include_directories(
-  ${TARGET_NAME}
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include
-          ${CMAKE_CURRENT_SOURCE_DIR}/public
-          # Any other extra include required
-)
 
+target_precompile_headers(${TARGET_NAME} PRIVATE private/include/utils.hpp)
 # Tests
 if(FEATURE_TESTS)
   add_subdirectory(test)
