@@ -1,6 +1,5 @@
 {
     "C_Cpp.autocompleteAddParentheses": true,
-    "C_Cpp.default.intelliSenseMode": "clang-x64",
     "C_Cpp.workspaceSymbols": "All",
     "C_Cpp.intelliSenseEngine": "disabled",
     /**********
@@ -58,16 +57,8 @@
     "editor.fontSize": 14,
     // 集成终端字体大小
     "terminal.integrated.fontSize": 14,
-    "spellright.language": [],
-    "spellright.documentTypes": [
-        "markdown",
-        "latex"
-    ],
     "cmake.skipConfigureIfCachePresent": true,
     "cmake.buildBeforeRun": true,
-    "task": {
-        "path": "/usr/bin/go-task"
-    },
     //http collection 保存路径
     "flashpost.saveDataToWorkspace": false,
     "flashpost.workspaceDataRelativePath": "rest-api-test",

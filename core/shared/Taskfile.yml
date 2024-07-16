@@ -20,7 +20,14 @@ tasks:
   human_read:test:run:
     deps: [human_read:test:build]
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -R HumanReadableTest
+      - cmd: cd $BUILD_DIR && ctest -R HumanReadable
+  hash:test:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target hash_function_test
+  hash:test:run:
+    deps: [hash:test:build]
+    cmds:
+      - cmd: cd $BUILD_DIR && ctest -R HashMethodTest
 
   random:test:build:
     cmds:

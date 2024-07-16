@@ -6,12 +6,12 @@ on:
       - develop
       - master
     paths:
-      - "core/**" 
+      - "core/**"
 
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - "core/**" 
+      - "core/**"
 env:
   CMAKE_GENERATOR: "Ninja Multi-Config"
 jobs:
@@ -22,7 +22,7 @@ jobs:
             - os: ubuntu-latest
               compiler: "gcc"
             - os: ubuntu-latest
-              compiler: "clang"  
+              compiler: "clang"
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -31,22 +31,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/vcpkg
-            ./build/vcpkg_installed
             ${{ env.CONAN_USER_HOME }}
             ~/.cache/pip
-            ${{ env.HOME }}/.cache/vcpkg/archives
-            ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
-            ${{ env.LOCALAPPDATA }}\vcpkg\archives
-            ${{ env.APPDATA }}\vcpkg\archives
-          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./vcpkg.json')}}-${{ hashFiles('**/CMakeLists.txt') }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./conanfile.txt')}}-${{ hashFiles('**/CMakeLists.txt') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./vcpkg.json') }}-
-      - name: Setup vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-            vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-            vcpkgJsonGlob: '**/vcpkg.json'
+            ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./conanfile.txt') }}-
       - name: Install Conan 2
         run: |
                 pip install conan
@@ -61,9 +50,9 @@ jobs:
         run: |
             sudo apt-get update
             sudo apt-get install -y ccache cppcheck clang-tidy
-            pip install gcovr 
+            pip install gcovr
       - name: Install CMake and Ninja
-        uses: lukka/get-cmake@latest  
+        uses: lukka/get-cmake@latest
       - name: config and setup project
         run: |
             task config

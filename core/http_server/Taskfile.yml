@@ -2,25 +2,33 @@ version: 3
 tasks:
   yaml_convert:test:build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target yaml_convert_test
+      - cmake --build  $BUILD_DIR  --target test.http_server_lib.yaml_convert
   yaml_convert:test:run:
     deps:
       - task: yaml_convert:test:build
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -R YmlTest
-  yaml_properties:test:build:
+      - cmd: cd $BUILD_DIR && ctest -T test --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_server_lib\.yaml_convert$
+  yaml_config:test:build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target yaml_properties_test
-  yaml_properties:test:run:
+      - cmake --build  $BUILD_DIR  --target test.http_server_lib.yaml_test
+  yaml_config:test:run:
     deps:
-      - task: yaml_properties:test:build
+      - task: yaml_config:test:build
     cmds:
-      - cmd:  cd $BUILD_DIR && ctest  -R YamlPropertiesTest
+      - cmd:  cd $BUILD_DIR && ctest -T test --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_server_lib\.yaml_config$
+  http_server:exe:build:
+    cmds:
+      - cmake --build  $BUILD_DIR  --target http_server
+  http_server:exe:run:
+    deps:
+      - task: http_server:exe:build
+    cmds:
+      - cmd: cd $BUILD_DIR && ./http_server
   http_server:test:build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target http_server_test
+      - cmake --build  $BUILD_DIR  --target  test.http_server_lib.dll
   http_server:test:run:
     deps:
       - task: http_server:test:build
     cmds:
-      - cmd: cd $BUILD_DIR && ctest  -R HttpServerTest
+      - cmd: cd $BUILD_DIR && ctest -T test --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_server_lib\.dll$

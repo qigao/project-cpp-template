@@ -6,7 +6,7 @@ endif()
 
 # building the docs
 option(FEATURE_DOCS "Enable the docs" OFF)
-option(ENABLE_OPENSSL "Enable OpenSSL support" ON)
+option(ENABLE_OPENSSL "Enable OpenSSL support" OFF)
 # fuzz tests
 option(FEATURE_FUZZ_TESTS "Enable the fuzz tests" OFF)
 option(ENABLE_BENCHMARKS "Enable benchmark tests" OFF)
@@ -24,11 +24,30 @@ if(FEATURE_TESTS)
     ENABLE_SANITIZER_ADDRESS ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
     ENABLE_SANITIZER_LEAK ENABLE_SANITIZER_THREAD ENABLE_SANITIZER_MEMORY
   )
-  include(GoogleTest)
+
   enable_testing()
   # code coverage
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
-  set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+  if(${ENABLE_COVERAGE})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+  endif()
+  # Include CTest before any tests
+  include(CTest)
+
+  # Add handy test wrappers
+  include(add_test)
+
+  # Common test config
+  add_test_config(
+    catch2_test_common
+    DEPENDENCIES_CONFIG
+    Catch2
+    LIBRARIES
+    starter_project_options
+    starter_project_warnings
+    SYSTEM_LIBRARIES
+    Catch2::Catch2WithMain
+  )
 
 endif()
 

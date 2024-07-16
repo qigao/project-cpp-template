@@ -54,6 +54,7 @@ target_find_dependencies(
   spdlog
   yaml-cpp
   fmt
+  bshoshany-thread-pool
 )
 target_link_system_libraries(
   ${TARGET_NAME}
@@ -63,15 +64,11 @@ target_link_system_libraries(
   Threads::Threads
   yaml-cpp::yaml-cpp
   fmt::fmt
+  bshoshany-thread-pool::bshoshany-thread-pool
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
 )
 
-set_target_properties(
-  ${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden
-                            VISIBILITY_INLINES_HIDDEN ON
-)
-target_compile_definitions(${TARGET_NAME} PRIVATE ${TARGET_NAME}_EXPORTS)
 target_compile_definitions(
   ${TARGET_NAME}
   INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
@@ -87,7 +84,6 @@ target_include_directories(
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/include
           ${CMAKE_CURRENT_SOURCE_DIR}/public
           # Any other extra include required
-          ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS}
 )
 
 # Tests

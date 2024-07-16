@@ -1,7 +1,7 @@
 #include "../../singleton.hpp"
 #include "singleton.hpp"
 
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 #include <nanobench.h>
 class Foo : public Singleton<Foo>
 {
@@ -13,7 +13,7 @@ private:
     int n_;
 };
 
-TEST(Benchmarks, singleton)
+TEST_CASE("Benchmarks singleton", "[!benchmark]")
 {
 
     ankerl::nanobench::Bench().run("get bar",
@@ -44,7 +44,7 @@ public:
 private:
     std::atomic_uint32_t count_{0};
 };
-TEST(Benchmarks, singletonAtomic)
+TEST_CASE("Benchmarks singletonAtomic", "[!benchmark]")
 {
 
     ankerl::nanobench::Bench().run("get bar",

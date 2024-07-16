@@ -1,14 +1,14 @@
 #include "random.hpp"
 
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 #include <string>
-TEST(RandomTest, StringGenerator)
+TEST_CASE("RandomTest generate string of len(10)", "[random_string]")
 {
     std::string str = random_string(10);
-    ASSERT_EQ(str.size(), 10);
+    REQUIRE(str.size() == 10);
 }
-TEST(RandomTest, StringGeneratorLen0)
+TEST_CASE("RandomTest generate string of len(0)", "[random_string]")
 {
     std::string str = random_string(0);
-    ASSERT_EQ(str.size(), 0);
+    REQUIRE(str.empty());
 }

@@ -40,19 +40,13 @@ tasks:
 
           echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
         {{end}}
-    env:
-      CMAKE_BUILD_TYPE: "{{.CMAKE_BUILD_TYPE}}"
 
-  lint:vcpkg:
-    cmds:
-      - ~/vcpkg/vcpkg format-manifest ./vcpkg.json
   lint.all:
     desc: cpp, cmake, and vcpkg linting
     deps:
       - task: lint:cmake
       - task: lint:clang-format
-    cmds:
-      - task: lint:vcpkg
+
   clean:build:
     desc: clean all build artifacts
     cmds:

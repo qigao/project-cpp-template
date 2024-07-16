@@ -6,13 +6,15 @@
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
 #include "http_client_lib.h"
+#include "logs.hpp"
 #include "test_helper.h"
 
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 #include <cstdio>
 #include <filesystem>
 #include <fmt/core.h>
 #include <functional>
-#include <gtest/gtest.h>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -21,10 +23,10 @@ using namespace std::placeholders;
 static char const* HOST = "127.0.0.1";
 static int const PORT = 5060;
 static char const* SHARED_FOLDER = "/tmp";
-class HttpClientTest : public testing::Test
+class HttpClientTest
 {
-protected:
-    void SetUp() override
+public:
+    HttpClientTest()
     {
         auto const file_name = "client.yaml";
         YAML::Node node = YAML::Load(yml_demo_data);
@@ -42,16 +44,14 @@ protected:
         write(full_path_file_name->string(), out.c_str(), out.size());
     }
 
-    void TearDown() override
-    {
-        fs::remove_all(full_path_file_name->filename());
-    }
+    ~HttpClientTest() { fs::remove_all(full_path_file_name->filename()); }
 
     std::shared_ptr<fs::path> full_path_file_name;
 };
 
-TEST_F(HttpClientTest, uploadFileByStream)
+TEST_CASE_METHOD(HttpClientTest, "http_client", "[uploadFileByStream]")
 {
+    Logger::Construct();
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
 
@@ -79,8 +79,9 @@ TEST_F(HttpClientTest, uploadFileByStream)
     fs::remove(filename);
 }
 
-TEST_F(HttpClientTest, uploadByStream)
+TEST_CASE_METHOD(HttpClientTest, "http_client", "[uploadByStream]")
 {
+    Logger::Construct();
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
 
@@ -95,13 +96,14 @@ TEST_F(HttpClientTest, uploadByStream)
     set_auth_token(http_client_api, "123456");
     http_request_initialize(http_client_api);
 
-    post_file_stream(http_client_api, "/upload", "101","hello",5);
-    std::string filename = fmt::format("{}/{}", SHARED_FOLDER,101);
-    EXPECT_TRUE(std::filesystem::exists(filename));
+    post_file_stream(http_client_api, "/upload", "101", "hello", 5);
+    std::string filename = fmt::format("{}/{}", SHARED_FOLDER, 101);
+    REQUIRE(std::filesystem::exists(filename));
 }
 
-TEST_F(HttpClientTest, listFile)
+TEST_CASE_METHOD(HttpClientTest, "http_client", "[listFile]")
 {
+    Logger::Construct();
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
@@ -111,12 +113,13 @@ TEST_F(HttpClientTest, listFile)
     httplib::Client cli(HOST, PORT);
     auto resp = cli.Get("/");
 
-    EXPECT_NE(resp, nullptr);
-    EXPECT_EQ(resp->status, 200);
+    REQUIRE(resp != nullptr);
+    REQUIRE(resp->status == 200);
 }
 
-TEST_F(HttpClientTest, downloadFile)
+TEST_CASE_METHOD(HttpClientTest, "http_client", "[downloadFile]")
 {
+    Logger::Construct();
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
@@ -146,14 +149,15 @@ TEST_F(HttpClientTest, downloadFile)
             return true;
         });
     ofs.close();
-    EXPECT_NE(resp, nullptr);
-    EXPECT_EQ(resp->status, 200);
+    REQUIRE(resp != nullptr);
+    REQUIRE(resp->status == 200);
     std::remove(local_file.c_str());
-    EXPECT_FALSE(std::filesystem::exists(local_file));
+    REQUIRE_FALSE(std::filesystem::exists(local_file));
 }
 
-TEST_F(HttpClientTest, downloadFile2)
+TEST_CASE_METHOD(HttpClientTest, "http_client", "[downloadFile2]")
 {
+    Logger::Construct();
     HttpServer svr(PORT);
     svr.setSharedFolder(SHARED_FOLDER);
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
@@ -171,12 +175,13 @@ TEST_F(HttpClientTest, downloadFile2)
     http_request_initialize(http_client_api);
     sync_file_download(http_client_api, remote_url.c_str(), local_file.c_str());
     std::remove(local_file.c_str());
-    EXPECT_FALSE(std::filesystem::exists(local_file));
+    REQUIRE_FALSE(std::filesystem::exists(local_file));
     svr.stop();
 }
 
-TEST_F(HttpClientTest, postJsonRequest)
+TEST_CASE_METHOD(HttpClientTest, "http_client", "[postJsonRequest]")
 {
+    Logger::Construct();
     HttpServer svr(PORT);
     // Register handler
     auto handler = std::make_shared<HttpJsonHandler>();
@@ -197,8 +202,9 @@ TEST_F(HttpClientTest, postJsonRequest)
     free_client_handle(http_client_api);
 }
 
-TEST_F(HttpClientTest, postJsonImageRequest)
+TEST_CASE_METHOD(HttpClientTest, "http_client", "[postJsonImageRequest]")
 {
+    Logger::Construct();
     WebHook::Construct("http://127.0.0.1:5060/dump");
     WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
     // Register handler

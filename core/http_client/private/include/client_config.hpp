@@ -1,5 +1,5 @@
-#ifndef __REMOTE_CONFIG_H__
-#define __REMOTE_CONFIG_H__
+#ifndef __CLIENT_CONFIG_H__
+#define __CLIENT_CONFIG_H__
 
 #include <string>
 #include <yaml-cpp/yaml.h>
@@ -9,7 +9,7 @@ class client_config
 public:
     int port;
     std::string host;
-    std::string ssl_cert;
+    std::string cert;
     std::string auth_token;
     std::string webhook_url;
     std::string files_url;
@@ -25,7 +25,7 @@ struct convert<client_config>
         YAML::Node node;
         node["webhook-url"] = rhs.webhook_url;
         node["files-url"] = rhs.files_url;
-        node["ssl-cert"] = rhs.ssl_cert;
+        node["cert"] = rhs.cert;
         node["auth-token"] = rhs.auth_token;
         node["port"] = rhs.port;
         node["host"] = rhs.host;
@@ -52,9 +52,9 @@ struct convert<client_config>
             return false;
         }
 
-        if (node["ssl-cert"])
+        if (node["cert"])
         {
-            rhs.ssl_cert = node["ssl-cert"].as<std::string>();
+            rhs.cert = node["cert"].as<std::string>();
         }
 
         if (node["auth-token"])
@@ -89,4 +89,4 @@ struct convert<client_config>
 };
 } // namespace YAML
 
-#endif // __REMOTE_CONFIG_H__
+#endif // __CLIENT_CONFIG_H__

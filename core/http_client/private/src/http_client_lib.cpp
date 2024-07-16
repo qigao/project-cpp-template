@@ -203,7 +203,6 @@ http_client_handle* new_http_client(char const* filename)
     auto config = yaml->getConfig();
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
     auto cli = std::make_shared<httplib::SSLClient>(config.host, config.port);
-    cli->enable_server_certificate_verification(true);
     cli->set_ca_cert_path(config.auth_token);
 #else
     auto cli = std::make_shared<httplib::Client>(config.host, config.port);
