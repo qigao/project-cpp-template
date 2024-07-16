@@ -1,8 +1,7 @@
 #ifndef __SERVER_CONFIG_H__
 #define __SERVER_CONFIG_H__
 
-#include <string>
-#include <yaml-cpp/yaml.h>
+#include "utils.hpp"
 class ssl_config
 {
 public:

@@ -1,23 +1,7 @@
 #include "http/http_file_handle.hpp"
 
-#include "constants.hpp"
-#include "fs.hpp"
-#include "logs.hpp"
-#include "yyjson.h"
+#include "config/utils.hpp"
 
-#include <cstring>
-#include <filesystem>
-#include <fmt/core.h>
-#include <fstream>
-#include <memory>
-#include <spdlog/async.h>
-#include <spdlog/logger.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <sstream>
-#include <vector>
-
-using namespace std;
-namespace fs = std::filesystem;
 HttpFileHandle::HttpFileHandle(std::string const& shared_folder,
                                bool delete_after_download)
     : shared_folder_(shared_folder),

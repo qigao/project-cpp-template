@@ -1,11 +1,7 @@
 #ifndef __HTTP_AUTH_HANDLE_H__
 #define __HTTP_AUTH_HANDLE_H__
 
-#include "http_lib_header.hpp"
-#include "singleton.hpp"
-
-#include <spdlog/logger.h>
-#include <string>
+#include "config/utils.hpp"
 class AuthHandler : public Singleton<AuthHandler>
 {
 public:

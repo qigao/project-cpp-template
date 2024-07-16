@@ -1,14 +1,8 @@
 #include "http/http_json_handle.hpp"
 
-#include "constants.hpp"
+#include "config/utils.hpp"
 #include "http/http_web_hook.hpp"
-#include "http_lib_header.hpp"
-#include "logs.hpp"
-#include "spdlog/spdlog.h"
-#include "yyjson.h"
 
-#include <BS_thread_pool.hpp>
-#include <fmt/core.h>
 HttpJsonHandler::HttpJsonHandler() : pool(std::make_shared<BS::thread_pool>(2))
 {
     logger = Logger::GetInstance()->get();

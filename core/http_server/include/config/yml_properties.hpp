@@ -2,10 +2,7 @@
 #define __YML_PROPERTIES_H__
 
 #include "config/server_config.hpp"
-
-#include <memory>
-#include <spdlog/logger.h>
-#include <string>
+#include "utils.hpp"
 
 class YamlProperties
 {

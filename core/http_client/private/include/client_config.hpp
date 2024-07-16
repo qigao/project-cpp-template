@@ -1,8 +1,7 @@
 #ifndef __CLIENT_CONFIG_H__
 #define __CLIENT_CONFIG_H__
 
-#include <string>
-#include <yaml-cpp/yaml.h>
+#include "utils.hpp"
 
 class client_config
 {

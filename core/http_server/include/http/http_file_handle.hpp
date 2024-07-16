@@ -1,10 +1,6 @@
 #ifndef __HTTP_FILE_H__
 #define __HTTP_FILE_H__
-#include "http_lib_header.hpp"
-
-#include <fmt/core.h>
-#include <spdlog/logger.h>
-#include <string>
+#include "config/utils.hpp"
 
 #define UP_LOAD_MESSAGE R"({"message":"upload result"})"
 class HttpFileHandle

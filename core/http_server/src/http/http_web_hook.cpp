@@ -1,10 +1,6 @@
 #include "http/http_web_hook.hpp"
 
-#include "constants.hpp"
-#include "logs.hpp"
-
-#include <memory>
-#include <spdlog/spdlog.h>
+#include "config/utils.hpp"
 
 WebHook::WebHook(std::string const& url)
     : web_hook_url(url), hash_func(std::make_shared<hash_function>()),

@@ -1,14 +1,8 @@
 #ifndef __WEB_HOOK_SINGLETON_H__
 #define __WEB_HOOK_SINGLETON_H__
 
-#include "hash_function.hpp"
-#include "http_request.hpp"
-#include "singleton.hpp"
+#include "config/utils.hpp"
 
-#include <memory>
-#include <spdlog/logger.h>
-#include <string>
-#include <vector>
 class WebHook : public Singleton<WebHook>
 {
 public:

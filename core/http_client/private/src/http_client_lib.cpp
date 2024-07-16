@@ -1,14 +1,9 @@
 #include "http_client_lib.h"
 
 #include "client_yaml.hpp"
-#include "constants.hpp"
-#include "helpers.hpp"
 #include "http_file_download.hpp"
+#include "utils.hpp"
 
-#include <BS_thread_pool.hpp>
-#include <algorithm>
-#include <filesystem>
-#include <thread>
 namespace fs = std::filesystem;
 static constexpr size_t BUF_SIZE = 16384L;
 
