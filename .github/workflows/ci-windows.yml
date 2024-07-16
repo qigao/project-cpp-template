@@ -6,20 +6,20 @@ on:
       - develop
       - master
     paths:
-      - "core/**" 
+      - "core/**"
 
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - "core/**" 
+      - "core/**"
 env:
   CMAKE_GENERATOR: "Ninja Multi-Config"
 jobs:
   setup-build:
     strategy:
         matrix:
-          os: 
-            - windows-2022  
+          os:
+            - windows-2022
           include:
             - os: "windows-2022"
               compiler: "msvc"
@@ -33,17 +33,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/vcpkg
-            ./build/vcpkg_installed
             ${{ env.CONAN_USER_HOME }}
             ~/.cache/pip
-            ${{ env.HOME }}/.cache/vcpkg/archives
-            ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
-            ${{ env.LOCALAPPDATA }}\vcpkg\archives
-            ${{ env.APPDATA }}\vcpkg\archives
-          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./vcpkg.json')}}-${{ hashFiles('**/CMakeLists.txt') }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./conanfile.txt')}}-${{ hashFiles('**/CMakeLists.txt') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./vcpkg.json') }}-
+            ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./conanfile.txt') }}-
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -51,7 +45,6 @@ jobs:
           vcvarsall: true
           cmake: true
           ninja: true
-          vcpkg: true
           conan: 2.1.0
           cppcheck: true
           clangtidy: true
