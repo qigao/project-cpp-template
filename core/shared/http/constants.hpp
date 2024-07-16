@@ -17,5 +17,6 @@
 #define SHA_256_HASH_HEADER "X-Hub-Signature-256"
 #define SHA1_HASH_HEADER "X-Hub-Signature"
 #define CHUNK_SIZE (32 * 1024)
+#define MyLogger "mylog"
 
 #endif // CPP_CORE_PROJECT_CONSTANTS_HPP

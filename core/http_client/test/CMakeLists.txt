@@ -1,60 +1,41 @@
-find_package(GTest REQUIRED)
-add_executable(http_client_test http_client_test.cpp)
-target_link_libraries(
-  http_client_test
-  PRIVATE GTest::gtest
-          GTest::gtest_main
-          GTest::gmock
-          GTest::gmock_main
-          http_server_lib
-          http_client
-          starter_project_options
-          starter_project_warnings
+add_test_config(http_client_lib SYSTEM_LIBRARIES http_client http_server_lib)
+
+add_library_test(
+  http_client
+  yaml_convert
+  CONFIGS
+  catch2_test_common
+  http_client_lib
+  SOURCES
+  yaml_convert_test.cpp
 )
 
-gtest_discover_tests(http_client_test)
-
-add_executable(sum_test sum_test.cpp)
-target_link_libraries(
-  sum_test
-  PRIVATE GTest::gtest
-          GTest::gtest_main
-          GTest::gmock
-          GTest::gmock_main
-          http_server_lib
-          http_client
-          starter_project_options
-          starter_project_warnings
-)
-gtest_discover_tests(sum_test)
-
-# --------------- YAML_PROPERTIES ---------------------
-add_executable(
-  client_yaml_test ../private/src/client_yaml.cpp client_yml_test.cpp
-)
-target_link_libraries(
-  client_yaml_test
-  PRIVATE GTest::gtest
-          GTest::gtest_main
-          GTest::gmock
-          GTest::gmock_main
-          http_client
-          starter_project_options
-          starter_project_warnings
-)
-gtest_discover_tests(client_yaml_test)
-
-# --------------- YAML_CONVERT TEST -------------------
-add_executable(client_yaml_convert_test yaml_convert_test.cpp)
-target_link_libraries(
-  client_yaml_convert_test
-  PRIVATE GTest::gtest
-          GTest::gtest_main
-          GTest::gmock
-          GTest::gmock_main
-          http_client
-          starter_project_options
-          starter_project_warnings
+add_library_test(
+  http_client
+  sum
+  CONFIGS
+  catch2_test_common
+  http_client_lib
+  SOURCES
+  sum_test.cpp
 )
 
-gtest_discover_tests(client_yaml_convert_test)
+add_library_test(
+  http_client
+  yaml_config
+  CONFIGS
+  catch2_test_common
+  http_client_lib
+  SOURCES
+  client_yml_test.cpp
+)
+
+add_library_test(
+  http_client
+  dll
+  CONFIGS
+  catch2_test_common
+  http_client_lib
+  SOURCES
+  http_client_test.cpp
+)

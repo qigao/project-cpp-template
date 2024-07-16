@@ -3,6 +3,7 @@
 #include "constants.hpp"
 #include "http/http_web_hook.hpp"
 #include "http_lib_header.hpp"
+#include "logs.hpp"
 #include "spdlog/spdlog.h"
 #include "yyjson.h"
 
@@ -10,6 +11,7 @@
 #include <fmt/core.h>
 HttpJsonHandler::HttpJsonHandler() : pool(std::make_shared<BS::thread_pool>(2))
 {
+    logger = Logger::GetInstance()->get();
 }
 void HttpJsonHandler::getMsg(httplib::Request const& req,
                              httplib::Response& res)
@@ -30,7 +32,7 @@ void HttpJsonHandler::postMsg(httplib::Request const& req,
                               httplib::Response& res)
 {
     auto pathVar = req.matches[1];
-    spdlog::info("request info:{},path params: {}", req.body, pathVar.str());
+    logger->info("request info:{},path params: {}", req.body, pathVar.str());
     // Read JSON string
     yyjson_doc* doc = yyjson_read(req.body.c_str(), req.body.length(), 0);
     yyjson_val* root = yyjson_doc_get_root(doc);
@@ -56,19 +58,19 @@ void HttpJsonHandler::dump(httplib::Request const& req, httplib::Response& res)
     std::string sha256_header = req.get_header_value(SHA_256_HASH_HEADER);
     if (sha256_header.empty())
     {
-        spdlog::info("no sha header");
+        logger->info("no sha header");
     }
     for (auto const& param : req.params)
     {
-        spdlog::info("Parameter: {} = {}", param.first, param.second);
+        logger->info("Parameter: {} = {}", param.first, param.second);
     }
     if (req.body.empty())
     {
-        spdlog::info("message: empty body");
+        logger->info("message: empty body");
 
         return;
     }
-    spdlog::info("dump body: {}", req.body);
+    logger->info("dump body: {}", req.body);
 }
 
 void HttpJsonHandler::web_hook(httplib::Request const& req,
@@ -85,7 +87,7 @@ void HttpJsonHandler::web_hook(httplib::Request const& req,
         if (my_future.wait_for(std::chrono::milliseconds(2000)) !=
             std::future_status::ready)
         {
-            spdlog::info("waiting");
+            logger->info("waiting");
         }
         else
         {

@@ -2,17 +2,18 @@
 #include "fs.hpp"
 #include "test_helper.h"
 
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 #include <filesystem>
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
 #include <iostream>
+#include <memory>
 #include <yaml-cpp/yaml.h>
-using ::testing::Eq;
+
 namespace fs = std::filesystem;
-class RemoteYmlTest : public testing::Test
+class RemoteYmlTest
 {
-protected:
-    void SetUp() override
+public:
+    RemoteYmlTest()
     {
         auto const file_name = "client.yaml";
         YAML::Node node = YAML::Load(yml_demo_data);
@@ -32,21 +33,18 @@ protected:
             std::make_unique<ClientYml>(full_path_file_name->string());
     }
 
-    void TearDown() override
-    {
-        fs::remove_all(full_path_file_name->filename());
-    }
+    ~RemoteYmlTest() { fs::remove_all(full_path_file_name->filename()); }
 
     std::unique_ptr<ClientYml> yml_properties_;
     std::unique_ptr<fs::path> full_path_file_name;
 };
-TEST_F(RemoteYmlTest, ParseTest)
+TEST_CASE_METHOD(RemoteYmlTest, "ParseTest", "[parse_yml]")
 {
     yml_properties_->parse();
     auto config = yml_properties_->getConfig();
-    EXPECT_THAT(config.host, Eq("127.0.0.1"));
-    EXPECT_THAT(config.port, Eq(5060));
-    EXPECT_THAT(config.auth_token, Eq("123456"));
-    EXPECT_THAT(config.files_url, Eq("/upload"));
-    EXPECT_THAT(config.webhook_url, Eq("/webhook"));
+    REQUIRE_THAT(config.host, Catch::Matchers::Equals("127.0.0.1"));
+    REQUIRE(config.port == 5060);
+    REQUIRE_THAT(config.auth_token, Catch::Matchers::Equals("123456"));
+    REQUIRE_THAT(config.files_url, Catch::Matchers::Equals("/upload"));
+    REQUIRE_THAT(config.webhook_url, Catch::Matchers::Equals("/webhook"));
 }

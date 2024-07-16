@@ -10,8 +10,4 @@ includes:
     taskfile: ./http_client/Taskfile.yml
   shared:
     taskfile: ./shared/Taskfile.yml
-tasks:
-  server:
-    deps:
-      - server:yaml_convert:test
-      - server:yaml_convert:coverage
+ 

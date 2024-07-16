@@ -3,15 +3,11 @@
 
 #include <string>
 #include <yaml-cpp/yaml.h>
-
 class ssl_config
 {
 public:
-    bool enabled = false;
     std::string key_file;
     std::string cert_file;
-    std::string root_ca_file;
-    std::string root_ca_key_file;
 };
 
 struct auth_config
@@ -27,7 +23,6 @@ struct header_config
 class webhook_config
 {
 public:
-    bool enabled = false;
     std::string url;
     std::string api_key;
     std::vector<header_config> headers;
@@ -113,21 +108,15 @@ struct convert<ssl_config>
     static YAML::Node encode(ssl_config const& rhs)
     {
         YAML::Node node;
-        node["enabled"] = rhs.enabled;
         node["key_file"] = rhs.key_file;
         node["cert_file"] = rhs.cert_file;
-        node["root_ca_file"] = rhs.root_ca_file;
-        node["root_ca_key_file"] = rhs.root_ca_key_file;
         return node;
     }
 
     static bool decode(YAML::Node const& node, ssl_config& rhs)
     {
-        rhs.enabled = node["enabled"].as<bool>();
         rhs.cert_file = node["cert_file"].as<std::string>();
         rhs.key_file = node["key_file"].as<std::string>();
-        rhs.root_ca_file = node["root_ca_file"].as<std::string>();
-        rhs.root_ca_key_file = node["root_ca_key_file"].as<std::string>();
         return true;
     }
 };
@@ -138,7 +127,6 @@ struct convert<webhook_config>
     static YAML::Node encode(webhook_config const& rhs)
     {
         YAML::Node node;
-        node["enabled"] = rhs.enabled;
         node["url"] = rhs.url;
         node["api_key"] = rhs.api_key;
         node["headers"] = rhs.headers;
@@ -147,7 +135,6 @@ struct convert<webhook_config>
 
     static bool decode(YAML::Node const& node, webhook_config& rhs)
     {
-        rhs.enabled = node["enabled"].as<bool>();
         rhs.url = node["url"].as<std::string>();
         rhs.api_key = node["api_key"].as<std::string>();
         rhs.headers = node["headers"].as<std::vector<header_config>>();

@@ -6,6 +6,7 @@
 #include "singleton.hpp"
 
 #include <memory>
+#include <spdlog/logger.h>
 #include <string>
 #include <vector>
 class WebHook : public Singleton<WebHook>
@@ -20,6 +21,7 @@ private:
     std::string web_hook_url;
     std::shared_ptr<hash_function> hash_func;
     std::shared_ptr<http::Request> http_request;
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 #endif // __WEB_HOOK_SINGLETON_H__

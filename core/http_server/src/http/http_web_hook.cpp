@@ -1,6 +1,7 @@
 #include "http/http_web_hook.hpp"
 
 #include "constants.hpp"
+#include "logs.hpp"
 
 #include <memory>
 #include <spdlog/spdlog.h>
@@ -10,6 +11,7 @@ WebHook::WebHook(std::string const& url)
       http_request(std::make_shared<http::Request>(url))
 {
     headers.push_back({CONTENT_TYPE, APP_JSON});
+    logger = Logger::GetInstance()->get();
 }
 
 void WebHook::call(std::string const& json)
@@ -22,7 +24,7 @@ void WebHook::call(std::string const& json)
     headers.push_back({SHA1_HASH_HEADER, sha1_value.c_str()});
     auto const response = http_request->send("POST", json, headers);
     auto resp = std::string{response.body.begin(), response.body.end()};
-    spdlog::info("forward call resp body: {}", resp);
+    logger->info("forward call resp body: {}", resp);
 }
 
 void WebHook::set_header(std::string const& header, std::string const& value)

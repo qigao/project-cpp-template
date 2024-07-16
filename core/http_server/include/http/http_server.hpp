@@ -3,6 +3,7 @@
 #include "http_lib_header.hpp"
 
 #include <memory>
+#include <spdlog/logger.h>
 #include <string>
 
 class HttpServer
@@ -10,8 +11,7 @@ class HttpServer
 public:
     explicit HttpServer(int port = 0, unsigned int numThreads = 4,
                         std::string const& certFile = "",
-                        std::string const& keyFile = "",
-                        std::string const& rootCaFile = "");
+                        std::string const& keyFile = "");
     virtual ~HttpServer();
 
     void start();
@@ -71,6 +71,7 @@ public:
     }
 
     inline std::string getSharedFolder() { return mSharedFolder; }
+    void config_server();
 
 private:
     void error_handler(httplib::Request const& req, httplib::Response& res);
@@ -81,6 +82,7 @@ private:
     // private vars
     int mPort = 0;
     int mBoundPort = 0;
+    int mThreads = 0;
     bool mStopSignal = false;
     std::string mSharedFolder;
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
@@ -91,6 +93,7 @@ private:
     std::thread mListenThread;
     HttpServer(HttpServer const&) = delete;
     HttpServer& operator=(HttpServer const&) = delete;
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 #endif // CPP_CORE_PROJECT_HTTPSERVER_HPP

@@ -2,22 +2,28 @@
 
 #include "constants.hpp"
 #include "fs.hpp"
-#include "spdlog/spdlog.h"
+#include "logs.hpp"
 #include "yyjson.h"
 
 #include <cstring>
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
+#include <memory>
+#include <spdlog/async.h>
+#include <spdlog/logger.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <sstream>
 #include <vector>
 
+using namespace std;
 namespace fs = std::filesystem;
 HttpFileHandle::HttpFileHandle(std::string const& shared_folder,
                                bool delete_after_download)
     : shared_folder_(shared_folder),
       delete_after_download_(delete_after_download)
 {
+    logger = Logger::GetInstance()->get();
 }
 /**
  * Handles the upload of a file through an HTML form.
@@ -58,29 +64,29 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
 {
 
     // req: /list/a.txt ---> Download/a.txt
-    fs::path path(req.path);
+    fs::path path(req.matches[1]);
     auto file_name =
         fmt::format("{}/{}", shared_folder_, path.filename().string());
-    spdlog::info("trying to download: {} from: {}", path.filename().string(),
+    logger->info("trying to download: {} from: {}", path.filename().string(),
                  shared_folder_);
     // 没有请求的文件,返回404
     if (!fs::exists(file_name))
     {
-        spdlog::error("file not found: {}", file_name);
+        logger->error("file not found: {}", file_name);
         res.status = 404;
         return;
     }
     // 请求的是目录,返回403
     if (fs::is_directory(file_name))
     {
-        spdlog::error("file is directory: {}", file_name);
+        logger->error("file is directory: {}", file_name);
         res.status = 403;
         return;
     }
     auto range_header = req.get_header_value("Range");
     if (range_header.empty())
     {
-        spdlog::error("Range header not found");
+        logger->error("Range header not found");
         download_file_by_order(req, res);
         return;
     }
@@ -88,7 +94,7 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
     auto range = parse_range(range_header, start, len);
     if (!range)
     {
-        spdlog::error("Range parse error");
+        logger->error("Range parse error");
         res.status = 416;
         return;
     }
@@ -97,7 +103,7 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
     std::ifstream file(file_name, std::ios::binary);
     if (!file.is_open())
     {
-        spdlog::error("file open error: {}", file_name);
+        logger->error("file open error: {}", file_name);
         res.status = 500;
         return;
     }
@@ -108,7 +114,7 @@ void HttpFileHandle::handle_file_download(httplib::Request const& req,
     // 文件出错
     if (!file.good())
     {
-        spdlog::error("file read error: {}", file_name);
+        logger->error("file read error: {}", file_name);
         res.status = 500;
         return;
     }
@@ -133,7 +139,7 @@ bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
     auto pos2 = range.find('-');
     if (pos1 == std::string::npos || pos2 == std::string::npos)
     {
-        spdlog::error("range format error");
+        logger->error("range format error");
         return false;
     }
 
@@ -216,7 +222,7 @@ void HttpFileHandle::upload_file_by_multiform(httplib::Request const& req,
     for (auto const& data : req.files)
     {
         auto file = data.second;
-        spdlog::info("upload file: {},type:{},name: {},length: {}", file.name,
+        logger->info("upload file: {},type:{},name: {},length: {}", file.name,
                      file.content_type, file.filename, file.content.length());
         auto file_path = fmt::format("{}/{}", shared_folder_, file.filename);
         if (file.content_type == TEXT_PLAIN)
@@ -277,7 +283,7 @@ void HttpFileHandle::handle_stream_file(
     std::string const& file_name, httplib::ContentReader const& content_reader)
 {
     auto file_path_str = fmt::format("{}/{}", shared_folder_, file_name);
-    spdlog::info("upload file by stream: {}", file_path_str);
+    logger->info("upload file by stream: {}", file_path_str);
     std::string body;
     content_reader(
         [&](char const* data, size_t data_length)
@@ -286,7 +292,7 @@ void HttpFileHandle::handle_stream_file(
             write(file_path_str, data, data_length);
             return true;
         });
-    spdlog::info("upload file by stream: {}", body);
+    logger->info("upload file by stream: {}", body);
 }
 
 void HttpFileHandle::handle_multipart_file(
@@ -297,7 +303,7 @@ void HttpFileHandle::handle_multipart_file(
         [&](httplib::MultipartFormData const& file)
         {
             files.push_back(file);
-            spdlog::info("upload file: {},type:{},name: {}", file.filename,
+            logger->info("upload file: {},type:{},name: {}", file.filename,
                          file.content_type, file.filename);
             return true;
         },
@@ -309,7 +315,7 @@ void HttpFileHandle::handle_multipart_file(
 
             auto contentType = last_file.content_type;
             write(file_path, data, data_length);
-            spdlog::info("upload file: {},type:{},size: {}", last_file.filename,
+            logger->info("upload file: {},type:{},size: {}", last_file.filename,
                          contentType, last_file.content.size());
             return true;
         });
@@ -321,13 +327,13 @@ void HttpFileHandle::handle_file_upload(
 {
     if (req.is_multipart_form_data())
     {
-        spdlog::info("upload file by multipart");
+        logger->info("upload file by multipart");
         handle_multipart_file(content_reader);
         res.set_content(UP_LOAD_MESSAGE, APP_JSON);
     }
     else
     {
-        spdlog::info("upload file by stream");
+        logger->info("upload file by stream");
         if (req.has_header(CONTENT_DISPOSITION))
         {
             std::string content_disposition =
@@ -345,14 +351,14 @@ void HttpFileHandle::handle_file_upload(
                 {
                     filename = filename.substr(1, filename.size() - 2);
                 }
-                spdlog::info("filename: {}", filename);
+                logger->info("filename: {}", filename);
             }
             handle_stream_file(filename, content_reader);
             res.set_content(UP_LOAD_MESSAGE, APP_JSON);
         }
         else
         {
-            spdlog::error("Content-Disposition header not found");
+            logger->error("Content-Disposition header not found");
             res.status = 400;
             res.set_content(
                 R"({"message":"Missing Content-Disposition header"})",

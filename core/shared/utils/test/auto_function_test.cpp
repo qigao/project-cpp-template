@@ -1,16 +1,11 @@
 #include "auto_function.hpp"
 
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 
 int add(int a, int b) { return a + b; }
-
 float multiple(float a, float b, float c) { return a * b * c; }
 
-TEST(AutoFunction, AutoClass)
-{
-    ASSERT_EQ(Call(add, 1, 2), 3);
-    ASSERT_EQ(Call(multiple, 1, 2, 3), 6.0);
-}
 class TestClass
 {
 public:
@@ -18,9 +13,15 @@ public:
     float multiple(float a, float b, float c) { return a * b * c; }
 };
 
-TEST(AutoFunction, AutoClassWithMemberFunc)
+TEST_CASE("AutoFunction AutoClass", "[AutoFunction]")
 {
-    TestClass* t;
-    auto val = Call(&TestClass::add, t, 2, 1);
-    ASSERT_EQ(val, 3);
+    REQUIRE(Call(add, 1, 2) == 3);
+    REQUIRE(Call(multiple, 1, 2, 3) == 6.0f);
+}
+
+TEST_CASE("AutoFunction AutoClassWithMemberFunc", "[AutoFunction]")
+{
+    TestClass t;
+    auto val = Call(&TestClass::add, &t, 2, 1);
+    REQUIRE(val == 3);
 }

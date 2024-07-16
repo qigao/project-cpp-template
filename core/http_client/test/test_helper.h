@@ -5,7 +5,7 @@ constexpr char const* yml_demo_data = R"(
     remote:
         port: 5060
         host: 127.0.0.1
-        ssl-cert: ./ca-bundle.crt
+        cert: ./ca-bundle.crt
         auth-token: 123456
         webhook-url: /webhook
         files-url: /upload

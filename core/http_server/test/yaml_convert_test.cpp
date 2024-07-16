@@ -1,92 +1,93 @@
+#define CATCH_CONFIG_MAIN
+
 #include "config/server_config.hpp"
 #include "test_helper.h"
 
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 #include <yaml-cpp/node/node.h>
 #include <yaml-cpp/yaml.h>
-TEST(YmlTest, authConfig)
+TEST_CASE("YmlTest auth config", "[yml_convert]")
 {
     auto node = YAML::Load("auth: {enabled: false, token: 123456} ");
     auto value = node["auth"].as<auth_config>();
-    EXPECT_EQ(value.token, "123456");
+    REQUIRE_THAT(value.token, Catch::Matchers::Equals("123456"));
 }
 
-TEST(YmlTest, container)
+TEST_CASE("YmlTest container", "[yml_convert]")
 {
     auto node = YAML::Load("label: {name: tom, age: 12} ");
     auto value = node["label"].as<container>();
-    EXPECT_EQ(value.age, 12);
-    EXPECT_EQ(value.name, "tom");
+    REQUIRE(value.age == 12);
+    REQUIRE_THAT(value.name, Catch::Matchers::Equals("tom"));
 }
 
-TEST(YmlTest, webhook)
+TEST_CASE("YmlTest webhook", "[yml_convert]")
 {
     auto node = YAML::Load(yml_demo_data);
     auto root = node["server"];
     auto webhook = root["webhook"].as<webhook_config>();
-    EXPECT_EQ(webhook.enabled, true);
-    EXPECT_EQ(webhook.url, "http://127.0.0.1:8080/webhook");
-    EXPECT_EQ(webhook.api_key, "123456");
+    REQUIRE_THAT(webhook.url,
+                 Catch::Matchers::Equals("http://127.0.0.1:8080/webhook"));
+    REQUIRE_THAT(webhook.api_key, Catch::Matchers::Equals("123456"));
     auto headers = webhook.headers;
-    EXPECT_EQ(headers.size(), 2);
-    EXPECT_EQ(headers[0].header, "x-test");
-    EXPECT_EQ(headers[0].value, "true");
-    EXPECT_EQ(headers[1].header, "x-agent");
-    EXPECT_EQ(headers[1].value, "mview_http_webhook");
+    REQUIRE(headers.size() == 2);
+    REQUIRE_THAT(headers[0].header, Catch::Matchers::Equals("x-test"));
+    REQUIRE_THAT(headers[0].value, Catch::Matchers::Equals("true"));
+    REQUIRE_THAT(headers[1].header, Catch::Matchers::Equals("x-agent"));
+    REQUIRE_THAT(headers[1].value,
+                 Catch::Matchers::Equals("mview_http_webhook"));
 }
-TEST(YmlTest, sslConfig)
+TEST_CASE("YmlTest ssl config", "[yml_convert]")
 {
     auto node = YAML::Load(yml_demo_data);
     auto root = node["server"];
     auto ssl = root["ssl"].as<ssl_config>();
-    EXPECT_EQ(ssl.enabled, false);
-    EXPECT_EQ(ssl.key_file, "./server.key");
-    EXPECT_EQ(ssl.cert_file, "./server.crt");
-    EXPECT_EQ(ssl.root_ca_file, "./rootCA/rootCA-crt.pem");
-    EXPECT_EQ(ssl.root_ca_key_file, "./rootCA/rootCA-key.pem");
+    REQUIRE_THAT(ssl.key_file, Catch::Matchers::Equals("./server.key"));
+    REQUIRE_THAT(ssl.cert_file, Catch::Matchers::Equals("./server.crt"));
 }
 
-TEST(YmlTest, serverConfig)
+TEST_CASE("YmlTest server config", "[yml_convert]")
 {
     auto node = YAML::Load(yml_demo_data);
     auto root = node["server"];
     auto server = root.as<server_config>();
-    EXPECT_EQ(server.port, 4443);
-    EXPECT_EQ(server.shared_folder, "./shared");
-    EXPECT_EQ(server.delete_after_download, true);
-    EXPECT_EQ(server.ssl.enabled, false);
-    EXPECT_EQ(server.auth.enabled, true);
-    EXPECT_EQ(server.auth.token, "123456");
-    EXPECT_EQ(server.webhook.enabled, true);
-    EXPECT_EQ(server.webhook.url, "http://127.0.0.1:8080/webhook");
-    EXPECT_EQ(server.webhook.api_key, "123456");
+    REQUIRE(server.port == 4443);
+    REQUIRE_THAT(server.shared_folder, Catch::Matchers::Equals("./shared"));
+    REQUIRE(server.delete_after_download);
+    REQUIRE(server.auth.enabled);
+    REQUIRE_THAT(server.auth.token, Catch::Matchers::Equals("123456"));
+    REQUIRE_THAT(server.webhook.url,
+                 Catch::Matchers::Equals("http://127.0.0.1:8080/webhook"));
+    REQUIRE_THAT(server.webhook.api_key, Catch::Matchers::Equals("123456"));
     auto headers = server.webhook.headers;
-    EXPECT_EQ(headers.size(), 2);
-    EXPECT_EQ(headers[0].header, "x-test");
-    EXPECT_EQ(headers[0].value, "true");
-    EXPECT_EQ(headers[1].header, "x-agent");
-    EXPECT_EQ(headers[1].value, "mview_http_webhook");
+    REQUIRE(headers.size() == 2);
+    REQUIRE_THAT(headers[0].header, Catch::Matchers::Equals("x-test"));
+    REQUIRE_THAT(headers[0].value, Catch::Matchers::Equals("true"));
+    REQUIRE_THAT(headers[1].header, Catch::Matchers::Equals("x-agent"));
+    REQUIRE_THAT(headers[1].value,
+                 Catch::Matchers::Equals("mview_http_webhook"));
 }
 
-TEST(YmlTest, authConfigEncode)
+TEST_CASE("YmlTest auth config encode", "[yml_convert]")
 {
     auth_config auth;
     auth.enabled = true;
     auth.token = "123456";
     auto node = YAML::Node(auth);
     auto encoded = YAML::Dump(node);
-    EXPECT_THAT(encoded, testing::HasSubstr("123456"));
-    EXPECT_THAT(encoded, testing::HasSubstr("true"));
-    EXPECT_THAT(encoded, testing::HasSubstr("auth"));
-    EXPECT_THAT(encoded, testing::HasSubstr("enabled"));
-    EXPECT_THAT(encoded, testing::HasSubstr("token"));
+    REQUIRE_THAT(encoded, Catch::Matchers::ContainsSubstring("123456"));
+    REQUIRE_THAT(encoded, Catch::Matchers::ContainsSubstring("true"));
+    REQUIRE_THAT(encoded, Catch::Matchers::ContainsSubstring("auth"));
+    REQUIRE_THAT(encoded, Catch::Matchers::ContainsSubstring("enabled"));
+    REQUIRE_THAT(encoded, Catch::Matchers::ContainsSubstring("token"));
 }
 
-TEST(YmlTest, Encode)
+TEST_CASE("YmlTest encode auth", "[yml_convert]")
 {
     auth_config config = {true, "my_token"};
     YAML::Node node = YAML::convert<auth_config>::encode(config);
-    EXPECT_EQ(node["auth"]["enabled"].as<bool>(), true);
-    EXPECT_EQ(node["auth"]["token"].as<std::string>(), "my_token");
+    REQUIRE(node["auth"]["enabled"].as<bool>());
+    REQUIRE_THAT(node["auth"]["token"].as<std::string>(),
+                 Catch::Matchers::ContainsSubstring("my_token"));
 }

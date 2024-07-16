@@ -1,7 +1,7 @@
 #include "../singleton.hpp"
 
 #include <atomic>
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 #include <thread>
 #include <vector>
 
@@ -19,10 +19,9 @@ private:
     std::atomic_uint32_t count_{0};
 };
 
-TEST(SingletonTest, multiThread)
+TEST_CASE("SingletonTest", "[multiThread]")
 {
     auto const count = std::thread::hardware_concurrency();
-    std::cout << "hardware: " << count << std::endl;
     std::vector<std::thread> threads;
 
     threads.reserve(count);
@@ -41,6 +40,6 @@ TEST(SingletonTest, multiThread)
         thread.join();
     }
 
-    EXPECT_EQ(init, 1);
-    EXPECT_EQ(Counter::GetInstance()->GetCount(), count);
+    REQUIRE(init == 1);
+    REQUIRE(Counter::GetInstance()->GetCount() == count);
 }

@@ -4,6 +4,7 @@
 #include "http_lib_header.hpp"
 #include "singleton.hpp"
 
+#include <spdlog/logger.h>
 #include <string>
 class AuthHandler : public Singleton<AuthHandler>
 {
@@ -16,6 +17,7 @@ public:
 
 private:
     std::string api_key;
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 #endif // __HTTP_AUTH_HANDLE_H__

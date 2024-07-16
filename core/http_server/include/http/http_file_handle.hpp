@@ -3,6 +3,7 @@
 #include "http_lib_header.hpp"
 
 #include <fmt/core.h>
+#include <spdlog/logger.h>
 #include <string>
 
 #define UP_LOAD_MESSAGE R"({"message":"upload result"})"
@@ -63,5 +64,6 @@ private:
                             httplib::ContentReader const& content_reader);
     std::string shared_folder_;
     bool delete_after_download_;
+    std::shared_ptr<spdlog::logger> logger;
 };
 #endif // __HTTP_FILE_H__

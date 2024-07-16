@@ -2,6 +2,7 @@
 
 #include "helpers.hpp"
 #include "http_lib_header.hpp"
+#include "logs.hpp"
 #include "task_queue.hpp"
 
 #include <exception>
@@ -16,22 +17,18 @@
 using namespace std::placeholders;
 
 HttpServer::HttpServer(int port, unsigned int numThreads,
-                       std::string const& certFile, std::string const& keyFile,
-                       std::string const& rootCaFile)
-    : mPort(port), mBoundPort(0), mStopSignal(false)
+                       std::string const& certFile, std::string const& keyFile)
+    : mPort(port), mBoundPort(0), mStopSignal(false), mThreads(numThreads)
 
 {
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
     mServer =
-        std::make_shared<httplib::SSLServer>(certFile, keyFile, rootCaFile);
+        std::make_shared<httplib::SSLServer>(certFile.c_str(), keyFile.c_str());
+    logger->info("openssl enabled");
 #else
     mServer = std::make_shared<httplib::Server>();
 #endif
-    mServer->new_task_queue = [numThreads]
-    { return new TaskQueue(numThreads); };
-    mServer->set_keep_alive_max_count(10);
-    mServer->set_keep_alive_timeout(5);
-    mServer->set_payload_max_length(1024 * 1024 * 512);
+    logger = Logger::GetInstance()->get();
 }
 
 HttpServer::~HttpServer()
@@ -48,7 +45,13 @@ HttpServer::~HttpServer()
     {
     }
 }
-
+void HttpServer::config_server()
+{
+    mServer->new_task_queue = [&] { return new TaskQueue(mThreads); };
+    mServer->set_keep_alive_max_count(10);
+    mServer->set_keep_alive_timeout(5);
+    mServer->set_payload_max_length(1024 * 1024 * 512);
+}
 void HttpServer::start()
 {
     mServer->set_logger(std::bind(&HttpServer::log_handler, this, _1, _2));
@@ -64,11 +67,11 @@ void HttpServer::start()
     {
         return;
     }
-    spdlog::info("server start ....");
+    logger->info("server start ....");
     mStopSignal = false;
     if (!mServer)
     {
-        mServer = std::make_shared<httplib::Server>();
+        return;
     }
     std::string host = "0.0.0.0";
     if (mPort == 0)
@@ -76,7 +79,7 @@ void HttpServer::start()
         mBoundPort = mServer->bind_to_any_port(host);
         if (mBoundPort <= 0 || mBoundPort > 65536)
         {
-            spdlog::error("invalid bind port {} ", mBoundPort);
+            logger->error("invalid bind port {} ", mBoundPort);
             throw std::runtime_error("bind_to_any_port");
         }
     }
@@ -85,13 +88,13 @@ void HttpServer::start()
         if (!mServer->bind_to_port(host, mPort))
         {
             auto msg = fmt::format("bind error {}:{}", host, mPort);
-            spdlog::error(msg);
+            logger->error(msg);
             throw std::runtime_error(msg);
         }
         mBoundPort = mPort;
     }
 
-    spdlog::info("bind to {}:{}", host, mBoundPort);
+    logger->info("bind to {}:{}", host, mBoundPort);
 
     std::exception_ptr ep;
     mListenThread = std::thread(
@@ -120,17 +123,17 @@ void HttpServer::start()
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-    spdlog::info("server started. ");
+    logger->info("server started. ");
 }
 
 void HttpServer::stop()
 {
     if (!mServer)
     {
-        spdlog::error("server init error");
+        logger->error("server init error");
         return;
     }
-    spdlog::info("server stop ...");
+    logger->info("server stop ...");
     mStopSignal = true;
     if (mServer->is_running())
     {
@@ -139,11 +142,11 @@ void HttpServer::stop()
     if (mListenThread.joinable())
     {
         mListenThread.join();
-        spdlog::info("unbound from 0.0.0.0:{}", mBoundPort);
+        logger->info("unbound from 0.0.0.0:{}", mBoundPort);
     }
     mBoundPort = 0;
     mServer = nullptr;
-    spdlog::info("server stopped.");
+    logger->info("server stopped.");
 }
 
 void HttpServer::error_handler(httplib::Request const& /* req */,
