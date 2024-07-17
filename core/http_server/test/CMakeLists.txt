@@ -16,7 +16,9 @@ add_library_test(
 )
 add_library_test(
   http_server_lib
-  dll
+  demo
+  WORKING_DIRECTORY
+  ${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}
   CONFIGS
   catch2_test_common
   SOURCES

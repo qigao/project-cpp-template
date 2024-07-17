@@ -1,7 +1,7 @@
 #ifndef __HTTP_AUTH_HANDLE_H__
 #define __HTTP_AUTH_HANDLE_H__
 
-#include "config/utils.hpp"
+#include "config/pch_headers.hpp"
 class AuthHandler : public Singleton<AuthHandler>
 {
 public:

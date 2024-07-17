@@ -62,11 +62,6 @@ Here is an example of how to use ``dynamic_project_options``:
    FetchContent_MakeAvailable(_project_options)
    include(${_project_options_SOURCE_DIR}/Index.cmake)
 
-   # install vcpkg dependencies: - should be called before defining project()
-   # run_vcpkg()
-   # install conan dependencies: - should be called before defining project()
-   # run_conan()
-
    # Set the project name and language
    project(myproject LANGUAGES CXX C)
 
@@ -150,8 +145,6 @@ macro(dynamic_project_options)
       "0\;ENABLE_GCC_ANALYZER\;OFF\;OFF\;Enable GCC (10+) analyzer during compilation"
       "0\;ENABLE_CACHE\;${MAKEFILE_OR_NINJA}\;${MAKEFILE_OR_NINJA}\;Enable ccache on Unix"
       "0\;ENABLE_PCH\;OFF\;OFF\;Enable pre-compiled-headers support"
-      "0\;ENABLE_CONAN\;OFF\;OFF\;Automatically integrate Conan for package management"
-      "0\;ENABLE_VCPKG\;OFF\;OFF\;Automatically integrate vcpkg for package management"
       "0\;ENABLE_DOXYGEN\;OFF\;OFF\;Build documentation with Doxygen"
       "0\;ENABLE_INTERPROCEDURAL_OPTIMIZATION\;OFF\;OFF\;Enable whole-program optimization (e.g. LTO)"
       "0\;ENABLE_NATIVE_OPTIMIZATION\;OFF\;OFF\;Enable the optimizations specific to the build machine (e.g. SSE4_1, AVX2, etc.)."
@@ -172,9 +165,6 @@ macro(dynamic_project_options)
       "0\;ENABLE_COMPILE_COMMANDS_SYMLINK\;OFF\;OFF\;Don't create a symlink for compile_commands.json"
       "1\;LINKER\;\;\;Choose a specific linker"
       "1\;VS_ANALYSIS_RULESET\;\;\;Override the defaults for the code analysis rule set in Visual Studio"
-      "1\;CONAN_PROFILE\;\;\;Use specific Conan profile"
-      "1\;CONAN_HOST_PROFILE\;\;\;Use specific Conan host profile"
-      "1\;CONAN_BUILD_PROFILE\;\;\;Use specific Conan build profile"
       "2\;DOXYGEN_THEME\;\;\;Name of the Doxygen theme to use"
       "2\;MSVC_WARNINGS\;\;\;Override the defaults for the MSVC warnings"
       "2\;CLANG_WARNINGS\;\;\;Override the defaults for the CLANG warnings"
@@ -184,7 +174,6 @@ macro(dynamic_project_options)
       "2\;CLANG_TIDY_EXTRA_ARGUMENTS\;\;\;Additional arguments to use for clang-tidy invocation"
       "2\;GCC_ANALYZER_EXTRA_ARGUMENTS\;\;\;Additional arguments to use for GCC static analysis"
       "2\;PCH_HEADERS\;\;\;List of the headers to precompile"
-      "2\;CONAN_OPTIONS\;\;\;Extra Conan options"
   )
 
   foreach(option ${options})
@@ -270,8 +259,6 @@ macro(dynamic_project_options)
     ${ENABLE_GCC_ANALYZER_VALUE}
     ${ENABLE_CACHE_VALUE}
     ${ENABLE_PCH_VALUE}
-    ${ENABLE_CONAN_VALUE}
-    ${ENABLE_VCPKG_VALUE}
     ${ENABLE_DOXYGEN_VALUE}
     ${ENABLE_INTERPROCEDURAL_OPTIMIZATION_VALUE}
     ${ENABLE_NATIVE_OPTIMIZATION_VALUE}
@@ -292,9 +279,6 @@ macro(dynamic_project_options)
     ${ENABLE_COMPILE_COMMANDS_SYMLINK_VALUE}
     ${LINKER_VALUE}
     ${VS_ANALYSIS_RULESET_VALUE}
-    ${CONAN_PROFILE_VALUE}
-    ${CONAN_HOST_PROFILE_VALUE}
-    ${CONAN_BUILD_PROFILE_VALUE}
     ${DOXYGEN_THEME_VALUE}
     ${MSVC_WARNINGS_VALUE}
     ${CLANG_WARNINGS_VALUE}
@@ -304,7 +288,6 @@ macro(dynamic_project_options)
     ${CLANG_TIDY_EXTRA_ARGUMENTS_VALUE}
     ${GCC_ANALYZER_EXTRA_ARGUMENTS_VALUE}
     ${PCH_HEADERS_VALUE}
-    ${CONAN_OPTIONS_VALUE}
     ${ARGN}
   )
 endmacro()

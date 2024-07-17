@@ -2,217 +2,179 @@
 
 #include "client_yaml.hpp"
 #include "http_file_download.hpp"
-#include "utils.hpp"
+#include "pch_headers.hpp"
 
-namespace fs = std::filesystem;
+#include <ostream>
+
 static constexpr size_t BUF_SIZE = 16384L;
-
-struct http_handle
+template <typename T>
+T custom_min(T a, T b)
+{
+    return (a < b) ? a : b;
+}
+struct http_handle_t
 {
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-    std::shared_ptr<httplib::SSLClient> mClient;
+    std::unique_ptr<httplib::SSLClient> mClient;
 #else
-    std::shared_ptr<httplib::Client> mClient;
+    std::unique_ptr<httplib::Client> mClient;
 #endif
     std::multimap<std::string, std::string> mHeaders;
     client_config config;
     bool debug = true;
-    std::shared_ptr<BS::thread_pool> pool;
+    std::unique_ptr<BS::thread_pool> pool;
 };
 
 int Sum(int const pLhs, int const pRhs) { return pLhs + pRhs; }
 
-void async_file_download(http_client_handle* handle, char const* url,
-                         char const* local_filename)
-{
-    auto downloader = std::make_shared<HttpFileDownload>();
-    std::thread thr(&HttpFileDownload::doDownload, downloader, handle->mClient,
-                    url, local_filename);
-    thr.detach();
-}
-
-void sync_file_download(http_client_handle* handle, char const* url,
-                        char const* local_filename)
+int file_download(http_client_handle handle, char const* url, char const* path,
+                  char const* local_file)
 {
     if (!handle->mClient->is_valid())
     {
-        spdlog::error("invalid http connection");
-        return;
+        std::cerr << "invalid http connection" << std::endl;
+        return -1;
     }
-    std::ofstream ofsl(local_filename, std::ofstream::binary);
-    auto resp_result = handle->pool->submit_task(
-        [&]
-        {
-            auto resp = handle->mClient->Get(
-                url,
-                [&](httplib::Response const& response)
-                {
-                    std::cerr << "Client read:" << response.status << std::endl;
-                    return true;
-                },
-                [&](char const* data, size_t data_length)
-                {
-                    ofsl.write(data, data_length);
-                    std::cerr << "Client write:" << data_length << std::endl;
-                    return true;
-                });
-            return resp;
-        });
-    spdlog::info("download result: {}", resp_result.get()->status);
-    ofsl.close();
-}
-
-void post_json_request(http_client_handle* handle, char const* url,
-                       char const* json)
-{
-    if (!handle->mClient->is_valid())
+    ensureDirectoryExists(path);
+    auto local_file_path = fs::path(path) / local_file;
+    // Open output file
+    std::ofstream outfile(local_file_path, std::ios::binary);
+    if (!outfile)
     {
-        spdlog::error("invalid http connection");
-        return;
+        std::cerr << "Failed to open output file: " << local_file << std::endl;
     }
-
-    auto resp_result = handle->pool->submit_task(
-        [&]
-        {
-            auto resp = handle->mClient->Post("/hello/100", json, APP_JSON);
-            return resp;
-        });
-    auto resp = resp_result.get();
-    if (resp == nullptr || resp->status != 200)
+    // Define content receiver callback
+    size_t total_bytes = 0;
+    auto content_receiver = [&](char const* data, size_t data_length)
     {
-        spdlog::error("failed to post json request");
-        return;
-    }
-}
-
-void post_image_info_request(http_client_handle* handle, char const* url,
-                             char const* json)
-{
-    if (!handle->mClient->is_valid())
-    {
-        spdlog::error("invalid http connection");
-        return;
-    }
-    auto resp_result = handle->pool->submit_task(
-        [&] { return handle->mClient->Post(url, json, APP_JSON); });
-    auto resp = resp_result.get();
-    if (resp == nullptr || resp->status != 200)
-    {
-        spdlog::error("failed to post json request");
-        return;
-    }
-}
-
-void post_file_request(http_client_handle* handle, char const* url,
-                       char const* filename)
-{
-    auto file_path = fs::path(filename);
-    if (!fs::exists(file_path))
-    {
-        spdlog::error("file {} does not exist", filename);
-        return;
-    }
-    auto file_name = file_path.filename().string();
-    auto file_size = fs::file_size(file_path);
-    std::ifstream file(filename, std::ifstream::binary);
-    std::ostringstream oss;
-    oss << file.rdbuf();
-    httplib::MultipartFormDataItems items = {
-        {"name", std::string(oss.str(), file_size), file_name, OCTET_STREAM},
+        outfile.write(data, data_length);
+        total_bytes += data_length;
+        std::cout << "\rDownloaded: " << total_bytes << " bytes" << std::flush;
+        return true; // Return false to cancel the download
     };
 
+    auto resp = handle->mClient->Get(url, content_receiver);
+    outfile.close();
+    return resp->status;
+}
+
+int post_json_with_resp(http_client_handle handle, char const* url,
+                        char const* json, char* resp_body)
+{
+    if (!handle->mClient->is_valid())
+    {
+        std::cerr << "invalid http connection" << std::endl;
+        return -1;
+    }
+
+    auto resp_result = handle->pool->submit_task(
+        [&]
+        {
+            auto resp = handle->mClient->Post(url, json, APP_JSON);
+            return resp;
+        });
+    auto resp = resp_result.get();
+    if (resp == nullptr || resp->status != 200)
+    {
+        std::cerr << "failed to post json request" << std::endl;
+        return resp->status;
+    }
+    std::memcpy(resp_body, resp->body.c_str(), resp->body.length());
+    return resp->status;
+}
+
+int post_json_request(http_client_handle handle, char const* url,
+                      char const* json)
+{
+    if (!handle->mClient->is_valid())
+    {
+        std::cerr << "invalid http connection" << std::endl;
+        return -1;
+    }
+    // auto resp = handle->mClient->Post(url, json, APP_JSON);
+    auto resp_result = handle->pool->submit_task(
+        [&]
+        {
+            auto resp = handle->mClient->Post(url, json, APP_JSON);
+            return resp;
+        });
+    auto resp = resp_result.get();
+    if (resp == nullptr || resp->status != 200)
+    {
+        std::cerr << "failed to post json request" << std::endl;
+    }
+    return resp->status;
+}
+int post_file_request(http_client_handle handle, char const* url,
+                      char const* filename)
+{
+    std::ifstream file(filename, std::ios::binary);
+    if (!file)
+    {
+        return false;
+    }
+
+    // Get file size
+    file.seekg(0, std::ios::end);
+    size_t file_size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // Read file content into a vector
+    std::vector<char> file_content(file_size);
+    file.read(file_content.data(), file_size);
+
+    httplib::MultipartFormDataItems items = {
+        {"file", file_content.data(), filename, OCTET_STREAM}};
+
+    // Send POST request
     auto resp = handle->mClient->Post(url, items);
     if (resp == nullptr || resp->status != 200)
     {
-        spdlog::error("failed to post file request");
-        return;
+        std::cerr << "failed to post json request" << std::endl;
     }
+    return resp->status;
 }
 
-void post_file_stream_request(http_client_handle* handle, char const* url,
-                              char const* filename)
+int post_file_stream(http_client_handle handle, char const* url,
+                     char const* data, long data_len)
 {
-    auto file_path = fs::path(filename);
-    if (!fs::exists(file_path))
+    if (!handle->mClient->is_valid())
     {
-        spdlog::error("file {} does not exist", filename);
-        return;
+        std::cerr << "invalid http connection" << std::endl;
+        return -1;
     }
-    auto file_name = file_path.filename().string();
-    auto file_size = fs::file_size(file_path);
-    auto file_attach = fmt::format("attachment; filename=\"{}\"", file_name);
-    httplib::Headers headers = {{CONTENT_DISPOSITION, file_attach.c_str()}};
-    std::ifstream file(filename, std::ifstream::binary);
-    if (!file.is_open())
-    {
-        spdlog::error("failed to open file {}", filename);
-        return;
-    }
-
     auto resp = handle->mClient->Post(
-        url, headers,
-        [&](size_t offset, httplib::DataSink& sink)
+        url, data_len,
+        [&](size_t offset, size_t length, httplib::DataSink& sink)
         {
-            const size_t remaining = file_size - offset;
-            size_t chunk_size = std::min(BUF_SIZE, remaining);
-            file.seekg(offset);
-            char buffer[BUF_SIZE];
-            file.read(buffer, chunk_size);
-            sink.write(buffer, chunk_size);
-            return remaining <= BUF_SIZE;
+            sink.write(data + offset, length);
+            return true; // return 'false' if you want to cancel the request.
         },
         OCTET_STREAM);
-    if (resp == nullptr || resp->status != 200)
-    {
-        spdlog::error("failed to post file request");
-        return;
-    }
+    return resp->status;
 }
-
-void post_file_stream(http_client_handle* handle, char const* url,
-                      char const* file_id, char const* data, unsigned long size)
+http_client_handle new_http_client(char const* filename)
 {
-
-    auto file_attach = fmt::format("attachment; filename=\"{}\"", file_id);
-    httplib::Headers headers = {{CONTENT_DISPOSITION, file_attach.c_str()}};
-    auto resp = handle->mClient->Post(
-        url, headers,
-        [&](size_t offset, httplib::DataSink& sink)
-        {
-            const size_t remaining = size - offset;
-            size_t chunk_size = std::min(BUF_SIZE, remaining);
-            sink.write(data + offset, chunk_size);
-            return remaining <= BUF_SIZE;
-        },
-        OCTET_STREAM);
-    if (resp == nullptr || resp->status != 200)
-    {
-        spdlog::error("failed to post file request");
-        return;
-    }
-}
-http_client_handle* new_http_client(char const* filename)
-{
-    auto yaml = std::make_shared<ClientYml>(std::string(filename));
+    auto yaml = std::make_unique<ClientYml>(std::string(filename));
     yaml->parse();
     auto config = yaml->getConfig();
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-    auto cli = std::make_shared<httplib::SSLClient>(config.host, config.port);
+    auto cli = std::make_unique<httplib::SSLClient>(config.host, config.port);
     cli->set_ca_cert_path(config.auth_token);
 #else
-    auto cli = std::make_shared<httplib::Client>(config.host, config.port);
+    auto cli = std::make_unique<httplib::Client>(config.host, config.port);
 #endif
     if (!cli->is_valid())
     {
         return nullptr;
     }
-    auto handle = new http_client_handle();
-    handle->mClient = cli;
-    handle->pool = std::make_shared<BS::thread_pool>(2);
+    auto handle = new http_handle_t();
+    handle->mClient = std::move(cli);
+    handle->pool = std::make_unique<BS::thread_pool>(2);
     handle->config = config;
     return handle;
 }
-void free_client_handle(http_client_handle* handle)
+void free_client_handle(http_client_handle handle)
 {
     if (handle == nullptr)
     {
@@ -228,31 +190,31 @@ void free_client_handle(http_client_handle* handle)
  * @param header_name
  * @param header_value
  */
-void setup_http_header(http_client_handle* handle, char const* header_name,
+void setup_http_header(http_client_handle handle, char const* header_name,
                        char const* header_value)
 {
     handle->mHeaders.emplace(header_name, header_value);
 }
 
-void set_auth_token(http_client_handle* handle, char const* token)
+void set_auth_token(http_client_handle handle, char const* token)
 {
     handle->mHeaders.emplace(API_KEY, token);
 }
 
-void http_request_initialize(http_client_handle* handle)
+void http_request_initialize(http_client_handle handle)
 {
     if (!handle->mClient->is_valid())
     {
         return;
     }
     handle->mClient->set_keep_alive(true);
-    handle->mClient->set_read_timeout(5, 0);
-    handle->mClient->set_write_timeout(5, 0);
-    httplib::Headers headers = {{"User-Agent", "MicroView Http library"}};
+    handle->mClient->set_read_timeout(30, 0);
+    handle->mClient->set_write_timeout(10, 0);
 
+    httplib::Headers headers = {{"User-Agent", "MicroView Http library"}};
     for (auto const& [key, value] : handle->mHeaders)
     {
-        spdlog::debug("Header: {}: {}", key, value);
+        std::cout << "Header: " << key << ":" << value << std::endl;
         headers.emplace(key, value);
     }
 

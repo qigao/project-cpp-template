@@ -1,7 +1,7 @@
 #ifndef __SERVER_CONFIG_H__
 #define __SERVER_CONFIG_H__
 
-#include "utils.hpp"
+#include "config/pch_headers.hpp"
 class ssl_config
 {
 public:
@@ -37,32 +37,9 @@ public:
     webhook_config webhook;
 };
 
-struct container
-{
-    std::string name;
-    int age;
-};
-
 namespace YAML
 {
-template <>
-struct convert<container>
-{
-    static Node encode(container const& rhs)
-    {
-        Node node;
-        node.push_back(rhs.name);
-        node.push_back(rhs.age);
-        return node;
-    }
 
-    static bool decode(Node const& node, container& rhs)
-    {
-        rhs.name = node["name"].as<std::string>();
-        rhs.age = node["age"].as<int>();
-        return true;
-    }
-};
 template <>
 struct convert<header_config>
 {
@@ -114,8 +91,14 @@ struct convert<ssl_config>
 
     static bool decode(YAML::Node const& node, ssl_config& rhs)
     {
-        rhs.cert_file = node["cert_file"].as<std::string>();
-        rhs.key_file = node["key_file"].as<std::string>();
+        if (node["cert_file"])
+        {
+            rhs.cert_file = node["cert_file"].as<std::string>();
+        }
+        if (node["key_file"])
+        {
+            rhs.key_file = node["key_file"].as<std::string>();
+        }
         return true;
     }
 };

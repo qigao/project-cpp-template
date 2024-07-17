@@ -1,0 +1,94 @@
+version: 3
+includes:
+     manual:
+        taskfile: Taskfile.setup.ext.yml
+        internal: true
+
+vars:
+    LIBRARIES:
+      - name: catch2
+        url: https://github.com/catchorg/Catch2.git
+        tag: v3.6.0
+        option: "-DBUILD_TESTING=OFF -DCATCH_INSTALL_EXTRAS=ON"
+      - name: yaml-cpp
+        url:  https://github.com/jbeder/yaml-cpp.git
+        tag:  0.8.0
+        option: "-DYAML_BUILD_SHARED_LIBS=ON"
+      - name: yyjson
+        url: https://github.com/ibireme/yyjson.git
+        tag: 0.9.0
+
+tasks:
+  build.clean.win:
+    platforms: [windows]
+    internal: true
+    cmds:
+      - cmd: powershell -c 'Remove-Item build -Recurse -Force'
+  build.clean.unix:
+    internal: true
+    platforms: [linux, darwin]
+    cmds:
+      - cmd: rm -rf ./build
+  clean.build:
+    desc: delete everything from build dir
+    cmds:
+      - cmd:  echo "cleaning..."
+      - task: build.clean.win
+      - task: build.clean.unix
+  build.all:
+    desc: build all
+    requires:
+      vars: [CONAN_PROFILE, CMAKE_PRESET]
+    cmds:
+      - cmake --build --preset  $CMAKE_PRESET
+  clean.all:
+     desc: clean everything
+     cmds:
+       - task: clean.build
+       - task: ext.clean
+  ext.clean:
+    desc: delete all libs installed by cona
+    cmds:
+      - cmd: powershell -c 'Remove-Item external/build -Recurse'
+        platforms: [windows]
+      - cmd: rm -fr external/build
+        platforms: [linux, darwin]
+  ext.conan.setup:
+    desc: prepare and install conan managed packages
+    vars:
+      CONAN_FILES: libs.txt tools.txt test.txt
+    cmds:
+      - for: { var: CONAN_FILES }
+        cmd: conan install tasks/conan/{{.ITEM}} -b missing $CONAN_CONFIG -of external
+  ext.conan.delete:
+    desc: remove all from conan cache
+    cmds:
+      - cmd: conan remove "*"  -c
+  ext.libs.clone:
+    desc: install ext libs manually
+    cmds:
+        - for: { var: lib in  .LIBRARIES}
+          task: manual:clone
+          vars:
+            LIB_NAME: "{{.lib.name}}"
+            LIB_URL: "{{.lib.url}}"
+            LIB_TAG: "{{.lib.tag}}"
+            LIB_OPTION: "{{.lib.option}}"
+            EXTERNAL_DEPS_PATH: external/_deps_
+            EXTERNAL_LIBS_PATH: external/libs
+            BUILD_TYPE: Debug
+
+  ext.libs.setup:
+    desc: install ext libs manually
+    cmds:
+        - for: { var: LIBRARIES, as: lib}
+          task: manual:setup
+          vars:
+            LIB_NAME: "{{.lib.name}}"
+            LIB_URL: "{{.lib.url}}"
+            LIB_TAG: "{{.lib.tag}}"
+            LIB_OPTION: "{{.lib.option}}"
+            EXTERNAL_LIBS_PATH: external/libs
+            EXTERNAL_DEPS_PATH: external/_deps_
+            BUILD_TYPE: Debug
+

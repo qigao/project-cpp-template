@@ -1,4 +1,4 @@
-#include "random.hpp"
+#include "../random.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 #include <string>

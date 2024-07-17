@@ -63,4 +63,11 @@
     "flashpost.saveDataToWorkspace": false,
     "flashpost.workspaceDataRelativePath": "rest-api-test",
     "liveServer.settings.port": 5501,
+    "yaml.schemas": {
+        "https://taskfile.dev/schema.json": "tasks/Taskfile*.yml"
+    },
+    "files.associations": {
+        "**/conan/*.txt": "ini",
+        "**/conan/profiles/*": "ini"
+      }
 }

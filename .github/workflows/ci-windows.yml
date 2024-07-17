@@ -1,74 +1,61 @@
 name: ci-windows
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - master
-    paths:
-      - "core/**"
+    push:
+        branches:
+            - main
+            - develop
+            - master
+        paths:
+            - "core/**"
 
-  pull_request:
-    types: [opened, reopened, synchronize]
-    paths:
-      - "core/**"
-env:
-  CMAKE_GENERATOR: "Ninja Multi-Config"
+    pull_request:
+        types: [opened, reopened, synchronize]
+
 jobs:
-  setup-build:
-    strategy:
-        matrix:
-          os:
-            - windows-2022
-          include:
-            - os: "windows-2022"
-              compiler: "msvc"
-              cmake: true
-              vcvarsall: true
-    runs-on: ${{ matrix.os }}
+    setup-build:
+        strategy:
+            matrix:
+                os:
+                    - windows-2019
+                compiler:
+                    - msvc
+                profile:
+                    - msvc-2019-x64-debug
+                preset:
+                    - windows-msvc-debug
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.CONAN_USER_HOME }}
-            ~/.cache/pip
-          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./conanfile.txt')}}-${{ hashFiles('**/CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./conanfile.txt') }}-
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: ${{ matrix.compiler }}
-          vcvarsall: true
-          cmake: true
-          ninja: true
-          conan: 2.1.0
-          cppcheck: true
-          clangtidy: true
-          task: true
-          opencppcoverage: true
-      - name: config and setup project
-        run: |
-            task config
-      - name: build all the project
-        run: |
-            task build.all
-      - name: Test
-        run: |
-            task test.all
-      - name: Publish Tagged Release
-        uses: softprops/action-gh-release@v2
-        if: ${{ startsWith(github.ref, 'refs/tags/')  }}
-        with:
-            files: |
-              build/*-*Release*-*.*
-      - name: Publish to codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-            flags: ${{ runner.os }}
-            name: ${{ runner.os }}-coverage
-            files: ./build/coverage.xml
-            token: ${{ secrets.CODECOV_TOKEN  }}
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - uses: actions/checkout@v4
+            - name: Cache
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ${{ github.workspace }}/build
+                      ~/.conan2
+                  key: ${{ runner.os }}-${{ matrix.compiler }}-${{matrix.preset}}-${{ matrix.profile}}-${{ hashFiles('**/CMakeLists.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-${{ matrix.compiler }}-${{matrix.preset}}-${{ matrix.profile}}-${{ hashFiles('**/CMakeLists.txt') }}-
+            - name: Install Task
+              uses: arduino/setup-task@v2
+            - name: Install CMake and Ninja
+              uses: lukka/get-cmake@latest
+            - name: Install Conan
+              run: |
+                  pip install conan
+                  conan --version
+            - name: Generate .env file
+              run: |
+                  touch .env
+                  echo "CONAN_PROFILE=${{matrix.profile}}" >> .env
+                  echo "CMAKE_PRESET=${{matrix.preset}}" >> .env
+                  cat .env
+            - name: config and setup project
+              run: |
+                  task setup:ext.conan.setup
+                  task preset
+            - name: build all the project
+              run: task compile
+        #   - name: Test
+        #     run: task test

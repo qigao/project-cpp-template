@@ -1,25 +1,24 @@
 #include "client_yaml.hpp"
 
-#include "client_config.hpp"
-#include "utils.hpp"
+#include "pch_headers.hpp"
 
 class ClientYml::remoteCfg
 {
 public:
     explicit remoteCfg(std::string const& file_name) : file_name_(file_name) {}
 
-    void parse()
+    inline void parse()
     {
         auto file = fs::path(file_name_);
         if (!fs::exists(file))
         {
-            spdlog::error("file {} does not exist", file_name_);
+            throw std::runtime_error(file_name_ + "not exits");
             return;
         }
         tree_ = YAML::LoadFile(file_name_);
     }
 
-    client_config get(std::string const& key)
+    inline client_config get(std::string const& key)
     {
         return tree_[key].as<client_config>();
     }

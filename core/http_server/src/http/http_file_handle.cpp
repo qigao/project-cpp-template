@@ -1,7 +1,12 @@
 #include "http/http_file_handle.hpp"
 
-#include "config/utils.hpp"
-
+#include "config/pch_headers.hpp"
+#include "fs.hpp"
+template <typename T>
+T custom_min(T a, T b)
+{
+    return (a < b) ? a : b;
+}
 HttpFileHandle::HttpFileHandle(std::string const& shared_folder,
                                bool delete_after_download)
     : shared_folder_(shared_folder),
@@ -46,88 +51,56 @@ void HttpFileHandle::list_upload_form(httplib::Request const& /* req */,
 void HttpFileHandle::handle_file_download(httplib::Request const& req,
                                           httplib::Response& res)
 {
-
-    // req: /list/a.txt ---> Download/a.txt
-    fs::path path(req.matches[1]);
-    auto file_name =
-        fmt::format("{}/{}", shared_folder_, path.filename().string());
-    logger->info("trying to download: {} from: {}", path.filename().string(),
-                 shared_folder_);
-    // 没有请求的文件,返回404
-    if (!fs::exists(file_name))
+    std::string req_file = req.matches[1];
+    auto file_path = fmt::format("{}/{}", shared_folder_, req_file);
+    logger->info("trying to download: {} from: {}", req_file, shared_folder_);
+    std::ifstream file(file_path, std::ios::binary);
+    if (!file)
     {
-        logger->error("file not found: {}", file_name);
         res.status = 404;
+        res.set_content("File not found", "text/plain");
         return;
     }
-    // 请求的是目录,返回403
-    if (fs::is_directory(file_name))
-    {
-        logger->error("file is directory: {}", file_name);
-        res.status = 403;
-        return;
-    }
-    auto range_header = req.get_header_value("Range");
-    if (range_header.empty())
-    {
-        logger->error("Range header not found");
-        download_file_by_order(req, res);
-        return;
-    }
-    int64_t start, len;
-    auto range = parse_range(range_header, start, len);
-    if (!range)
-    {
-        logger->error("Range parse error");
-        res.status = 416;
-        return;
-    }
-    // TODO:: read file by multithread
-    //  file读入文件
-    std::ifstream file(file_name, std::ios::binary);
-    if (!file.is_open())
-    {
-        logger->error("file open error: {}", file_name);
-        res.status = 500;
-        return;
-    }
-    // 跳转到下载位置,写入rsp
-    file.seekg(start, std::ios::beg);
-    res.body.resize(len);
-    file.read(res.body.data(), len);
-    // 文件出错
-    if (!file.good())
-    {
-        logger->error("file read error: {}", file_name);
-        res.status = 500;
-        return;
-    }
-    auto file_size = fs::file_size(file_name);
-    file.close();
 
-    res.status = 206;
+    res.set_header("Content-Type", "application/octet-stream");
+    res.set_header("Content-Disposition",
+                   "attachment; filename=\"" + file_path + "\"");
 
-    res.set_header(CACHE_CONTROL, "no-cache");
-    res.set_header(CONTENT_TYPE, OCTET_STREAM);
-    res.set_header(CONTENT_RANGE, std::to_string(start) + "-" +
-                                      std::to_string(start + len) + "/" +
-                                      std::to_string(file_size));
-    res.set_header(CONTENT_LENGTH, std::to_string(len));
+    res.set_content_provider(
+        file.seekg(0, std::ios::end).tellg(), "text/plain",
+        [&, file_path](size_t offset, size_t length, httplib::DataSink& sink)
+        {
+            std::ifstream file(file_path, std::ios::binary);
+            file.seekg(offset);
+            char buffer[8192];
+            size_t read_length;
+
+            while (length > 0 &&
+                   (read_length =
+                        file.read(buffer, custom_min(length, sizeof(buffer)))
+                            .gcount()) > 0)
+            {
+                sink.write(buffer, read_length);
+                length -= read_length;
+            }
+
+            return true;
+        });
+
+    res.status = 200;
 }
 
 bool HttpFileHandle::parse_range(std::string& range, int64_t& start,
                                  int64_t& len)
 {
-    // 检查格式
-    auto pos1 = range.find('=');
-    auto pos2 = range.find('-');
+    std::size_t pos1 = range.find('=');
+    std::size_t pos2 = range.find('-');
     if (pos1 == std::string::npos || pos2 == std::string::npos)
     {
         logger->error("range format error");
         return false;
     }
 
-    // 解析start,end
     int64_t end;
     auto sstart = range.substr(pos1 + 1, pos2 - pos1 - 1);
     auto send = range.substr(pos2 + 1);
@@ -200,83 +173,25 @@ void HttpFileHandle::download_file_by_order(httplib::Request const& req,
                          // process.
         });
 }
-void HttpFileHandle::upload_file_by_multiform(httplib::Request const& req,
-                                              httplib::Response& res)
-{
-    for (auto const& data : req.files)
-    {
-        auto file = data.second;
-        logger->info("upload file: {},type:{},name: {},length: {}", file.name,
-                     file.content_type, file.filename, file.content.length());
-        auto file_path = fmt::format("{}/{}", shared_folder_, file.filename);
-        if (file.content_type == TEXT_PLAIN)
-        {
-            std::ofstream ofs(file_path);
-
-            ofs << file.content;
-        }
-        else
-        {
-            std::ofstream ofs(file_path, std::ios::binary);
-
-            ofs << file.content;
-        }
-    }
-    res.set_content("done", TEXT_PLAIN);
-}
 
 void HttpFileHandle::handle_file_lists(httplib::Request const& /* req */,
                                        httplib::Response& res)
 {
-    // Create a mutable doc
-    yyjson_mut_doc* doc = yyjson_mut_doc_new(nullptr);
-    yyjson_mut_val* root = yyjson_mut_arr(doc);
-    yyjson_mut_doc_set_root(doc, root);
 
-    fs::directory_iterator item_begin(shared_folder_);
-    fs::directory_iterator item_end;
-    for (; item_begin != item_end; ++item_begin)
+    std::vector<std::string> files;
+    for (auto const& entry : fs::directory_iterator(shared_folder_))
     {
-        // 文件夹跳过
-        if (fs::is_directory(*item_begin))
+        if (fs::is_directory(entry))
         {
             continue;
         }
-        auto pathname = item_begin->path();
-        auto path = pathname.filename().string();
-        auto file_size = get_file_size(path);
-        yyjson_mut_val* obj = yyjson_mut_obj(doc);
-        yyjson_mut_obj_add_str(doc, obj, "path", path.c_str());
-        yyjson_mut_obj_add_int(doc, obj, "size", file_size);
-        yyjson_mut_arr_append(root, obj);
+        auto pathname = entry.path();
+        files.push_back(pathname.string());
     }
-    // 设置body格式--文本文件 和状态码
-    char const* json = yyjson_mut_write(doc, 0, nullptr);
-    if (json)
-    {
-        res.set_content(json, strlen(json), APP_JSON);
-        free((void*)json);
-    }
-    char const* not_found = R"({"message":"no files found"})";
-    res.set_content(not_found, strlen(not_found), APP_JSON);
-    res.status = 200;
-    yyjson_mut_doc_free(doc);
-}
+    std::string result = fmt::format("{}", fmt::join(files, ""));
 
-void HttpFileHandle::handle_stream_file(
-    std::string const& file_name, httplib::ContentReader const& content_reader)
-{
-    auto file_path_str = fmt::format("{}/{}", shared_folder_, file_name);
-    logger->info("upload file by stream: {}", file_path_str);
-    std::string body;
-    content_reader(
-        [&](char const* data, size_t data_length)
-        {
-            body.append(data, data_length);
-            write(file_path_str, data, data_length);
-            return true;
-        });
-    logger->info("upload file by stream: {}", body);
+    res.set_content(result, "text/plain");
+    res.status = 200;
 }
 
 void HttpFileHandle::handle_multipart_file(
@@ -298,7 +213,7 @@ void HttpFileHandle::handle_multipart_file(
                 fmt::format("{}/{}", shared_folder_, last_file.filename);
 
             auto contentType = last_file.content_type;
-            write(file_path, data, data_length);
+            fs_write(file_path, data, data_length);
             logger->info("upload file: {},type:{},size: {}", last_file.filename,
                          contentType, last_file.content.size());
             return true;
@@ -318,35 +233,36 @@ void HttpFileHandle::handle_file_upload(
     else
     {
         logger->info("upload file by stream");
-        if (req.has_header(CONTENT_DISPOSITION))
-        {
-            std::string content_disposition =
-                req.get_header_value(CONTENT_DISPOSITION);
-
-            // Extract the filename from the Content-Disposition header
-            std::string filename;
-            size_t pos = content_disposition.find("filename=");
-            if (pos != std::string::npos)
+        std::string body;
+        content_reader(
+            [&](char const* data, size_t data_length)
             {
-                filename = content_disposition.substr(
-                    pos + 9, content_disposition.length());
-                // Remove any surrounding quotes
-                if (filename.front() == '\"' && filename.back() == '\"')
-                {
-                    filename = filename.substr(1, filename.size() - 2);
-                }
-                logger->info("filename: {}", filename);
-            }
-            handle_stream_file(filename, content_reader);
-            res.set_content(UP_LOAD_MESSAGE, APP_JSON);
+                body.append(data, data_length);
+                return true;
+            });
+        std::string filename = req.matches[1];
+        auto file_path = fmt::format("{}/{}", shared_folder_, filename);
+        ensureDirectoryExists(shared_folder_);
+        std::ofstream file(file_path, std::ios::binary);
+
+        if (!file)
+        {
+            res.status = 500;
+            res.set_content("Failed to create file", "text/plain");
+            return;
+        }
+
+        file.write(body.c_str(), body.length());
+        file.close();
+
+        if (file)
+        {
+            res.set_content("File uploaded successfully", "text/plain");
         }
         else
         {
-            logger->error("Content-Disposition header not found");
-            res.status = 400;
-            res.set_content(
-                R"({"message":"Missing Content-Disposition header"})",
-                APP_JSON);
+            res.status = 500;
+            res.set_content("Failed to save file", "text/plain");
         }
     }
 }

@@ -1,0 +1,12 @@
+[requires]
+
+# OpenGL
+
+meshoptimizer/0.21
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout

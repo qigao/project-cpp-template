@@ -1,6 +1,6 @@
 #include "http/http_web_hook.hpp"
 
-#include "config/utils.hpp"
+#include "config/pch_headers.hpp"
 
 WebHook::WebHook(std::string const& url)
     : web_hook_url(url), hash_func(std::make_shared<hash_function>()),

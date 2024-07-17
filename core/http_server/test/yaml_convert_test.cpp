@@ -1,10 +1,7 @@
-#define CATCH_CONFIG_MAIN
-
 #include "config/server_config.hpp"
 #include "test_helper.h"
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
+#include <catch2/catch_all.hpp>
 #include <yaml-cpp/node/node.h>
 #include <yaml-cpp/yaml.h>
 TEST_CASE("YmlTest auth config", "[yml_convert]")
@@ -12,14 +9,6 @@ TEST_CASE("YmlTest auth config", "[yml_convert]")
     auto node = YAML::Load("auth: {enabled: false, token: 123456} ");
     auto value = node["auth"].as<auth_config>();
     REQUIRE_THAT(value.token, Catch::Matchers::Equals("123456"));
-}
-
-TEST_CASE("YmlTest container", "[yml_convert]")
-{
-    auto node = YAML::Load("label: {name: tom, age: 12} ");
-    auto value = node["label"].as<container>();
-    REQUIRE(value.age == 12);
-    REQUIRE_THAT(value.name, Catch::Matchers::Equals("tom"));
 }
 
 TEST_CASE("YmlTest webhook", "[yml_convert]")

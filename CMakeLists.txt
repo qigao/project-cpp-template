@@ -1,14 +1,13 @@
-cmake_minimum_required(VERSION 3.21...3.28)
+cmake_minimum_required(VERSION 3.20)
 
 # set a default CXX standard for the tools and targets that do not specify them.
 # If commented, the latest supported standard for your compiler is automatically set.
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 # Define the features of the project
 # -------------------------------------------------------------------
 include(tailored_options)
@@ -40,11 +39,11 @@ project(
   HOMEPAGE_URL ${PROJECT_WEBSITE}
   LANGUAGES CXX C
 )
-
 ## projects
 # ----------------------------------------------
 # Set the features of the project
-include(Config.cmake)
+include(Options.cmake)
+include(GenerateExportHeader)
 
 # threads
 if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") OR ("${CMAKE_CXX_COMPILER_ID}"
@@ -60,21 +59,22 @@ set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 # share vars with Taskfile
+set(CMAKE_CONFIG_VARS ".env.config.cmake")
 file(
-  WRITE ${CMAKE_BINARY_DIR}/task_vars.env
+  WRITE ${CMAKE_BINARY_DIR}/${CMAKE_CONFIG_VARS}
   "
     CMAKE_BUILD_DIR=${CMAKE_BINARY_DIR}
     CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     CMAKE_OUTPUT_DIR=${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}
   "
 )
-file(CREATE_LINK ${CMAKE_BINARY_DIR}/task_vars.env
-     ${PROJECT_SOURCE_DIR}/task_vars.env
+file(CREATE_LINK ${CMAKE_BINARY_DIR}/${CMAKE_CONFIG_VARS}
+     ${PROJECT_SOURCE_DIR}/${CMAKE_CONFIG_VARS}
 )
 # --------------------------------------------------------------
-add_subdirectory(configured_files)
-
+include(add_test)
+include(feat_test)
 add_subdirectory(core)
 if(ENABLE_SAMPLE_PROJECT_COMPILING)
-  add_subdirectory(project)
+  add_subdirectory(examples)
 endif()

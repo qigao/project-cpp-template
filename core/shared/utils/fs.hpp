@@ -54,7 +54,7 @@ inline void append(std::string const& filename, char const* data, size_t size)
     outfile.write(data, static_cast<long>(size));
 }
 
-inline void write(std::string const& filename, char const* data, size_t size)
+inline void fs_write(std::string const& filename, char const* data, size_t size)
 {
     std::ofstream outfile(filename.c_str(),
                           std::ios_base::out | std::ios_base::trunc);
@@ -63,6 +63,7 @@ inline void write(std::string const& filename, char const* data, size_t size)
         throw std::runtime_error("failed to open " + filename + " for write");
     }
     outfile.write(data, static_cast<long>(size));
+    outfile.close();
 }
 
 inline bool breakup_url(std::string const& url, std::string& scheme_and_host,
@@ -132,6 +133,45 @@ inline bool caseInsensitiveEqual(char a, char b)
     return std::tolower(a) == std::tolower(b);
 }
 
+inline void ensureDirectoryExists(std::string const& path)
+{
+    try
+    {
+        if (!fs::exists(path))
+        {
+            fs::create_directories(path);
+            std::cout << "Directory created: " << path << std::endl;
+        }
+        else
+        {
+            std::cout << "Directory already exists: " << path << std::endl;
+        }
+    }
+    catch (fs::filesystem_error const& e)
+    {
+        std::cerr << "Filesystem error: " << e.what() << std::endl;
+    }
+}
+inline void ensureDirectoryExists(char const* path)
+{
+    try
+    {
+        fs::path dirPath(path);
+        if (!fs::exists(dirPath))
+        {
+            fs::create_directories(dirPath);
+            std::cout << "Directory created: " << path << std::endl;
+        }
+        else
+        {
+            std::cout << "Directory already exists: " << path << std::endl;
+        }
+    }
+    catch (fs::filesystem_error const& e)
+    {
+        std::cerr << "Filesystem error: " << e.what() << std::endl;
+    }
+}
 static char const hex_chars[] = "0123456789ABCDEF";
 
 inline std::string to_hex(unsigned char const* input, size_t length)

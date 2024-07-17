@@ -1,5 +1,5 @@
+#include "config/pch_headers.hpp"
 #include "config/server_config.hpp"
-#include "config/utils.hpp"
 #include "config/yml_properties.hpp"
 #include "http/http_auth_handle.hpp"
 #include "http/http_file_handle.hpp"
@@ -22,11 +22,7 @@ bool check_ssl_config(server_config const& config)
     fs::path fs_key = config.ssl.key_file;
     logger->debug("ssl cert file: {},ssl key file: {}", config.ssl.cert_file,
                   config.ssl.key_file);
-    if (!fs::exists(fs_cert) || !fs::exists(fs_key))
-    {
-        logger->error("ssl cert file or key file does not exist");
-        return false;
-    }
+
     return true;
 }
 
@@ -68,22 +64,12 @@ void config_handle(HttpServer* http_server, server_config const& config)
 }
 std::unique_ptr<HttpServer> createServer(server_config const& config)
 {
-    if (check_ssl_config(config))
-    {
-        fs::path fs_cert = config.ssl.cert_file;
-        fs::path fs_key = config.ssl.key_file;
-        return std::make_unique<HttpServer>(config.port, 4,
-                                            fs::absolute(fs_cert).string(),
-                                            fs::absolute(fs_key).string());
-    }
-    else
-    {
-        auto msg =
-            fmt::format("invalid ssl config, cert file: {}, key file: {}",
-                        config.ssl.cert_file, config.ssl.key_file);
-        logger->error("{}", msg);
-        throw std::runtime_error(msg);
-    }
+
+    fs::path fs_cert = config.ssl.cert_file;
+    fs::path fs_key = config.ssl.key_file;
+    return std::make_unique<HttpServer>(config.port, 4,
+                                        fs::absolute(fs_cert).string(),
+                                        fs::absolute(fs_key).string());
 }
 
 void start_server(server_config const& config)

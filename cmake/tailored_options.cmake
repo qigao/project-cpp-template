@@ -25,9 +25,6 @@ endif()
 set(ENABLE_INTERPROCEDURAL_OPTIMIZATION_DEFAULT ON)
 set(ENABLE_NATIVE_OPTIMIZATION_DEFAULT ON)
 
-# install vcpkg/conan dependencies: - should be called before defining project()
-run_conan()
-
 # configure files based on CMake configuration options
 project_options(
   PREFIX
@@ -58,5 +55,4 @@ project_options(
   # ENABLE_BUILD_WITH_TIME_TRACE
   # ENABLE_UNITY
   # LINKER "lld"
-  # CONAN_PROFILE ${profile_path}
 )

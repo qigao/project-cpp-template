@@ -34,7 +34,7 @@ include("${ProjectOptions_SRC_DIR}/CrossCompiler.cmake")
 include("${ProjectOptions_SRC_DIR}/DynamicProjectOptions.cmake")
 include("${ProjectOptions_SRC_DIR}/Hardening.cmake")
 
-# Include msvc toolchain on windows if the generator is not visual studio. Should be called before run_vcpkg and run_conan to be effective
+# Include msvc toolchain on windows if the generator is not visual studio.
 if("${CMAKE_TOOLCHAIN_FILE}" STREQUAL "")
   msvc_toolchain()
 else()
@@ -43,9 +43,6 @@ else()
       "project_options: skipping msvc_toolchain as CMAKE_TOOLCHAIN_FILE is set"
   )
 endif()
-
-include("${ProjectOptions_SRC_DIR}/Conan.cmake")
-include("${ProjectOptions_SRC_DIR}/Vcpkg.cmake")
 
 #[[.rst:
 
@@ -130,8 +127,6 @@ macro(project_options)
       ENABLE_GCC_ANALYZER
       ENABLE_CACHE
       ENABLE_PCH
-      ENABLE_CONAN
-      ENABLE_VCPKG
       ENABLE_DOXYGEN
       ENABLE_INTERPROCEDURAL_OPTIMIZATION
       ENABLE_NATIVE_OPTIMIZATION
@@ -151,14 +146,7 @@ macro(project_options)
       ENABLE_RUNTIME_SYMBOLS_RESOLUTION
       ENABLE_COMPILE_COMMANDS_SYMLINK
   )
-  set(oneValueArgs
-      PREFIX
-      LINKER
-      VS_ANALYSIS_RULESET
-      CONAN_PROFILE
-      CONAN_HOST_PROFILE
-      CONAN_BUILD_PROFILE
-  )
+  set(oneValueArgs PREFIX LINKER VS_ANALYSIS_RULESET)
   set(multiValueArgs
       DOXYGEN_THEME
       MSVC_WARNINGS
@@ -169,7 +157,6 @@ macro(project_options)
       CLANG_TIDY_EXTRA_ARGUMENTS
       GCC_ANALYZER_EXTRA_ARGUMENTS
       PCH_HEADERS
-      CONAN_OPTIONS
   )
   cmake_parse_arguments(
     ProjectOptions "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
@@ -312,36 +299,6 @@ macro(project_options)
     target_precompile_headers(
       ${_options_target} INTERFACE ${ProjectOptions_PCH_HEADERS}
     )
-  endif()
-
-  if(${ProjectOptions_ENABLE_VCPKG})
-    run_vcpkg()
-  endif()
-
-  if(${ProjectOptions_ENABLE_CONAN})
-    _run_conan1(
-      DEPRECATED_CALL
-      DEPRECATED_PROFILE
-      ${ProjectOptions_CONAN_PROFILE}
-      HOST_PROFILE
-      ${ProjectOptions_CONAN_HOST_PROFILE}
-      BUILD_PROFILE
-      ${ProjectOptions_CONAN_BUILD_PROFILE}
-      DEPRECATED_OPTIONS
-      ${ProjectOptions_CONAN_OPTIONS}
-    )
-  endif()
-
-  get_property(
-    _should_invoke_conan1 DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    PROPERTY PROJECT_OPTIONS_SHOULD_INVOKE_CONAN1
-  )
-  if(_should_invoke_conan1)
-    get_property(
-      conan1_args DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      PROPERTY PROJECT_OPTIONS_CONAN1_ARGS
-    )
-    _run_conan1(${conan1_args})
   endif()
 
   if(${ProjectOptions_ENABLE_UNITY})

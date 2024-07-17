@@ -1,41 +1,41 @@
-add_test_config(http_client_lib SYSTEM_LIBRARIES http_client http_server_lib)
-
-add_library_test(
-  http_client
-  yaml_convert
-  CONFIGS
-  catch2_test_common
-  http_client_lib
-  SOURCES
-  yaml_convert_test.cpp
+find_package(yyjson)
+add_test_config(
+  my_client SYSTEM_LIBRARIES yyjson::yyjson INCLUDES
+  ${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}/http_client
 )
 
 add_library_test(
   http_client
-  sum
+  client_config
+  WORKING_DIRECTORY
+  ${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}
   CONFIGS
   catch2_test_common
-  http_client_lib
+  my_client
   SOURCES
-  sum_test.cpp
+  client_config_test.cpp
 )
 
 add_library_test(
   http_client
-  yaml_config
+  client_yml
+  WORKING_DIRECTORY
+  ${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}
   CONFIGS
   catch2_test_common
-  http_client_lib
   SOURCES
+  ../private/src/client_yaml.cpp
   client_yml_test.cpp
 )
 
 add_library_test(
   http_client
-  dll
+  demo
+  WORKING_DIRECTORY
+  ${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}
   CONFIGS
   catch2_test_common
-  http_client_lib
+  my_client
   SOURCES
   http_client_test.cpp
 )
