@@ -81,9 +81,6 @@ public:
 
                             auto contentType = last_file.content_type;
                             fs_write(std::string(file_path), data, data_length);
-                            std::cout << "upload file: " << last_file.filename
-                                      << " file type: " << contentType
-                                      << last_file.content.size() << std::endl;
                             return true;
                         });
                     if (files.empty())

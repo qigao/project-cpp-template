@@ -24,8 +24,6 @@ if(FEATURE_TESTS)
       yaml-cpp PATHS ${EXTERNAL_LIBS_PATH}/yaml-cpp/lib/cmake/yaml-cpp
     )
     find_package(yyjson PATHS ${EXTERNAL_LIBS_PATH}/yyjson/lib/cmake/yyjson)
-    set(OPENSSL_ROOT_DIR ${EXTERNAL_LIBS_PATH}/openssl)
-    find_package(OpenSSL REQUIRED)
   else()
     find_package(Catch2 3)
   endif()
