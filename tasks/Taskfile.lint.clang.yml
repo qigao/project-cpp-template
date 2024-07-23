@@ -1,0 +1,31 @@
+version: 3
+tasks:
+  lint:clang:win:
+    internal: true
+    platforms: [windows]
+    cmds:
+      - cmd: echo "Linting cpp related files on windows"
+      - cmd: powershell -c '$files=(git ls-files core ); `
+             foreach ($file in $files) `
+             { `
+               if ((get-item $file).Extension -in ".cpp", ".hpp", ".c", ".cc", ".cxx", ".hxx", ".ixx") `
+               { `
+                  Write-Output "Processing $file"; `
+
+               } `
+             }'
+
+  lint:clang:unix:
+    internal: true
+    platforms: [linux, darwin]
+    cmds:
+      - cmd: echo "Linting cpp related files on Unix based OS"
+      - |
+        git ls-files -- ':!:external/*' ':!:examples/*' | \
+        grep -E '\.(cpp|hpp|c|cc|cxx|hxx|ixx)$' | \
+        xargs clang-format -i -style=file
+  lint:
+    internal: true
+    cmds:
+      - task: lint:clang:win
+      - task: lint:clang:unix

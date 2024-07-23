@@ -1,0 +1,30 @@
+version: 3
+
+env:
+    SRC_ROOT_PATH: "{{.ROOT_DIR}}/{{.EXTERNAL_DEPS_PATH}}/{{.LIB_NAME}}"
+    LIB_ROOT_PATH: "{{.EXTERNAL_LIBS_PATH}}/{{.LIB_NAME}}"
+    INSTALL_PATH: "{{.ROOT_DIR}}/{{.EXTERNAL_LIBS_PATH}}/{{.LIB_NAME}}"
+    INSTALL_CMD: cmake --build build --config {{.BUILD_TYPE}} --target install
+    CONFIG_CMD: cmake -B build -S . {{.LIB_OPTION}}
+
+tasks:
+    clone:
+        desc: clone git repo
+        cmds:
+            - cmd: echo "Cloning git repo {{.LIB_NAME}} ... "
+            - cmd: git clone --depth 1 --branch {{.LIB_TAG }} {{.LIB_URL}} $SRC_ROOT_PATH
+
+    setup:
+        desc: build and setup from local repo
+        cmds:
+            - cmd: echo "Setup {{.LIB_NAME}} ..."
+            - |
+                cd $SRC_ROOT_PATH
+                $CONFIG_CMD -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH
+                $INSTALL_CMD
+    echo:
+        desc: echo vars
+        cmds:
+            - cmd: echo $SRC_ROOT_PATH $INSTALL_PATH  $LIB_ROOT_PATH {{.ROOT_DIR}}
+            - cmd: echo {{.LIB_NAME}} {{.EXTERNAL_DEPS_PATH}}  {{.BUILD_TYPE}} {{.LIB_TAG }} {{.LIB_URL}}
+            - cmd: echo $CONFIG_CMD  $INSTALL_CMD

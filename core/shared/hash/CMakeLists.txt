@@ -1,12 +1,13 @@
 # Project Name
-set(TARGET_NAME hash_lib)
+set(TARGET_NAME hashfunc)
 
 # ##############################################################################
 # Define Target Information
 # ##############################################################################
 
-file(GLOB TARGET_HEADERS include/*.hpp)
-file(GLOB TARGET_SOURCES src/*.cpp)
+file(GLOB TARGET_SOURCES private/src/*.cpp)
+file(GLOB TARGET_HEADERS private/include/*.hpp)
+file(GLOB TARGET_PUBLIC_HEADERS public/*.hpp)
 
 # ##############################################################################
 # Support IDE Visualization
@@ -16,49 +17,48 @@ source_group(
   FILES ${TARGET_SOURCES}
 )
 source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header Files"
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header(Private) Files"
   FILES ${TARGET_HEADERS}
+)
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Header(Public) Files"
+  FILES ${TARGET_PUBLIC_HEADERS}
 )
 
 add_library(${TARGET_NAME})
-target_sources(${TARGET_NAME} PRIVATE ${TARGET_SOURCES})
+target_sources(
+  ${TARGET_NAME} PRIVATE ${TARGET_HEADERS} ${TARGET_SOURCES}
+                         ${TARGET_PUBLIC_HEADERS}
+)
 target_include_interface_directories(
-  ${TARGET_NAME} include ${CMAKE_SOURCE_DIR}/core/shared/utils
-) # Includes
+  ${TARGET_NAME}
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/private/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/public
+  ${CMAKE_SOURCE_DIR}/core/shared/utils
+  ${CMAKE_SOURCE_DIR}/core/shared/http
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${TARGET_NAME}
+)
+if(ENABLE_OPENSSL)
+  find_package(OpenSSL)
+endif()
+target_link_system_libraries(
+  ${TARGET_NAME} PUBLIC $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
+  $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
+)
+target_compile_definitions(
+  ${TARGET_NAME} INTERFACE $<$<BOOL:${ENABLE_OPENSSL}>:WITH_OPENSSL>
+)
+# link project_options/warnings
 target_link_libraries(
   ${TARGET_NAME} PRIVATE starter_project_options starter_project_warnings
 )
-find_package(OpenSSL REQUIRED)
-target_find_dependencies(
-  ${TARGET_NAME} # Find dependencies
-  PRIVATE_CONFIG range-v3
-)
-target_link_system_libraries(
-  ${TARGET_NAME} # Link dependencies
-  PRIVATE OpenSSL::SSL OpenSSL::Crypto
-)
 
-# =================================================================================
-# INSTALL
-# =================================================================================
-
-# Files to Install
-install(
-  TARGETS ${TARGET_NAME}
-  EXPORT ${TARGET_NAME}Targets
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET_NAME}
+generate_export_header(
+  ${TARGET_NAME} EXPORT_FILE_NAME
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${TARGET_NAME}/${TARGET_NAME}_export.h
 )
-install(
-  EXPORT ${TARGET_NAME}Targets
-  FILE ${TARGET_NAME}Targets.cmake
-  NAMESPACE ${TARGET_NAME}::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME}
-)
-# ----------------------------------------------------------------------------------------------------------------------
 # tests
 if(FEATURE_TESTS)
-  #add_subdirectory(test)
+  add_subdirectory(test)
 endif()

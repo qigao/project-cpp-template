@@ -11,8 +11,6 @@ public:
 
     bool enqueue(std::function<void()> fn) override
     {
-        // 将任务fn加入到你的线程池任务队列中
-        // 如果队列已满无法加入,返回false,这会导致连接被关闭
         pool_.detach_task(fn);
         return true;
     }

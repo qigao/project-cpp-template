@@ -1,6 +1,6 @@
 #ifndef __HTTP_FILE_H__
 #define __HTTP_FILE_H__
-#include "config/utils.hpp"
+#include "config/pch_headers.hpp"
 
 #define UP_LOAD_MESSAGE R"({"message":"upload result"})"
 class HttpFileHandle
@@ -15,8 +15,6 @@ public:
      */
     void list_upload_form(httplib::Request const& req, httplib::Response& res);
 
-    void upload_file_by_multiform(httplib::Request const& req,
-                                  httplib::Response& res);
     /**
      * Handles request for downloading a file.
      *   1. If there is no range header, return the whole file.
@@ -56,8 +54,6 @@ private:
                                 httplib::Response& res);
 
     void handle_multipart_file(httplib::ContentReader const& content_reader);
-    void handle_stream_file(std::string const& file_name,
-                            httplib::ContentReader const& content_reader);
     std::string shared_folder_;
     bool delete_after_download_;
     std::shared_ptr<spdlog::logger> logger;

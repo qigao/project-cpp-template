@@ -1,77 +1,52 @@
 version: 3
 includes:
-  core:
-    taskfile: ./core/Taskfile.yml
-dotenv: ['.env', 'task_vars.env']
+    core: ./core/Taskfile.yml
+    clang: ./tasks/Taskfile.lint.clang.yml
+    cmake: ./tasks/Taskfile.lint.cmake.yml
+    coverage: ./tasks/Taskfile.coverage.yml
+    setup: ./tasks/Taskfile.setup.yml
+dotenv:
+    - .env
+    - .env.config.cmake
 env:
-  CONFIG: '{{.CONFIG | default "developer"}}'
-  BUILD_DIR: '{{ .CMAKE_BUILD_DIR }}'
-  BUILD_TYPE: '{{ .CMAKE_BUILD_TYPE }}'
-  OUTPUT_DIR: '{{.CNMAKE_OUTPUT_DIR}}'
+    CMAKE_BUILD: cmake --build {{.CMAKE_BUILD_DIR}} --target
+    CMAKE_TEST: ctest -T test --build-config {{.CMAKE_BUILD_TYPE}} --test-dir {{.CMAKE_BUILD_DIR}} --stop-on-failure --no-tests=error -R
+    CONAN_CONFIG: -pr:h  tasks/conan/profiles/{{.CONAN_PROFILE}} -pr:b  tasks/conan/profiles/{{.CONAN_PROFILE}}
 tasks:
-  lint:clang-format:
-    cmds:
-      - cmd: powershell -c '$files=(git ls-files --exclude-standard); foreach ($file in $files) { if ((get-item $file).Extension -in ".cpp", ".hpp", ".c", ".cc", ".cxx", ".hxx", ".ixx") { clang-format -i -style=file $file } }'
-        platforms: [windows]
-      - cmd: git ls-files --exclude-standard | grep -E '\.(cpp|hpp|c|cc|cxx|hxx|ixx)$' | xargs clang-format -i -style=file
-        platforms: [linux, darwin]
-  lint:cmake:
-    cmds:
-      - cmd: powershell -c '$files=(git ls-files --exclude-standard); foreach ($file in $files) { $item=(get-item $file); if (($item.Name -eq "CMakeLists.txt") -or ($item.Extension -in ".cmake")) { cmake-format --in-place $file; cmake-lint $file {{.CMAKE_LINT_FLAGS}} } }'
-        platforms: [windows]
-      - cmd: git ls-files --exclude-standard | grep -E '(CMakeLists\.txt)|(\.(cmake))$' | xargs cmake-format --in-place | xargs cmake-lint {{.CMAKE_LINT_FLAGS}}
-        platforms: [linux, darwin]
-    vars:
-      CMAKE_LINT_FLAGS: --disabled-codes C0103 C0301 R0912 R0915 R0913 --suppress-decorations
-  # Run with coverage analysis
-  coverage.all:
-    cmds:
-      # Set --sources "your_source_folder\*" and --filter "your_source_folder/" to have a clean coverage report
-      - |
-        {{if eq OS "windows"}}
+    lint:
+        desc: linting cpp and cmake files
+        deps:
+            - task: cmake:lint
+            - task: clang:lint
+    ext.setup:
+        desc: install 3rd packages from conan and local,then config by preset
+        cmds:
+            - task: setup:ext.conan.setup
+            - task: setup:ext.libs.setup
+    preset:
+        desc: configure cmake project for dev and test purpose
+        requires:
+            vars: [CONAN_PROFILE, CMAKE_PRESET]
+        cmds:
+            - cmake --list-presets all
+            - cmake --preset $CMAKE_PRESET
+    compile:
+        cmds:
+            - task: setup:build.all
+    test:
+        desc: all the test tasks from modules
+        cmds:
+            - ctest --preset $CMAKE_PRESET
+    coverage:
+        cmds:
+            - cmd: echo "Generating coverage"
+            - task: coverage:all
+            - cmd: echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
 
-          OpenCppCoverage.exe --export_type html:./build/coverage --export_type cobertura:./build/coverage.xml --cover_children --sources "core\*" --modules "build\*" -- task test.all
-
-          powershell -c "if (!\$env:CI) { echo '[info] Opening ./build/coverage/index.html...'; start ./build/coverage/index.html }"
-        {{else}}
-           mkdir -p ./build/coverage/
-
-         gcovr -r . -e '/.*/build/'  -e '/.*/test/'   --html --html-details -o build/coverage/index.html --xml-pretty --xml build/coverage.xml
-
-          echo "Open ./build/coverage/index.html in a browser for a visual coverage report"
-        {{end}}
-
-  lint.all:
-    desc: cpp, cmake, and vcpkg linting
-    deps:
-      - task: lint:cmake
-      - task: lint:clang-format
-
-  clean:build:
-    desc: clean all build artifacts
-    cmds:
-      - cmd: powershell -c 'function rmrf($path) { if (test-path $path) { rm -r -force $path }}; rmrf ./build; rmrf ./install'
-        platforms: [windows]
-      - cmd: rm -rf ./build && rm -fr CMakeUserPresets.json && rm -fr task_vars.env
-        platforms: [linux, darwin]
-  clean.all:
-    desc: clean all build artifacts and packages
-    deps:
-      - task: clean:build
-  test.all:
-    desc: all the test tasks from modules
-    cmds:
-      - ctest --preset $CONFIG
-  config:
-    desc: list all cmake presets, then generate the developer preset
-    cmds:
-      - cmake --list-presets all
-      - cmake --preset $CONFIG
-  build.all:
-    desc: build all the targets by presets
-    cmds:
-      - cmake --build --preset $CONFIG
-  default:
-    desc: list all tasks
-    cmds:
-      - task -a
+    default:
+        desc: list all tasks
+        cmds:
+            - task -a
+            - echo "Use task <taskname> to run a task"
+            - echo ".env must be set before further steps"
+            - echo "to install libs from github, use task ext.setup"

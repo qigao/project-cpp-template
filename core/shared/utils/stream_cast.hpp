@@ -1,7 +1,6 @@
 
 #ifndef CPP_CORE_PROJECT_HTTP_HELPERS_HPP
 #define CPP_CORE_PROJECT_HTTP_HELPERS_HPP
-#include <fmt/core.h>
 #include <sstream>
 #include <string>
 

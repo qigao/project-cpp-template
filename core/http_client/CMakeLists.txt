@@ -41,29 +41,24 @@ target_sources(
                          ${TARGET_PUBLIC_HEADERS}
 )
 target_include_interface_directories(
-  ${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/private/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/public ${CMAKE_SOURCE_DIR}/core/shared/utils
+  ${TARGET_NAME}
+  ${CMAKE_CURRENT_SOURCE_DIR}/private/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/public
+  ${CMAKE_SOURCE_DIR}/core/shared/utils
   ${CMAKE_SOURCE_DIR}/core/shared/http
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${TARGET_NAME}
 )
 find_package(Threads)
 # Link dependencies:
 target_find_dependencies(
-  ${TARGET_NAME}
-  PUBLIC_CONFIG
-  httplib
-  spdlog
-  yaml-cpp
-  fmt
-  bshoshany-thread-pool
+  ${TARGET_NAME} PUBLIC_CONFIG httplib yaml-cpp bshoshany-thread-pool
 )
 target_link_system_libraries(
   ${TARGET_NAME}
   PUBLIC
   httplib::httplib
-  spdlog::spdlog
   Threads::Threads
   yaml-cpp::yaml-cpp
-  fmt::fmt
   bshoshany-thread-pool::bshoshany-thread-pool
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
@@ -78,33 +73,19 @@ target_compile_definitions(
 target_link_libraries(
   ${TARGET_NAME} PRIVATE starter_project_options starter_project_warnings
 )
-
-target_precompile_headers(${TARGET_NAME} PRIVATE private/include/utils.hpp)
+generate_export_header(
+  ${TARGET_NAME} EXPORT_FILE_NAME
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${TARGET_NAME}/${TARGET_NAME}_export.h
+)
+add_custom_command(
+  TARGET ${TARGET_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/client.yml
+          $<TARGET_FILE_DIR:${TARGET_NAME}>/client.yml
+)
+target_precompile_headers(
+  ${TARGET_NAME} PRIVATE private/include/pch_headers.hpp
+)
 # Tests
 if(FEATURE_TESTS)
   add_subdirectory(test)
 endif()
-
-# =================================================================================
-# INSTALL
-# =================================================================================
-
-# Import GNU Install Rules
-include(GNUInstallDirs)
-
-# Files to Install
-install(
-  TARGETS ${TARGET_NAME}
-  EXPORT ${TARGET_NAME}Targets
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET_NAME}
-)
-
-install(
-  EXPORT ${TARGET_NAME}Targets
-  FILE ${TARGET_NAME}Targets.cmake
-  NAMESPACE ${TARGET_NAME}::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME}
-)

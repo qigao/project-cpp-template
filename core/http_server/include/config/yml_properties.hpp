@@ -1,8 +1,8 @@
 #ifndef __YML_PROPERTIES_H__
 #define __YML_PROPERTIES_H__
 
+#include "config/pch_headers.hpp"
 #include "config/server_config.hpp"
-#include "utils.hpp"
 
 class YamlProperties
 {

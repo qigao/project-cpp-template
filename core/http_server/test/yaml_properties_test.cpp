@@ -1,12 +1,9 @@
-#include "logs.hpp"
-#define CATCH_CONFIG_MAIN
-
+#include "../include/config/logs.hpp"
 #include "config/yml_properties.hpp"
 #include "fs.hpp"
 #include "test_helper.h"
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
+#include <catch2/catch_all.hpp>
 #include <filesystem>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
@@ -30,12 +27,16 @@ protected:
 
         YAML::Emitter out;
         out << node;
-        write(full_path_file_name->string(), out.c_str(), out.size());
+        fs_write(full_path_file_name->string(), out.c_str(), out.size());
         Logger::Construct();
         yml_properties_ =
             std::make_unique<YamlProperties>(full_path_file_name->string());
     }
-    ~YamlPropertiesTest() { fs::remove_all(full_path_file_name->filename()); }
+    ~YamlPropertiesTest()
+    {
+        std::cout << "path name" << full_path_file_name->string() << std::endl;
+        fs::remove_all(full_path_file_name->filename());
+    }
 
     std::unique_ptr<YamlProperties> yml_properties_;
     std::unique_ptr<fs::path> full_path_file_name;

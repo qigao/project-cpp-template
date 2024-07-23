@@ -7,7 +7,7 @@ set(TARGET_NAME_LIB ${TARGET_NAME}_lib)
 # ##############################################################################
 
 file(GLOB TARGET_SOURCES src/http/*.cpp src/config/*.cpp)
-file(GLOB TARGET_HEADERS include/http/*.hpp include/config/*.hpp)
+file(GLOB TARGET_HEADERS include/http/*.hpp include/config/*.hpp include/*.h)
 source_group(
   TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source Files"
   FILES ${TARGET_SOURCES}
@@ -42,19 +42,17 @@ target_find_dependencies(
   yaml-cpp
   cxxopts
   bshoshany-thread-pool
-  fmt
 )
 target_link_system_libraries(
   ${TARGET_NAME_LIB}
   INTERFACE
   httplib::httplib
-  spdlog::spdlog
+  spdlog::spdlog_header_only
   Threads::Threads
   yyjson::yyjson
   yaml-cpp::yaml-cpp
-  hash_lib
+  hashfunc
   cxxopts::cxxopts
-  fmt::fmt
   bshoshany-thread-pool::bshoshany-thread-pool
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::SSL>
   $<$<BOOL:${ENABLE_OPENSSL}>:OpenSSL::Crypto>
@@ -68,7 +66,9 @@ target_compile_definitions(
 target_link_libraries(
   ${TARGET_NAME_LIB} INTERFACE starter_project_options starter_project_warnings
 )
-target_precompile_headers(${TARGET_NAME_LIB} INTERFACE include/config/utils.hpp)
+target_precompile_headers(
+  ${TARGET_NAME_LIB} INTERFACE include/config/pch_headers.hpp
+)
 # Executable part
 add_executable(${TARGET_NAME})
 target_sources(${TARGET_NAME} PRIVATE src/main.cpp)
@@ -76,18 +76,11 @@ target_link_libraries(
   ${TARGET_NAME} PRIVATE ${TARGET_NAME_LIB} starter_project_options
                          starter_project_warnings
 )
-
-# ----------------------------------------------------------------------------------------------------------------------
-# install
-# add_custom_command(
-#   TARGET ${TARGET_NAME}
-#   POST_BUILD
-#   COMMAND
-#     ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../generate_certs.sh
-#     ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}
-#   COMMENT "Copying cmake file as demo to build dir"
-# )
-# ----------------------------------------------------------------------------------------------------------------------
+add_custom_command(
+  TARGET ${TARGET_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/application.yml
+          $<TARGET_FILE_DIR:${TARGET_NAME}>/application.yml
+)
 # tests
 if(FEATURE_TESTS)
   add_subdirectory(test)

@@ -1,41 +1,29 @@
-# Notes
-# - install task from: https://taskfile.dev/#/installation or use `setup-cpp --task true`
-# - If using Visual Studio, either run the following commands inside the Visual Studio command prompt (vcvarsall) or set CMAKE_GENERATOR to "Visual Studio 17 2022"
-
 version: 3
 tasks:
-  http_client:test:build:
+  http_client.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR   --target test.http_client.dll
-  http_client:test:run:
+      - cmd: $CMAKE_BUILD  test.http_client.demo
+  http_client.test.run:
     deps:
-      - task: http_client:test:build
+      - task: http_client.test.build
     cmds:
-      - cmd: cd $BUILD_DIR &&  ctest -T test --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_client\.dll$
-  http_client:exe:build:
+      - cmd: $CMAKE_TEST ^test\.http_client\.demo$
+  http_client.dll.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target http_client
-  sum:test:build:
+      - cmd: $CMAKE_BUILD  http_client
+  client_config.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target test.http_client.sum
-  sum:test:run:
+      - cmd: $CMAKE_BUILD  test.http_client.client_config
+  client_config.test.run:
     deps:
-      - task: sum:test:build
+      - task: client_config.test.build
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -T test  --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_client\.sum$
-  yaml_convert:test:build:
+      - cmd: $CMAKE_TEST ^test\.http_client\.client_config$
+  client_yml.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target test.http_client.yaml_convert
-  yaml_convert:test:run:
+      - cmd: $CMAKE_BUILD  test.http_client.client_yml
+  client_yml.test.run:
     deps:
-      - task: yaml_convert:test:build
+      - task: client_yml.test.build
     cmds:
-      - cmd: cd $BUILD_DIR &&  ctest -T test  --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_client\.yaml_convert$
-  yaml_config:test:build:
-    cmds:
-      - cmake --build  $BUILD_DIR  --target test.http_client.yaml_config
-  yaml_config:test:run:
-    deps:
-      - task: yaml_config:test:build
-    cmds:
-      - cmd:  cd $BUILD_DIR &&  ctest -T test  --build-config $BUILD_TYPE --stop-on-failure --no-tests=error -R ^test\.http_client\.yaml_config$
+      - cmd: $CMAKE_TEST ^test\.http_client\.client_yml$

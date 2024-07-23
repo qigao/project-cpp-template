@@ -1,4 +1,4 @@
-#define CATCH_CONFIG_MAIN
+#include "../include/config/logs.hpp"
 #include "constants.hpp"
 #include "fs.hpp"
 #include "http/http_file_handle.hpp"
@@ -6,13 +6,14 @@
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
 #include "http_lib_header.hpp"
-#include "logs.hpp"
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
+#include <catch2/catch_all.hpp>
 #include <cstdio>
+#include <fstream>
 #include <functional>
+#include <httplib.h>
 #include <memory>
+#include <vector>
 #include <yyjson.h>
 #define DEMO_JSON "{\"msg\":\"demo\",\"id\":200}"
 static char const* HOST = "127.0.0.1";
@@ -34,6 +35,7 @@ std::pair<std::string, int> parse_json(char* json, int len)
     yyjson_doc_free(doc);
     return result;
 }
+
 TEST_CASE("HttpServerTest checkSharedFolder", "[http_server]")
 {
     Logger::Construct();
@@ -67,6 +69,7 @@ TEST_CASE("HttpServerTes getHelloJson", "[http_server]")
     REQUIRE(result.second == 100);
     REQUIRE_THAT(result.first, Catch::Matchers::Equals("demo"));
 }
+
 TEST_CASE("HttpServerTest  postJson", "[http_server]")
 {
     Logger::Construct();
@@ -98,6 +101,7 @@ TEST_CASE("HttpServerTest  postJson", "[http_server]")
     REQUIRE(result.second == 4001);
     REQUIRE_THAT(result.first, Catch::Matchers::Equals("demo"));
 }
+
 TEST_CASE("HttpServerTest postJsonReturn4001", "[http_server]")
 {
     Logger::Construct();
@@ -118,25 +122,38 @@ TEST_CASE("HttpServerTest postJsonReturn4001", "[http_server]")
     REQUIRE(result.second == 4001);
     REQUIRE_THAT(result.first, Catch::Matchers::Equals("demo"));
 }
-TEST_CASE("HttpServerTest multipartForm", "[http_server]")
+
+// Helper function to generate a large file
+void generate_large_file(std::string const& filename, size_t size_mb)
 {
-    Logger::Construct();
-    HttpServer svr(PORT);
-    svr.setSharedFolder(SHARED_FOLDER);
-    // Register handler
-    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
-    svr.Get("/", std::bind(&HttpFileHandle::list_upload_form, handler, _1, _2));
-    svr.Post("/multipart", std::bind(&HttpFileHandle::upload_file_by_multiform,
-                                     handler, _1, _2));
-    svr.start();
-    httplib::MultipartFormDataItems items = {
-        {"text_file", "h\ne\n\nl\nl\no\n", "hello.txt", "text/plain"},
-        {"binary_file", "h\ne\n\nl\nl\no\n", "hello.bin",
-         "application/octet-stream"}};
-    httplib::Client cli(HOST, PORT);
-    auto resp = cli.Post("/multipart", items);
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    std::ofstream file(filename, std::ios::binary);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 255);
+
+    for (size_t i = 0; i < size_mb * 1024 * 1024; ++i)
+    {
+        char byte = static_cast<char>(dis(gen));
+        file.write(&byte, 1);
+    }
+    file.close();
+}
+
+// Helper function to compare two files
+bool compare_files(std::string const& file1, std::string const& file2)
+{
+    std::ifstream f1(file1, std::ios::binary);
+    std::ifstream f2(file2, std::ios::binary);
+
+    if (!f1.is_open() || !f2.is_open())
+    {
+        return false;
+    }
+
+    std::istreambuf_iterator<char> begin1(f1), end1;
+    std::istreambuf_iterator<char> begin2(f2), end2;
+
+    return std::equal(begin1, end1, begin2, end2);
 }
 
 TEST_CASE("HttpServerTest  streamUpload", "[http_server]")
@@ -147,40 +164,40 @@ TEST_CASE("HttpServerTest  streamUpload", "[http_server]")
     // Register handler
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.PostWithReader(
-        R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
-                          httplib::ContentReader const& content_reader)
+        R"(/upload/(.*))",
+        [&](httplib::Request const& req, httplib::Response& res,
+            httplib::ContentReader const& content_reader)
         { handler->handle_file_upload(req, res, content_reader); });
     svr.start();
-    std::string filename = "/tmp/test.txt";
-    std::ofstream ofs(filename, std::ofstream::binary);
-    ofs.write("hello", 5);
-    ofs.close();
-    httplib::Headers headers = {
-        {"Content-Disposition", "attachment; filename=\"hello.txt\""}};
+    std::string const test_file = "test_large_file.jpg";
+    std::string const received_file = "received_image.jpg";
+    size_t const file_size_mb = 2;
 
-    std::ifstream file(filename, std::ifstream::binary);
+    // Generate a large test file
+    generate_large_file(test_file, file_size_mb);
     httplib::Client cli(HOST, PORT);
-    auto resp = cli.Post(
-        "/upload", headers,
-        [&](size_t offset, httplib::DataSink& sink)
-        {
-            // Read the file data in chunks and write to the sink
-            char buffer[16384];
-            file.seekg(offset);
-            while (file.read(buffer, sizeof(buffer)))
-            {
-                sink.write(buffer, file.gcount());
-            }
-            sink.write(buffer, file.gcount());
-            sink.done();
-            return true;
-        },
-        "application/octet-stream");
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
-
+    std::ifstream file(test_file, std::ios::binary);
+    std::string file_content((std::istreambuf_iterator<char>(file)),
+                             std::istreambuf_iterator<char>());
     file.close();
-    std::remove(filename.c_str());
+    auto res = cli.Post(
+        "/upload/received_image.jpg", file_content.size(),
+        [&](size_t offset, size_t length, httplib::DataSink& sink)
+        {
+            sink.write(file_content.data() + offset, length);
+            return true; // return 'false' if you want to cancel the request.
+        },
+        "text/plain");
+    REQUIRE(res != nullptr);
+    REQUIRE(res->status == 200);
+    REQUIRE(res->body == "File uploaded successfully");
+
+    // Compare the original and received files
+    REQUIRE(compare_files(test_file, received_file));
+
+    // Clean up
+    std::remove(test_file.c_str());
+    std::remove(received_file.c_str());
 }
 
 TEST_CASE("HttpServerTest multipartUpload", "[http_server]")
@@ -215,6 +232,7 @@ TEST_CASE("HttpServerTest  getFileLists", "[http_server]")
     svr.start();
     httplib::Client cli(HOST, PORT);
     auto resp = cli.Get("/");
+    std::cout << resp->body << std::endl;
     REQUIRE(resp != nullptr);
     REQUIRE(resp->status == 200);
 }
@@ -229,28 +247,91 @@ TEST_CASE("HttpServerTest  downloadFile", "[http_server]")
             std::bind(&HttpFileHandle::handle_file_download, handler, _1, _2));
     svr.start();
     httplib::Client cli(HOST, PORT);
-    auto unix_file = "hello.txt";
+    std::string const unix_file = "test_large_file.jpg";
+    std::string const local_file = "received_image.jpg";
+    size_t const file_size_mb = 2;
+
+    // Generate a large test file
+    generate_large_file(unix_file, file_size_mb);
+    std::ofstream file(local_file, std::ios::binary);
     auto remote_url = fmt::format("/download/{}", unix_file);
-    auto local_file = fmt::format("./{}", unix_file);
-    std::ofstream ofs(local_file, std::ofstream::binary);
-    auto resp = cli.Get(
+
+    std::cout << "remote url: " << remote_url << std::endl;
+    auto res = cli.Get(
         remote_url,
-        [&](httplib::Response const& response)
-        {
-            std::cerr << "Client read:" << response.status << std::endl;
-            return true;
-        },
         [&](char const* data, size_t data_length)
         {
-            ofs.write(data, data_length);
-            std::cerr << "Client write:" << data_length << std::endl;
-            return true;
+            file.write(data, data_length);
+            return true; // Return false if you want to cancel the download
         });
-    ofs.close();
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+
+    if (res)
+    {
+        // Download successful
+        file.close();
+    }
+    else
+    {
+        // Handle error
+        auto err = res.error();
+    }
+    REQUIRE(res != nullptr);
+    REQUIRE(res->status == 200);
+    REQUIRE(compare_files(unix_file, local_file));
+
+    std::remove(unix_file.c_str());
     std::remove(local_file.c_str());
 }
+void create_test_file(std::string const& filename, std::string const& content)
+{
+    std::ofstream file(filename);
+    file << content;
+}
+template <typename T>
+T custom_min(T a, T b)
+{
+    return (a < b) ? a : b;
+}
+
+void handle_file_download(httplib::Request const& req, httplib::Response& res)
+{
+    std::string file_path = req.matches[1];
+    std::ifstream file(file_path, std::ios::binary);
+    if (!file)
+    {
+        res.status = 404;
+        res.set_content("File not found", "text/plain");
+        return;
+    }
+
+    res.set_header("Content-Type", "application/octet-stream");
+    res.set_header("Content-Disposition",
+                   "attachment; filename=\"" + file_path + "\"");
+
+    res.set_content_provider(
+        file.seekg(0, std::ios::end).tellg(), "text/plain",
+        [&, file_path](size_t offset, size_t length, httplib::DataSink& sink)
+        {
+            std::ifstream file(file_path, std::ios::binary);
+            file.seekg(offset);
+            char buffer[8192];
+            size_t read_length;
+
+            while (length > 0 &&
+                   (read_length =
+                        file.read(buffer, custom_min(length, sizeof(buffer)))
+                            .gcount()) > 0)
+            {
+                sink.write(buffer, read_length);
+                length -= read_length;
+            }
+
+            return true;
+        });
+
+    res.status = 200;
+}
+
 TEST_CASE("HttpServerTest dump", "[http_server]")
 {
     Logger::Construct();

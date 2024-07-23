@@ -1,0 +1,9 @@
+add_library_test(
+  my_lib
+  my_sum
+  CONFIGS
+  catch2_test_common
+  my_lib
+  SOURCES
+  my_sum.cpp
+)

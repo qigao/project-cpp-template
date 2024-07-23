@@ -1,7 +1,7 @@
 #ifndef __WEB_HOOK_SINGLETON_H__
 #define __WEB_HOOK_SINGLETON_H__
 
-#include "config/utils.hpp"
+#include "config/pch_headers.hpp"
 
 class WebHook : public Singleton<WebHook>
 {

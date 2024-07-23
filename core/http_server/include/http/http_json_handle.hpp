@@ -1,7 +1,7 @@
 #ifndef CPP_CORE_PROJECT_HTTP_HANDLER_HPP
 #define CPP_CORE_PROJECT_HTTP_HANDLER_HPP
 
-#include "config/utils.hpp"
+#include "config/pch_headers.hpp"
 
 class HttpJsonHandler
 {

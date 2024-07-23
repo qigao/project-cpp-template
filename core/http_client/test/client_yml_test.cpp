@@ -1,21 +1,14 @@
 #include "client_yaml.hpp"
-#include "fs.hpp"
 #include "test_helper.h"
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
-#include <filesystem>
-#include <iostream>
-#include <memory>
-#include <yaml-cpp/yaml.h>
-
+#include <catch2/catch_all.hpp>
 namespace fs = std::filesystem;
-class RemoteYmlTest
+class YamlPropertiesTest
 {
-public:
-    RemoteYmlTest()
+protected:
+    YamlPropertiesTest()
     {
-        auto const file_name = "client.yaml";
+        fs::path file_name = "test.yaml";
         YAML::Node node = YAML::Load(yml_demo_data);
         auto random_dir = fs::temp_directory_path();
         if (!createRandomDir(random_dir))
@@ -28,20 +21,22 @@ public:
 
         YAML::Emitter out;
         out << node;
-        write(full_path_file_name->string(), out.c_str(), out.size());
-        yml_properties_ =
-            std::make_unique<ClientYml>(full_path_file_name->string());
+        fs_write(full_path_file_name->string(), out.c_str(), out.size());
+    }
+    ~YamlPropertiesTest()
+    {
+        std::cout << "path name" << full_path_file_name->string() << std::endl;
+        fs::remove_all(full_path_file_name->filename());
     }
 
-    ~RemoteYmlTest() { fs::remove_all(full_path_file_name->filename()); }
-
-    std::unique_ptr<ClientYml> yml_properties_;
     std::unique_ptr<fs::path> full_path_file_name;
 };
-TEST_CASE_METHOD(RemoteYmlTest, "ParseTest", "[parse_yml]")
+TEST_CASE_METHOD(YamlPropertiesTest, "ParseTest", "[parse_yml]")
 {
-    yml_properties_->parse();
-    auto config = yml_properties_->getConfig();
+
+    auto yml = ClientYml(full_path_file_name->string());
+    yml.parse();
+    auto config = yml.getConfig();
     REQUIRE_THAT(config.host, Catch::Matchers::Equals("127.0.0.1"));
     REQUIRE(config.port == 5060);
     REQUIRE_THAT(config.auth_token, Catch::Matchers::Equals("123456"));

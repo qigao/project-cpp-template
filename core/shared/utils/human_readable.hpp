@@ -3,7 +3,6 @@
 #define CPP_CORE_PROJECT_HUMAN_READABLE_HPP
 #include <cmath>
 #include <cstdint>
-#include <fmt/core.h>
 #include <iostream>
 template <class T, class V>
 T NarrowCast(V v)

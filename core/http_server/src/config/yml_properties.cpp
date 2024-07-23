@@ -1,7 +1,7 @@
 #include "config/yml_properties.hpp"
 
+#include "config/pch_headers.hpp"
 #include "config/server_config.hpp"
-#include "config/utils.hpp"
 
 namespace fs = std::filesystem;
 class YamlProperties::ymlImpl

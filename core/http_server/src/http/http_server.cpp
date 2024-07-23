@@ -1,6 +1,6 @@
 #include "http/http_server.hpp"
 
-#include "config/utils.hpp"
+#include "config/pch_headers.hpp"
 
 using namespace std::placeholders;
 
@@ -9,14 +9,17 @@ HttpServer::HttpServer(int port, unsigned int numThreads,
     : mPort(port), mBoundPort(0), mStopSignal(false), mThreads(numThreads)
 
 {
+    logger = Logger::GetInstance()->get();
+
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+
     mServer =
         std::make_shared<httplib::SSLServer>(certFile.c_str(), keyFile.c_str());
     logger->info("openssl enabled");
+
 #else
     mServer = std::make_shared<httplib::Server>();
 #endif
-    logger = Logger::GetInstance()->get();
 }
 
 HttpServer::~HttpServer()

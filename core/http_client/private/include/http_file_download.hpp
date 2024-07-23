@@ -1,7 +1,7 @@
 #ifndef CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
 #define CPP_CORE_PROJECT_HTTP_FILE_DOWNLOAD_HPP
 
-#include "utils.hpp"
+#include "pch_headers.hpp"
 
 class HttpFileDownload
 {
@@ -73,7 +73,7 @@ public:
         {
             if (res->status == 404)
             {
-                spdlog::error("resource not found!");
+                std::cerr << "resource not found!" << std::endl;
                 return false;
             }
             else
@@ -83,10 +83,10 @@ public:
             }
         }
         bool completed = false;
-        spdlog::info("before trails");
+        std::cout << "before trails" << std::endl;
         for (int trials = 0; trials < max_trials_ && !completed; ++trials)
         {
-            spdlog::info("trials # {}", trials);
+            std::cout << "trials # " << trials << std::endl;
             int64_t already_downloaded_size = 0;
             try
             {
@@ -125,18 +125,18 @@ public:
                     else if (resp.status == 200)
                     {
                         // 202 OK
-                        write(temporary_filename, data, size);
+                        fs_write(temporary_filename, data, size);
                     }
                     return true;
                 }
                 catch (std::runtime_error const& e)
                 {
-                    spdlog::info("[c++ exception] {}", e.what());
+                    std::cerr << "[c++ exception] " << e.what() << std::endl;
                     return false;
                 }
                 catch (...)
                 {
-                    spdlog::info("[c++ exception] <UNKNOWN>");
+                    std::cerr << "[c++ exception] <UNKNOWN>" << std::endl;
                     return false;
                 }
             };
@@ -148,7 +148,7 @@ public:
             req.headers = headers;
             if (!mClient->send(req, resp, err))
             {
-                spdlog::error("err = {}", httplib::to_string(err));
+                std::cerr << "err = " << httplib::to_string(err) << std::endl;
                 if (resp.status == 206 || resp.status == 200 ||
                     resp.status == -1)
                 {
@@ -159,7 +159,7 @@ public:
                 else
                 {
                     // FIXME?
-                    spdlog::error("resp.status == {}", resp.status);
+                    std::cerr << "resp.status == " << resp.status << std::endl;
                     return false;
                 }
             }

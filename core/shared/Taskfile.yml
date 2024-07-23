@@ -1,38 +1,44 @@
 version: 3
 tasks:
-  func:test:build:
+  func.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target function_test
-  func:test:run:
-    deps: [func:test:build]
+      - cmd: $CMAKE_BUILD test.my_lib.auto_function
+  func.test.run:
+    deps: [func.test.build]
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -R AutoFunction
-  singleton:test:build:
+      - cmd: $CMAKE_TEST ^test\.my_lib\.auto_function$
+  singleton.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target singleton_test
-  singleton:test:run:
-    deps: [singleton:test:build]
+      - cmd: $CMAKE_BUILD test.my_lib.Singleton
+  singleton.test.run:
+    deps: [singleton.test.build]
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -R SingletonTest
-  human_read:test:build:
+      - cmd: $CMAKE_TEST ^test\.my_lib\.Singleton$
+  human_read.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target hr_test
-  human_read:test:run:
-    deps: [human_read:test:build]
+      - cmd: $CMAKE_BUILD test.my_lib.hr
+  human_read.test.run:
+    deps: [human_read.test.build]
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -R HumanReadable
-  hash:test:build:
+      - cmd: $CMAKE_TEST ^test\.my_lib\.hr$
+  hash.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target hash_function_test
-  hash:test:run:
-    deps: [hash:test:build]
+      - cmd: $CMAKE_BUILD test.hashfunc.sha
+  hash.test.run:
+    deps: [hash.test.build]
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -R HashMethodTest
+      - cmd: $CMAKE_TEST ^test\.hashfunc\.sha$
 
-  random:test:build:
+  random.test.build:
     cmds:
-      - cmake --build  $BUILD_DIR  --target random_test
-  random:test:run:
-    deps: [random:test:build]
+      - cmd: $CMAKE_BUILD  test.my_lib.random
+  random.test.run:
+    deps: [random.test.build]
     cmds:
-      - cmd: cd $BUILD_DIR && ctest -R RandomTest
+      - cmd: $CMAKE_TEST ^test\.my_lib\.random$
+  my_lib.test.build:
+    cmds:
+      - cmd: $CMAKE_BUILD test.my_lib.my_sum
+  my_lib.test.run:
+    cmds:
+      - cmd: $CMAKE_TEST ^test\.my_lib\.my_sum$

@@ -1,0 +1,27 @@
+version: 3
+tasks:
+  coverage.win:
+    internal: true
+    platforms: [windows]
+    cmds:
+      - |
+        OpenCppCoverage.exe \
+        --export_type html:./build/coverage \
+        --export_type cobertura:./build/coverage.xml \
+        --cover_children \
+        --sources "core\*" --modules "build\*"
+  coverage.unix:
+    internal: true
+    platforms: [linux, darwin]
+    cmds:
+      - mkdir -p ./build/coverage/
+      - |
+        gcovr -r . -e '/.*/build/'  -e '/.*/test/'   \
+        --html --html-details -o build/coverage/index.html \
+        --xml-pretty --xml build/coverage.xml
+
+  all:
+    internal: true
+    cmds:
+      - task: coverage.win
+      - task: coverage.unix
