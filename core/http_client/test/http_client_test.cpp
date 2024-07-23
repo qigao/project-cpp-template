@@ -404,8 +404,6 @@ TEST_CASE("File download test", "[file_download]")
         {
             outfile.write(data, data_length);
             total_bytes += data_length;
-            std::cout << "\rDownloaded: " << total_bytes << " bytes"
-                      << std::flush;
             return true; // Return false to cancel the download
         };
         // Make a request to download the file
