@@ -72,7 +72,7 @@ jobs:
                   files: |
                       build/*-*Release*-*.*
             - name: Publish to codecov
-              uses: codecov/codecov-action@v4.0.1
+              uses: codecov/codecov-action@v4.5.0
               with:
                   flags: ${{ runner.os }}
                   name: ${{ runner.os }}-coverage
