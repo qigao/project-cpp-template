@@ -13,6 +13,7 @@ HttpFileHandle::HttpFileHandle(std::string const& shared_folder,
       delete_after_download_(delete_after_download)
 {
     logger = Logger::GetInstance()->get();
+    ensureDirectoryExists(shared_folder_);
 }
 /**
  * Handles the upload of a file through an HTML form.
@@ -242,7 +243,6 @@ void HttpFileHandle::handle_file_upload(
             });
         std::string filename = req.matches[1];
         auto file_path = fmt::format("{}/{}", shared_folder_, filename);
-        ensureDirectoryExists(shared_folder_);
         std::ofstream file(file_path, std::ios::binary);
 
         if (!file)

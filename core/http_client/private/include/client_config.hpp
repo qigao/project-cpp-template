@@ -12,6 +12,7 @@ public:
     std::string auth_token;
     std::string webhook_url;
     std::string files_url;
+    bool debug;
 };
 
 namespace YAML
@@ -28,6 +29,7 @@ struct convert<client_config>
         node["auth-token"] = rhs.auth_token;
         node["port"] = rhs.port;
         node["host"] = rhs.host;
+        node["debug"] = rhs.debug;
         return node;
     }
 
@@ -82,7 +84,14 @@ struct convert<client_config>
         {
             return false;
         }
-
+        if(node["debug"])
+        {
+            rhs.debug = node["debug"].as<bool>();
+        }
+        else
+        {
+            rhs.debug = true;
+        }
         return true;
     }
 };

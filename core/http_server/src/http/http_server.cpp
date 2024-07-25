@@ -39,8 +39,8 @@ HttpServer::~HttpServer()
 void HttpServer::config_server()
 {
     mServer->new_task_queue = [&] { return new TaskQueue(mThreads); };
-    mServer->set_keep_alive_max_count(10);
-    mServer->set_keep_alive_timeout(5);
+    mServer->set_keep_alive_max_count(30);
+    mServer->set_keep_alive_timeout(15);
     mServer->set_payload_max_length(1024 * 1024 * 512);
 }
 void HttpServer::start()
@@ -149,7 +149,9 @@ void HttpServer::error_handler(httplib::Request const& /* req */,
 void HttpServer::log_handler(httplib::Request const& req,
                              httplib::Response const& res)
 {
+    if (mDebug){
     dump_request_response(req, res);
+    }
 }
 
 void HttpServer::post_route_handler(httplib::Request const& req,

@@ -24,25 +24,25 @@ inline std::string dump_headers(httplib::Headers const& headers)
 
 inline static void dump_http_request(httplib::Request const& r)
 {
-    std::cout << "REQ.METHOD = " << r.method << std::endl;
+    std::cout <<"REQ.PATH = "<<r.path <<" REQ.METHOD = " << r.method << std::endl;
     for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
     {
-        std::cerr << "RES.HEADER[" << it->first << "]" << it->second
+        std::cerr <<"REQ.PATH = "<<r.path << " HEADER[" << it->first << "]" << it->second
                   << std::endl;
     }
 }
 
 inline static void dump_http_response(httplib::Response const& r)
 {
-    std::cout << "res.status=" << r.status << std::endl;
+    std::cout << "RESP.STATUS=" << r.status << std::endl;
     for (auto it = r.headers.begin(); it != r.headers.end(); ++it)
     {
-        std::cerr << "RES.HEADER[" << it->first << "]" << it->second
+        std::cerr << "RESP.HEADER[" << it->first << "]" << it->second
                   << std::endl;
     }
     if (r.status != 200 && r.status != 206)
     {
-        std::cerr << "RES.BODY = " << r.body << std::endl;
+        std::cerr << "RESP.BODY = " << r.body << std::endl;
     }
 }
 

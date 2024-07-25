@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-class HASHFUNC_EXPORT hash_function
+class HASHFUNC_API hash_function
 {
 public:
     std::string sha_256_hash(std::string const& data) const noexcept;

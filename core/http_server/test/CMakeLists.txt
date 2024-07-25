@@ -14,13 +14,17 @@ add_library_test(
   SOURCES
   yaml_properties_test.cpp
 )
+
 add_library_test(
   http_server_lib
   demo
+  INCLUDES
+  ${PROJECT_SOURCE_DIR}/core/http_client/public/
   WORKING_DIRECTORY
   ${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}
   CONFIGS
   catch2_test_common
+  my_client
   SOURCES
   http_server_test.cpp
 )

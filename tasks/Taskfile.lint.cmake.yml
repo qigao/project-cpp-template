@@ -5,7 +5,7 @@ tasks:
         internal: true
         cmds:
             - cmd: echo "Linting CMakeLists.txt and *.cmake files on windows"
-            - cmd: powershell -c '$files=(git ls-files cmake core ':!:examples/*'); `
+            - cmd: powershell -c '$files=(git ls-files cmake core ':!:examples/*' ':!:cmake/options/*'); `
                    foreach ($file in $files) `
                    { `
                         $item=(get-item $file); `

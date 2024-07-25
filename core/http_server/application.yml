@@ -9,7 +9,7 @@ server:
     enabled: true
     token: 123456
   webhook:
-    url: http://127.0.0.1:8080/webhook
+    url: http://localhost:4443/dump
     api_key: 123456
     headers:
       - header: x-test

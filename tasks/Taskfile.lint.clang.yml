@@ -8,10 +8,10 @@ tasks:
       - cmd: powershell -c '$files=(git ls-files core ); `
              foreach ($file in $files) `
              { `
-               if ((get-item $file).Extension -in ".cpp", ".hpp", ".c", ".cc", ".cxx", ".hxx", ".ixx") `
+               if ((get-item $file).Extension -in ".cpp", ".hpp", ".c", ".cc", ".cxx", ".hxx", ".h") `
                { `
                   Write-Output "Processing $file"; `
-
+                  clang-format -i style=file   $file
                } `
              }'
 

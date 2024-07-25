@@ -44,7 +44,7 @@ void config_handle(HttpServer* http_server, server_config const& config)
     http_server->Get(
         "/", std::bind(&HttpFileHandle::list_upload_form, mHttpFile, _1, _2));
     http_server->PostWithReader(
-        "/upload",
+        "/upload/(.*)",
         std::bind(&HttpFileHandle::handle_file_upload, mHttpFile, _1, _2, _3));
     http_server->Post(
         "/download/(.*)",

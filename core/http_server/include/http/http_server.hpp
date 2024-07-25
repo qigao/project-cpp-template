@@ -61,11 +61,9 @@ public:
         mServer->set_pre_routing_handler(handler);
     }
 
-    inline void setSharedFolder(std::string const& folder)
-    {
-        mSharedFolder = folder;
+    inline void setDebugMode(bool debug){
+        mDebug = debug;
     }
-
     inline std::string getSharedFolder() { return mSharedFolder; }
     void config_server();
 
@@ -80,6 +78,7 @@ private:
     int mBoundPort = 0;
     int mThreads = 0;
     bool mStopSignal = false;
+    bool mDebug = false;
     std::string mSharedFolder;
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
     std::shared_ptr<httplib::SSLServer> mServer;

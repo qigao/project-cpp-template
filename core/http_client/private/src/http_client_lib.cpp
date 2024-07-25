@@ -1,7 +1,6 @@
 #include "http_client_lib.h"
 
 #include "client_yaml.hpp"
-#include "http_file_download.hpp"
 #include "pch_headers.hpp"
 
 #include <ostream>
@@ -21,7 +20,6 @@ struct http_handle_t
 #endif
     std::multimap<std::string, std::string> mHeaders;
     client_config config;
-    bool debug = true;
     std::unique_ptr<BS::thread_pool> pool;
 };
 
@@ -49,7 +47,6 @@ int file_download(http_client_handle handle, char const* url, char const* path,
     {
         outfile.write(data, data_length);
         total_bytes += data_length;
-        std::cout << "\rDownloaded: " << total_bytes << " bytes" << std::flush;
         return true; // Return false to cancel the download
     };
 
@@ -91,7 +88,6 @@ int post_json_request(http_client_handle handle, char const* url,
         std::cerr << "invalid http connection" << std::endl;
         return -1;
     }
-    // auto resp = handle->mClient->Post(url, json, APP_JSON);
     auto resp_result = handle->pool->submit_task(
         [&]
         {
@@ -153,6 +149,7 @@ int post_file_stream(http_client_handle handle, char const* url,
         OCTET_STREAM);
     return resp->status;
 }
+
 http_client_handle new_http_client(char const* filename)
 {
     auto yaml = std::make_unique<ClientYml>(std::string(filename));
@@ -183,22 +180,10 @@ void free_client_handle(http_client_handle handle)
     handle->mHeaders.clear();
     free(handle);
 }
-/**
- *  headers will be applicable to all the request, such as http request of
- * token,agent etc.
- * @param handle
- * @param header_name
- * @param header_value
- */
 void setup_http_header(http_client_handle handle, char const* header_name,
                        char const* header_value)
 {
     handle->mHeaders.emplace(header_name, header_value);
-}
-
-void set_auth_token(http_client_handle handle, char const* token)
-{
-    handle->mHeaders.emplace(API_KEY, token);
 }
 
 void http_request_initialize(http_client_handle handle)
@@ -212,14 +197,14 @@ void http_request_initialize(http_client_handle handle)
     handle->mClient->set_write_timeout(10, 0);
 
     httplib::Headers headers = {{"User-Agent", "MicroView Http library"}};
+    headers.emplace(API_KEY,handle->config.auth_token);
     for (auto const& [key, value] : handle->mHeaders)
     {
-        std::cout << "Header: " << key << ":" << value << std::endl;
         headers.emplace(key, value);
     }
 
     handle->mClient->set_default_headers(headers);
-    if (handle->debug)
+    if (handle->config.debug)
     {
         handle->mClient->set_logger(
             [](httplib::Request const& req, httplib::Response const& res)

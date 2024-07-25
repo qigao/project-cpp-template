@@ -264,28 +264,6 @@ TEST_CASE("HTTP file download by dll", "[httplib]")
     }
 }
 
-TEST_CASE("HTTP POST upload large byte array ", "[httplib]")
-{
-    MockServer mock_server;
-    httplib::Client cli("localhost", 5060);
-
-    SECTION("Upload large file (10MB)")
-    {
-        size_t const file_size = 10 * 1024 * 1024; // 10MB
-        std::string large_content = generate_large_content(file_size);
-
-        // Prepare multipart form data
-        httplib::MultipartFormDataItems items = {{"file", large_content,
-                                                  "large_file.txt",
-                                                  "application/octet-stream"}};
-
-        // Send POST request
-        auto res = cli.Post("/upload/large", items);
-
-        REQUIRE(res);
-        REQUIRE(res->status == 200);
-    }
-}
 TEST_CASE("HTTP POST upload large byte array  by dll", "[httplib]")
 {
     MockServer mock_server;
@@ -506,7 +484,6 @@ TEST_CASE("http request post JSON ", "[httplib][yyjson]")
         char const* request_json = R"({"name":"John Doe","age":30})";
 
         // Send POST request
-        char* data = new char[1024];
         auto resp_code =
             post_json_request(http_client_api, "/api/user", request_json);
 

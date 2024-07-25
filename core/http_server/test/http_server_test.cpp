@@ -6,7 +6,7 @@
 #include "http/http_server.hpp"
 #include "http/http_web_hook.hpp"
 #include "http_lib_header.hpp"
-
+#include "http_client_lib.h"
 #include <catch2/catch_all.hpp>
 #include <cstdio>
 #include <fstream>
@@ -17,7 +17,7 @@
 #include <yyjson.h>
 #define DEMO_JSON "{\"msg\":\"demo\",\"id\":200}"
 static char const* HOST = "127.0.0.1";
-static int const PORT = 5061;
+static int const PORT = 5060;
 using namespace std::placeholders;
 static char const* const SHARED_FOLDER = ".";
 
@@ -40,7 +40,6 @@ TEST_CASE("HttpServerTest checkSharedFolder", "[http_server]")
 {
     Logger::Construct();
     HttpServer svr(PORT);
-    svr.setSharedFolder("test");
     REQUIRE_THAT(svr.getSharedFolder(), Catch::Matchers::Equals("test"));
 }
 // Handler function to test
@@ -160,7 +159,6 @@ TEST_CASE("HttpServerTest  streamUpload", "[http_server]")
 {
     Logger::Construct();
     HttpServer svr(PORT);
-    svr.setSharedFolder(SHARED_FOLDER);
     // Register handler
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.PostWithReader(
@@ -204,7 +202,6 @@ TEST_CASE("HttpServerTest multipartUpload", "[http_server]")
 {
     Logger::Construct();
     HttpServer svr(PORT);
-    svr.setSharedFolder(SHARED_FOLDER);
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.PostWithReader(
         R"(/upload)", [&](httplib::Request const& req, httplib::Response& res,
@@ -225,7 +222,6 @@ TEST_CASE("HttpServerTest  getFileLists", "[http_server]")
 {
     Logger::Construct();
     HttpServer svr(PORT);
-    svr.setSharedFolder(SHARED_FOLDER);
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.Get("/",
             std::bind(&HttpFileHandle::handle_file_lists, handler, _1, _2));
@@ -241,7 +237,6 @@ TEST_CASE("HttpServerTest  downloadFile", "[http_server]")
 {
     Logger::Construct();
     HttpServer svr(PORT);
-    svr.setSharedFolder(SHARED_FOLDER);
     auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
     svr.Get("/download/(.*)",
             std::bind(&HttpFileHandle::handle_file_download, handler, _1, _2));
@@ -374,4 +369,74 @@ TEST_CASE("HttpServerTest webHookDemo", "[http_server]")
     auto resp = cli.Post("/webhook", DEMO_JSON, APP_JSON);
     REQUIRE(resp != nullptr);
     REQUIRE(resp->status == 200);
+}
+std::string generate_large_content(size_t size)
+{
+    std::string const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    std::string result;
+    result.reserve(size);
+    for (size_t i = 0; i < size; ++i)
+    {
+        result += chars[rand() % chars.length()];
+    }
+    return result;
+}
+
+TEST_CASE("HttpServerTest  streamUpload by dll", "[http_server]")
+{
+    Logger::Construct();
+    HttpServer svr(PORT);
+    // Register handler
+    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
+    svr.PostWithReader(
+        R"(/upload/(.*))",
+        [&](httplib::Request const& req, httplib::Response& res,
+            httplib::ContentReader const& content_reader)
+        { handler->handle_file_upload(req, res, content_reader); });
+    svr.start();
+        size_t const file_size = 10 * 1024 * 1024; // 10MB
+        std::string large_content = generate_large_content(file_size);
+        std::string filename = "large_file.txt";
+        std::ofstream ofs(filename, std::ofstream::binary);
+        ofs.write(large_content.c_str(), file_size);
+        ofs.close();
+     auto http_client_api = new_http_client("client.yml");
+    http_request_initialize(http_client_api);
+
+    // Send POST request
+    auto res = post_file_stream(http_client_api, "/upload/large.txt",
+                                large_content.data(), file_size);
+
+    REQUIRE(res == 200);
+
+    // Compare the original and received files
+    REQUIRE(compare_files(filename, "large.txt"));
+
+    // Clean up
+    std::remove(filename.c_str());
+    std::remove("large.txt");
+}
+
+TEST_CASE("HttpServerTest webHookDemo from client", "[http_server]")
+{
+    Logger::Construct();
+    WebHook::Construct("http://127.0.0.1:5060/dump");
+    WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
+    HttpServer svr(PORT);
+    // Register handler
+    auto handler = std::make_shared<HttpJsonHandler>();
+    svr.Post("/webhook",
+             std::bind(&HttpJsonHandler::web_hook, handler, _1, _2));
+    svr.Post("/dump", std::bind(&HttpJsonHandler::dump, handler, _1, _2));
+    svr.start();
+    auto se = httplib::detail::scope_exit([&] { svr.stop(); });
+   auto http_client_api = new_http_client("client.yml");
+    http_request_initialize(http_client_api);
+        auto resp_code =
+    post_json_request(http_client_api, "/webhook", DEMO_JSON);
+
+        REQUIRE(resp_code == 200);
+    // Send request and check response
+
 }

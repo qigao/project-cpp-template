@@ -73,9 +73,12 @@ target_compile_definitions(
 target_link_libraries(
   ${TARGET_NAME} PRIVATE starter_project_options starter_project_warnings
 )
+string(TOUPPER ${TARGET_NAME} API_NAME)
+
 generate_export_header(
   ${TARGET_NAME} EXPORT_FILE_NAME
   ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${TARGET_NAME}/${TARGET_NAME}_export.h
+  EXPORT_MACRO_NAME ${API_NAME}_API
 )
 add_custom_command(
   TARGET ${TARGET_NAME} POST_BUILD

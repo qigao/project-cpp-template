@@ -1,6 +1,10 @@
 find_package(yyjson)
 add_test_config(
-  my_client SYSTEM_LIBRARIES yyjson::yyjson INCLUDES
+  my_client
+  SYSTEM_LIBRARIES
+  yyjson::yyjson
+  http_client
+  INCLUDES
   ${CMAKE_EXECUTABLE_OUTPUT_DIRECTORY}/http_client
 )
 
