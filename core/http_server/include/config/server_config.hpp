@@ -123,7 +123,7 @@ struct convert<webhook_config>
         {
             rhs.api_key = node["api_key"].as<std::string>();
         }
-        if (node["headears"])
+        if (node["headers"])
         {
             rhs.headers = node["headers"].as<std::vector<header_config>>();
         }
@@ -149,7 +149,10 @@ struct convert<server_config>
 
     static bool decode(YAML::Node const& node, server_config& rhs)
     {
-        rhs.webhook = node["webhook"].as<webhook_config>();
+        if (node["webhook"])
+        {
+            rhs.webhook = node["webhook"].as<webhook_config>();
+        }
         if (node["ssl"])
         {
             rhs.ssl = node["ssl"].as<ssl_config>();

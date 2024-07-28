@@ -12,7 +12,7 @@ public:
         auto file = fs::path(file_name_);
         if (!fs::exists(file))
         {
-            throw std::runtime_error(file_name_ + "not exits");
+            throw std::runtime_error(file_name_ + " not exits");
             return;
         }
         tree_ = YAML::LoadFile(file_name_);

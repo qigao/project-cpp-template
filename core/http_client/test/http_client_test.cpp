@@ -1,7 +1,5 @@
 #include "http_client_lib.h"
 #include "mock_server.hpp"
-#include "mock_yml.hpp"
-#include "test_helper.h"
 
 #include <catch2/catch_all.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -187,10 +185,10 @@ TEST_CASE("HTTP POST file upload", "[httplib]")
     }
 }
 
-TEST_CASE_METHOD(YmlCfg, "HTTP POST file upload by dll", "[httplib]")
+TEST_CASE("HTTP POST file upload by dll", "[httplib]")
 {
     MockServer mock_server;
-    auto http_client_api = new_http_client(config_file.c_str());
+    auto http_client_api = new_http_client("client.yml");
     http_request_initialize(http_client_api);
 
     SECTION("Successful file upload")
@@ -244,10 +242,10 @@ TEST_CASE("HTTP file download", "[httplib]")
         std::remove(outputPath.c_str());
     }
 }
-TEST_CASE_METHOD(YmlCfg, "HTTP file download by dll", "[httplib]")
+TEST_CASE("HTTP file download by dll", "[httplib]")
 {
     MockServer mock_server;
-    auto http_client_api = new_http_client(config_file.c_str());
+    auto http_client_api = new_http_client("client.yml");
     http_request_initialize(http_client_api);
 
     SECTION("Successful file download")
@@ -266,11 +264,10 @@ TEST_CASE_METHOD(YmlCfg, "HTTP file download by dll", "[httplib]")
     }
 }
 
-TEST_CASE_METHOD(YmlCfg, "HTTP POST upload large byte array  by dll",
-                 "[httplib]")
+TEST_CASE("HTTP POST upload large byte array  by dll", "[httplib]")
 {
     MockServer mock_server;
-    auto http_client_api = new_http_client(config_file.c_str());
+    auto http_client_api = new_http_client("client.yml");
     http_request_initialize(http_client_api);
 
     SECTION("Upload large file (10MB)")
@@ -288,10 +285,10 @@ TEST_CASE_METHOD(YmlCfg, "HTTP POST upload large byte array  by dll",
         std::remove("large_file.txt");
     }
 }
-TEST_CASE_METHOD(YmlCfg, "HTTP POST large file upload by dll", "[httplib]")
+TEST_CASE("HTTP POST large file upload by dll", "[httplib]")
 {
     MockServer mock_server;
-    auto http_client_api = new_http_client(config_file.c_str());
+    auto http_client_api = new_http_client("client.yml");
     http_request_initialize(http_client_api);
 
     SECTION("Upload large file (10MB)")
@@ -419,26 +416,26 @@ TEST_CASE("File download test", "[file_download]")
     server_thread.join();
 }
 
-TEST_CASE_METHOD(YmlCfg, "HTTP Client DLL functionality", "[http_client]")
+TEST_CASE("HTTP Client DLL functionality", "[http_client]")
 {
     SECTION("Creation and destruction")
     {
-        http_client_handle handle = new_http_client(config_file.c_str());
+        http_client_handle handle = new_http_client("client.yml");
         REQUIRE(handle != nullptr);
         http_request_initialize(handle);
     }
 
     SECTION("Setting headers")
     {
-        http_client_handle handle = new_http_client(config_file.c_str());
+        http_client_handle handle = new_http_client("client.yml");
         REQUIRE(handle != nullptr);
         http_request_initialize(handle);
     }
 }
-TEST_CASE_METHOD(YmlCfg, "http request post JSON ", "[httplib][yyjson]")
+TEST_CASE("http request post JSON ", "[httplib][yyjson]")
 {
     MockServer mock_server;
-    auto http_client_api = new_http_client(config_file.c_str());
+    auto http_client_api = new_http_client("client.yml");
     http_request_initialize(http_client_api);
 
     SECTION("Successful POST request")
@@ -454,14 +451,14 @@ TEST_CASE_METHOD(YmlCfg, "http request post JSON ", "[httplib][yyjson]")
         REQUIRE(resp_code == 200);
         std::cout << "resp body: " << data << std::endl;
         yyjson_doc* doc = yyjson_read(data, strlen(data) - 1, 0);
-        if (doc == NULL)
+        if (doc == nullptr)
         {
             std::cerr << "Failed to parse JSON" << std::endl;
             // Handle error appropriately
             return;
         }
         yyjson_val* root = yyjson_doc_get_root(doc);
-        if (root == NULL || !yyjson_is_obj(root))
+        if (root == nullptr || !yyjson_is_obj(root))
         {
             std::cerr << "Invalid JSON structure" << std::endl;
             yyjson_doc_free(doc);
@@ -469,13 +466,13 @@ TEST_CASE_METHOD(YmlCfg, "http request post JSON ", "[httplib][yyjson]")
         }
 
         yyjson_val* status = yyjson_obj_get(root, "status");
-        if (status != NULL)
+        if (status != nullptr)
         {
             std::cout << "Status: " << yyjson_get_str(status) << std::endl;
         }
 
         yyjson_val* message = yyjson_obj_get(root, "message");
-        if (message != NULL)
+        if (message != nullptr)
         {
             std::cout << "Message: " << yyjson_get_str(message) << std::endl;
         }

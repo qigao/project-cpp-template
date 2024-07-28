@@ -10,7 +10,7 @@ dotenv:
     - .env.config.cmake
 env:
     CMAKE_BUILD: cmake --build {{.CMAKE_BUILD_DIR}} --target
-    CMAKE_TEST: ctest -T test --build-config {{.CMAKE_BUILD_TYPE}} --test-dir {{.CMAKE_BUILD_DIR}} --stop-on-failure --no-tests=error -R
+    CMAKE_TEST: ctest -T test --build-config {{.CMAKE_BUILD_TYPE}} --test-dir {{.CMAKE_BUILD_DIR}} --output-on-failure --stop-on-failure --no-tests=error -R
     CONAN_CONFIG: -pr:h  tasks/conan/profiles/{{.CONAN_PROFILE}} -pr:b  tasks/conan/profiles/{{.CONAN_PROFILE}}
 tasks:
     lint:

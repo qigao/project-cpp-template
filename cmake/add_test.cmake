@@ -209,13 +209,13 @@ endfunction()
 #   [COMPILE_OPTIONS <option...>]
 #   [COMPILE_FEATURES <feature...>]
 #   [EXECUTE_ARGS <arg...>]  # Args used as command args running the test
-#   [WORKING_DIRECTOY <dir>]
+#   [WORKING_DIRECTORY <dir>]
 # )
 #
 # Add a library test called test.${library}.${test_name}
 function(add_library_test library test_name)
   set(options)
-  set(one_value_args WORKING_DIRECTOY)
+  set(one_value_args WORKING_DIRECTORY)
   set(multi_value_args
       CONFIGS
       EXECUTE_ARGS

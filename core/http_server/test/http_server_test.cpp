@@ -322,33 +322,33 @@ void handle_file_download(httplib::Request const& req, httplib::Response& res)
     res.status = 200;
 }
 
-TEST_CASE("HttpServerTest dump", "[http_server]")
-{
-    Logger::Construct();
-    WebHook::Construct("http://127.0.0.1:5061/dump");
-    WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
-    HttpServer svr(PORT);
-    // Register handler
-    auto handler = std::make_shared<HttpJsonHandler>();
-    svr.Post("/dump", std::bind(&HttpJsonHandler::dump, handler, _1, _2));
-    svr.start();
-    auto se = httplib::detail::scope_exit([&] { svr.stop(); });
+// TEST_CASE("HttpServerTest dump", "[http_server]")
+// {
+//     Logger::Construct();
+//     WebHook::Construct("http://127.0.0.1:5060/dump");
+//     WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
+//     HttpServer svr(PORT);
+//     // Register handler
+//     auto handler = std::make_shared<HttpJsonHandler>();
+//     svr.Post("/dump", std::bind(&HttpJsonHandler::dump, handler, _1, _2));
+//     svr.start();
+//     auto se = httplib::detail::scope_exit([&] { svr.stop(); });
 
-    // Send request and check response
-    httplib::Client cli(HOST, PORT);
-    httplib::Headers headers = {
-        {"X-Hub-Signature-256",
-         "sha256="
-         "fa090c43f504e30497b7ef441500f9666e13aa1368e394d7d668eeb7de983bcb"}};
-    auto resp = cli.Post("/dump", DEMO_JSON, APP_JSON);
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
-}
+//     // Send request and check response
+//     httplib::Client cli(HOST, PORT);
+//     httplib::Headers headers = {
+//         {"X-Hub-Signature-256",
+//          "sha256="
+//          "fa090c43f504e30497b7ef441500f9666e13aa1368e394d7d668eeb7de983bcb"}};
+//     auto resp = cli.Post("/dump", DEMO_JSON, APP_JSON);
+//     REQUIRE(resp != nullptr);
+//     REQUIRE(resp->status == 200);
+// }
 
 TEST_CASE("HttpServerTest webHookDemo", "[http_server]")
 {
     Logger::Construct();
-    WebHook::Construct("http://127.0.0.1:5061/dump");
+    WebHook::Construct("http://127.0.0.1:5060/dump");
     WebHook::GetInstance()->set_header(USER_AGENT, "MVIEW");
     HttpServer svr(PORT);
     // Register handler
@@ -358,12 +358,25 @@ TEST_CASE("HttpServerTest webHookDemo", "[http_server]")
     svr.Post("/dump", std::bind(&HttpJsonHandler::dump, handler, _1, _2));
     svr.start();
     auto se = httplib::detail::scope_exit([&] { svr.stop(); });
-
-    // Send request and check response
-    httplib::Client cli(HOST, PORT);
-    auto resp = cli.Post("/webhook", DEMO_JSON, APP_JSON);
-    REQUIRE(resp != nullptr);
-    REQUIRE(resp->status == 200);
+    SECTION("webhook demo")
+    {
+        // Send request and check response
+        httplib::Client cli(HOST, PORT);
+        auto resp = cli.Post("/webhook", DEMO_JSON, APP_JSON);
+        REQUIRE(resp != nullptr);
+        REQUIRE(resp->status == 200);
+    }
+    SECTION("dump")
+    {
+        httplib::Client cli(HOST, PORT);
+        httplib::Headers headers = {{"X-Hub-Signature-256",
+                                     "sha256="
+                                     "fa090c43f504e30497b7ef441500f9666e13aa136"
+                                     "8e394d7d668eeb7de983bcb"}};
+        auto resp = cli.Post("/dump", DEMO_JSON, APP_JSON);
+        REQUIRE(resp != nullptr);
+        REQUIRE(resp->status == 200);
+    }
 }
 std::string generate_large_content(size_t size)
 {
@@ -378,42 +391,7 @@ std::string generate_large_content(size_t size)
     return result;
 }
 
-TEST_CASE("HttpServerTest  streamUpload by dll", "[http_server]")
-{
-    Logger::Construct();
-    HttpServer svr(PORT);
-    // Register handler
-    auto handler = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
-    svr.PostWithReader(
-        R"(/upload/(.*))",
-        [&](httplib::Request const& req, httplib::Response& res,
-            httplib::ContentReader const& content_reader)
-        { handler->handle_file_upload(req, res, content_reader); });
-    svr.start();
-    size_t const file_size = 10 * 1024 * 1024; // 10MB
-    std::string large_content = generate_large_content(file_size);
-    std::string filename = "large_file.txt";
-    std::ofstream ofs(filename, std::ofstream::binary);
-    ofs.write(large_content.c_str(), file_size);
-    ofs.close();
-    auto http_client_api = new_http_client("client.yml");
-    http_request_initialize(http_client_api);
-
-    // Send POST request
-    auto res = post_file_stream(http_client_api, "/upload/large.txt",
-                                large_content.data(), file_size);
-
-    REQUIRE(res == 200);
-
-    // Compare the original and received files
-    REQUIRE(compare_files(filename, "large.txt"));
-
-    // Clean up
-    std::remove(filename.c_str());
-    std::remove("large.txt");
-}
-
-TEST_CASE("HttpServerTest webHookDemo from client", "[http_server]")
+TEST_CASE("HttpServerTest with client", "[http_server]")
 {
     Logger::Construct();
     WebHook::Construct("http://127.0.0.1:5060/dump");
@@ -421,17 +399,49 @@ TEST_CASE("HttpServerTest webHookDemo from client", "[http_server]")
     HttpServer svr(PORT);
     // Register handler
     auto handler = std::make_shared<HttpJsonHandler>();
+    auto fileHandle = std::make_shared<HttpFileHandle>(SHARED_FOLDER);
+    svr.PostWithReader(
+        R"(/upload/(.*))",
+        [&](httplib::Request const& req, httplib::Response& res,
+            httplib::ContentReader const& content_reader)
+        { fileHandle->handle_file_upload(req, res, content_reader); });
     svr.Post("/webhook",
              std::bind(&HttpJsonHandler::web_hook, handler, _1, _2));
     svr.Post("/dump", std::bind(&HttpJsonHandler::dump, handler, _1, _2));
     svr.start();
     auto se = httplib::detail::scope_exit([&] { svr.stop(); });
-    fs::path current_dir = fs::current_path();
-    auto cfg_file = current_dir/"client.yml";
-    auto http_client_api = new_http_client(cfg_file.c_str());
-    http_request_initialize(http_client_api);
-    auto resp_code = post_json_request(http_client_api, "/webhook", DEMO_JSON);
+    SECTION("webhook demo")
+    {
+        auto http_client_api = new_http_client("client.yml");
+        http_request_initialize(http_client_api);
+        auto resp_code =
+            post_json_request(http_client_api, "/webhook", DEMO_JSON);
 
-    REQUIRE(resp_code == 200);
-    // Send request and check response
+        REQUIRE(resp_code == 200);
+        // Send request and check response
+    }
+    SECTION(" upload file stream")
+    {
+        size_t const file_size = 10 * 1024 * 1024; // 10MB
+        std::string large_content = generate_large_content(file_size);
+        std::string filename = "large_file.txt";
+        std::ofstream ofs(filename, std::ofstream::binary);
+        ofs.write(large_content.c_str(), file_size);
+        ofs.close();
+        auto http_client_api = new_http_client("client.yml");
+        http_request_initialize(http_client_api);
+
+        // Send POST request
+        int res = post_file_stream(http_client_api, "/upload/large.txt",
+                                    large_content.data(), file_size);
+
+        REQUIRE(res == 200);
+
+        // Compare the original and received files
+        REQUIRE(compare_files(filename, "large.txt"));
+
+        // Clean up
+        std::remove(filename.c_str());
+        std::remove("large.txt");
+    }
 }
